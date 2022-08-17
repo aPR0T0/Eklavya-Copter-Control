@@ -1,8 +1,9 @@
-# Eklavya-Copter-Control
+# Eklavya-Copter Control
 
 
 Controlling a hexacopter with coaxial tilt rotors in simulation, understanding the various dynamics of such a system and creating a controller that will enable a stable positioning system with multiple functionalities.
 
 ---
 ## Project workflow
-
+- To learn about different control systems and make gazebo simulation of a modelled hexacopter by ETH-Zürich
+- Make the control system
