@@ -26,6 +26,8 @@
     cd ~/catkin_ws/
     catkin_make
 ```
+Iff catkin_make doesn't work try using catkin_make_isolated instead.
+
 4. Add source to your .bashrc file
 ```
     echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
