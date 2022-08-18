@@ -10,3 +10,14 @@ sudo rosdep init
 rosdep update
 source /opt/ros/kinetic/setup.bash
 ```
+2. If you don't have ROS workspace yet you can do so by
+```
+ mkdir -p ~/catkin_ws/src
+ cd ~/catkin_ws/src
+ catkin_init_workspace  # initialize your catkin workspace
+ wstool init
+ wget https://raw.githubusercontent.com/ethz-asl/rotors_simulator/master/rotors_hil.rosinstall
+ wstool merge rotors_hil.rosinstall
+ wstool update
+ 
+ ```
