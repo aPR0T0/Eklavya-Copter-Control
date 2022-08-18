@@ -31,3 +31,9 @@
     echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
     source ~/.bashrc
 ```
+## Get the simulator and additional dependencies
+```
+    cd ~/catkin_ws/src
+    git clone git@github.com:ethz-asl/rotors_simulator.git
+    git clone git@github.com:ethz-asl/mav_comm.git
+```
