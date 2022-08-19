@@ -39,10 +39,12 @@ Then run following command in terminal `source ~/.bashrc`
 
 **If you face a problem like:**
 ![Error faced](./Resources/References/Installation_Dependencies.png "Error based on unmet dependencies")
+    
     Then just before using `line 3` of the above block just type in `sudo apt install -f` (This is auto remove feature of ros of unwanted commands) after this the problem should be solved.
 
 **If you face a problem like:**
 ![Error faced](./Resources/References/source_file_exists.png "Source File Already Exists")
+    
     It is necessary to solve this error (But in few cases it might be required)
     Run `sudo rm <path mentioned in error>`, for example `sudo rm /etc/ros/rosdep/sources.list.d/20-default.list`
     Then Run `sudo rosdep init`
@@ -66,66 +68,45 @@ Then run following command in terminal `source ~/.bashrc`
 
 
 
-
-### Get the simulator and additional dependencies
-```
-    git clone git@github.com:ethz-asl/rotors_simulator.git
-```
-
-3. Add source to your `.bashrc` file
-```
-    echo "source ~/workspace/devel/setup.bash" >> ~/.bashrc
-    source ~/.bashrc
-```
-4. Build your workspace with `python3_catkin_tools` (therefore you need `python_catkin_tools`)
+> 3. Cloning ethz-asl/rotors_simulator Repository :
+## Note the repository is to be cloned in the <workspace_name>/src directory
+(Note : Here we are using ssh key to clone repository, other methods can also be used. Also, recursive cloning is used so any linked components if any are not missed)
 
 ```
-    1. cd ~/workspace
-    2. catkin init
-    3. catkin build
+    cd ~/hexacopter_ws/src
+    git clone --recursive git@github.com:ethz-asl/rotors_simulator.git
+
 ```
 
 
 
-
-
-1. Install and initialize ROS kinetic desktop full, additional ROS packages, catkin-tools, and wstool:
+> 4. Building Workspace with `python3_catkin_tools` (therefore you need `python3_catkin_tools`) :
+(Commands being run in Ubuntu Terminal in <workspace_name> directory)
+Checking/Installing `python3_catkin_tools` :
 
 ```
-    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
-    wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
     sudo apt-get update
-    sudo apt-get install ros-kinetic-desktop-full ros-kinetic-joy ros-kinetic-octomap-ros ros-kinetic-mavlink python-wstool python-catkin-tools protobuf-compiler libgoogle-glog-dev ros-kinetic-control-toolbox ros-kinetic-mavros
-    sudo rosdep init
-    rosdep update
-    source /opt/ros/kinetic/setup.bash
-```
-2. If you don't have ROS workspace yet you can do so by
-```
-    mkdir -p ~/catkin_ws/src
-    cd ~/catkin_ws/src
-    catkin_init_workspace  # initialize your catkin workspace
-    wstool init
-    wget https://raw.githubusercontent.com/ethz-asl/rotors_simulator/master/rotors_hil.rosinstall
-    wstool merge rotors_hil.rosinstall
-    wstool update
+    sudo apt-get install python3-catkin-tools
 
- ```
- 3. Build your workspace
 ```
-    cd ~/catkin_ws/
-    catkin_make
-```
-Iff catkin_make doesn't work try using catkin_make_isolated instead.
 
-4. Add source to your .bashrc file
+Building Workspace :
+
 ```
-    echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+    cd ~/hexacopter_ws
+    catkin init
+    catkin build
+```
+
+If any errors occur you could run `catkin init` and `catkin build` commands again
+
+## Note : There should be total 16 packages (maybe more) installed successfully for installation to be successful
+
+
+
+> 5. Add Sourcing to your `~/.bashrc` file :
+
+```
+    echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
     source ~/.bashrc
-```
-## Get the simulator and additional dependencies
-```
-    cd ~/catkin_ws/src
-    git clone git@github.com:ethz-asl/rotors_simulator.git
-    git clone git@github.com:ethz-asl/mav_comm.git
 ```
