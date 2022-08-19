@@ -10,10 +10,10 @@ Consider a hexacopter that we are using here, suppose we have set the cartesian 
 Now, if we want to fly the hexacopter to (x,y,z) cordinates (here, we ar not bothering the control system, we are just understanding whats happeining) it may offshoot from the point by (dx,dy,dz) term in order to get back at the desired position we should add or subtract the error.
 
 ## Types of error terms
-* **Proportional**:
-![]
-* **Integral**:
-![]
-* **Derivatve**:
-![]
+* **Proportional**: Take the error and multiply it by a constant Kp.
+![Proportional](Images/Proportional.png)
+* **Integral**: Take the cumulative total error and multiply it by a constant Ki.
+![Integral](Images/Integral.png)
+* **Derivatve**: Take the rate of change in error and multiply it by a constant Kd.
+![Derivative](Images/Derivative.png)
 
