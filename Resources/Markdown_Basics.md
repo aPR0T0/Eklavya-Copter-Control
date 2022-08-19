@@ -3,7 +3,7 @@
 This guide is for beginners/experts to learn/revise the use of Markdown.
 
 > Following is Handwritten Quick Notes
-[Handwritten Quick Notes](https://drive.google.com/file/d/1Eb5ouucNBrQsy0D1Sd8PaYrDd1UK5Azd/view?usp=sharing "Handwritten Notes")
+[Handwritten Quick Notes](https://drive.google.com/file/d/1qy0kFO3ZXdzKElsZOpKyMc111r70rAdO/view?usp=sharing "Handwritten Notes")
 
 If above link doesn't work use [Handwritten Quick Notes](./References/Markdown%20Quick%20Notes.pdf "Handwritten Notes")
 
