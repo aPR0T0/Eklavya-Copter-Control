@@ -11,8 +11,9 @@
     7. gedit ~/.bashrc
 ```
 ###  After gedit you should add `source /opt/ros/noetic/setup.bash` at the end of the file and then save it
-* If you face a problem like
-![Error faced](Images/Dependencies.png)
+* If you face a problem like:
+![Error faced](Images/Dependencies.png "Error based on unmet dependencies")
+    Then just before using `line 3` of the above block just type in `sudo apt install -f` (This is auto remove feature of ros of unwanted commands) after this the problem should be solved.
 
 2. If you don't have ROS workspace yet you can do so by
 ```
