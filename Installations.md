@@ -1,4 +1,4 @@
-# Installation Instructions on Ubuntu 20.04 with ROS NOETIC NINJEMYS
+# Installation Instructions on Ubuntu 20.04 for ROS NOETIC
 > **ETH-Zürich** : ethz-asl/rotors_simulator Repository
 
 ## Prerequisites
@@ -15,7 +15,7 @@
 
 
 
-> 1. Install and initialize ROS kinetic desktop full, additional ROS packages, catkin-tools, and wstool :
+## 1. Install and initialize ROS kinetic desktop full, additional ROS packages, catkin-tools, and wstool :
 
 (Commands being run in Ubuntu Terminal in Home Directory)
 
@@ -58,7 +58,7 @@ Then Run `rosdep update`
 
 
 
-> 2. Since we don’t have a workspace for the given project, we will make one :
+## 2. Since we don’t have a workspace for the given project, we will make one :
 
 (Commands being run in Ubuntu Terminal in <workspace_name>/src directory once workspace created)
 
@@ -74,7 +74,7 @@ wstool update
 
 
 
-> 3. Cloning ethz-asl/rotors_simulator Repository :
+## 3. Cloning ethz-asl/rotors_simulator Repository :
 
 **Note the repository is to be cloned in the <workspace_name>/src directory**
 
@@ -87,7 +87,7 @@ git clone --recursive git@github.com:ethz-asl/rotors_simulator.git
 
 
 
-> 4. Building Workspace with `python3_catkin_tools` (therefore you need `python3_catkin_tools`) :
+## 4. Building Workspace with `python3_catkin_tools` (therefore you need `python3_catkin_tools`) :
 
 (Commands being run in Ubuntu Terminal in <workspace_name> directory)
 
@@ -112,7 +112,7 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 
 
 
-> 5. Add Sourcing to your `~/.bashrc` file :
+## 5. Add Sourcing to your `~/.bashrc` file :
 
 ```
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
