@@ -6,6 +6,7 @@ Controlling a Hexacopter with Co-axial tilt rotors in Simulation ( **Gazebo** ),
 
 The copter we are considering is a hexacopter with tilt brushless motors. 
 
+
 > Project Workflow
 - To learn about different control systems and make gazebo simulation of a modelled hexacopter by ETH-Zürich.
 - To learn about types of drones and types of rotors.
