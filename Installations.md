@@ -31,18 +31,18 @@ source /opt/ros/noetic/setup.bash
 
 * **If you don’t have `source /opt/ros/noetic/setup.bash` line in your bash file then run following commands**
 
-`gedit ~/.bashrc`
+    `gedit ~/.bashrc`
 
-Add following command at the end of your bash file `source /opt/ros/noetic/setup.bash`
+    Add following command at the end of your bash file `source /opt/ros/noetic/setup.bash`
 
-“SAVE” and then close the file
+    “SAVE” and then close the file
 
-Then run following command in terminal `source ~/.bashrc`
+    Then run following command in terminal `source ~/.bashrc`
 
 * **If you face a problem like:**
 ![Error faced](./Resources/References/Installation_Dependencies.png "Error based on unmet dependencies")
     
-Then just before using `line 3` of the above block just type in `sudo apt install -f` (This is auto remove feature of ros of unwanted commands) after this the problem should be solved.
+    Then just before using `line 3` of the above block just type in `sudo apt install -f` (This is auto remove feature of ros of unwanted commands) after this the problem should be solved.
 
 
 * **If you face a problem like:**
