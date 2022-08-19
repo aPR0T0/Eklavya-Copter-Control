@@ -1,6 +1,6 @@
 # Installation Instructions on Ubuntu
 1. Install and initialize ROS noetic desktop full, additional ROS packages, catkin-tools, and wstool:
-
+`Note: This installation process is for Ubuntu 20.04 LTS`
 ```
     1. sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
     2. wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
@@ -10,7 +10,7 @@
     6. source /opt/ros/noetic/setup.bash
     7. gedit ~/.bashrc
 ```
-###  After gedit you should add 'source /opt/ros/noetic/setup.bash' at the end of the file and then save it
+###  After gedit you should add `source /opt/ros/noetic/setup.bash` at the end of the file and then save it
 * If you face a problem like
 ![Error faced]()
 
@@ -24,14 +24,12 @@
     6. wstool merge rotors_hil.rosinstall
     7. wstool update
 ```
-Iff catkin_make doesn't work try using catkin_make_isolated instead.
-
-## Get the simulator and additional dependencies
+### Get the simulator and additional dependencies
 ```
     git clone git@github.com:ethz-asl/rotors_simulator.git
 ```
 
-3. Add source to your .bashrc file
+3. Add source to your `.bashrc` file
 ```
     echo "source ~/workspace/devel/setup.bash" >> ~/.bashrc
     source ~/.bashrc
