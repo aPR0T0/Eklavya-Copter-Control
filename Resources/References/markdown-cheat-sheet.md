@@ -1,13 +1,4 @@
-# Markdown_Basics
-
-This guide is for beginners/experts to learn/revise the use of Markdown.
-
-> Following is Handwritten Quick Notes
-[Handwritten Quick Notes](./References/Markdown%20Quick%20Notes.pdf "Handwritten Notes")
-
 # Markdown Cheat Sheet
-> Following is Link for Markdown Cheat Sheet
-[Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet "Cheat Sheet")
 
 Thanks for visiting [The Markdown Guide](https://www.markdownguide.org)!
 
