@@ -48,13 +48,13 @@ source /opt/ros/noetic/setup.bash
 * **If you face a problem like:**
 ![Error faced](./Resources/References/source_file_exists.png "Source File Already Exists")
     
-It is necessary to solve this error (But in few cases it might be required)
+    It is necessary to solve this error (But in few cases it might be required)
 
-Run `sudo rm <path mentioned in error>`, for example `sudo rm /etc/ros/rosdep/sources.list.d/20-default.list`
+    Run `sudo rm <path mentioned in error>`, for example `sudo rm /etc/ros/rosdep/sources.list.d/20-default.list`
 
-Then Run `sudo rosdep init`
+    Then Run `sudo rosdep init`
 
-Then Run `rosdep update`
+    Then Run `rosdep update`
 
 
 
