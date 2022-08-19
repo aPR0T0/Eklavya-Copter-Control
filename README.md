@@ -14,4 +14,6 @@ The copter we are considering is a hexacopter with tilt brushless motors.
 - Implementation
 
 
-**Follow Installation Guide for Installation Instructions on Ubuntu 20.04 for ROS NOETIC**
+## Follow Installation Guide for Installation Instructions on Ubuntu 20.04 for ROS NOETIC
+
+[Installation Guide](./Installations.md "Installation")
