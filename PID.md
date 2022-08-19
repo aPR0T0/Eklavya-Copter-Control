@@ -14,6 +14,6 @@ Now, if we want to fly the hexacopter to (x,y,z) cordinates (here, we ar not bot
 ![Proportional](Images/Proportional.png)
 * **Integral**: Take the cumulative total error and multiply it by a constant Ki.
 ![Integral](Images/Integral.png)
-* **Derivatve**: Take the rate of change in error and multiply it by a constant Kd.
+* **Derivative**: Take the rate of change in error and multiply it by a constant Kd.
 ![Derivative](Images/Derivative.png)
 
