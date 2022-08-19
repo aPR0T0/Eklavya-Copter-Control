@@ -12,7 +12,7 @@
 ```
 ###  After gedit you should add `source /opt/ros/noetic/setup.bash` at the end of the file and then save it
 * If you face a problem like
-![Error faced]()
+![Error faced](Images/Dependencies.png)
 
 2. If you don't have ROS workspace yet you can do so by
 ```
