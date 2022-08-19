@@ -26,15 +26,12 @@
     sudo rosdep init
     rosdep update
     source /opt/ros/noetic/setup.bash
-
 ```
-**If you don’t have `source /opt/ros/noetic/setup.bash` line in your bash file then run following commands**
-
+* **If you don’t have `source /opt/ros/noetic/setup.bash` line in your bash file then run following commands**
 `gedit ~/.bashrc`
+
 Add following command at the end of your bash file `source /opt/ros/noetic/setup.bash`
-
 “SAVE” and then close the file
-
 Then run following command in terminal `source ~/.bashrc`
 
 **If you face a problem like:**
