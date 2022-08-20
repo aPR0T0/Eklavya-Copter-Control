@@ -39,4 +39,4 @@ For now please refer the block diagram below and checkout the link below for bet
 
 ![MAV control Basic](Images/MAV_Controller_Basic_Structure.png "Controller")
 
-[Control Systems Basics](https://youtube.com/playlist?list=PLn8PRpmsu08oOLBVYYIwwN_nvuyUqEjrj "Video")
+[Control Systems Basics](https://youtube.com/playlist?list=PLn8PRpmsu08oOLBVYYIwwN_nvuyUqEjrj "Playlist")
