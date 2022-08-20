@@ -3,7 +3,7 @@ We are using a model by the ETH-Zurich so there are file structure, MAV modellin
 
 > ## Necessary building blocks of MAV
 
-![Block Diagram](Images/MAV\Block\Diagram.png "Image")
+![Block Diagram](Images/MAV_Block_Diagram.png "Image")
 
 > ### Understanding the block diagram
 
@@ -37,6 +37,6 @@ These calculate the readings (Because these are not the real sensors :😉) and 
 It basically takes the reading from the State estimator and processes in such a way that it predicts accurately the desired angular velocities for the 12 rotors we need. We will see the control system in detail while designing it in the basics of control systems.
 For now please refer the block diagram below and checkout the link below for better understanding.
 
-![MAV control Basic](Images/MAV\Controller\Basic\Structure.png "Controller")
+![MAV control Basic](Images/MAV_Controller_Basic_Structure.png "Controller")
 
 [Control Systems Basics](https://youtube.com/playlist?list=PLn8PRpmsu08oOLBVYYIwwN_nvuyUqEjrj "Video")
