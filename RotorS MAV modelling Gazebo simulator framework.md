@@ -43,3 +43,9 @@ For now please refer the block diagram below and checkout the link below for bet
 
 ## State Estimation
 ![State Estimation](Images/State_representation.png "Image")
+
+It combines both IMU measurements which come at a higher rate and with lower delay, and methods of estimation of 6 DoF (Degrees of Freedom) which are of lower drift or no drift due to complex computation needed. Once, they are combined we get almost drift free estimate of the state, at high rate and with low delay. To combine these two it uses **EKF formulation** EKF is Extended Karman Filter 
+
+## IMU sensor model
+
+IMU provides basic readings for the angular velocity and acceleration of the MAV through its MPU and gyroscope. 
