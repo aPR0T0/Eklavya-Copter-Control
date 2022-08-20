@@ -50,4 +50,4 @@ It combines both IMU measurements which come at a higher rate and with lower del
 
 IMU provides basic readings for the angular velocity and acceleration of the MAV through its MPU and gyroscope. 
 
-[Reference for IMU](Resources/Rotors_Sim.pdf "pdf")
+[Reference for IMU](https://drive.google.com/file/d/1psTlkN6moLHDshecLDnJdyQ80qUk-Von/view?usp=sharing "pdf")
