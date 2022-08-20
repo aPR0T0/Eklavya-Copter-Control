@@ -10,4 +10,5 @@ How they interact with the environment and what should be their behavior is deci
 - ### Linear : 
     These are very ideal form of systems which don't really represent the real world scenario. But these systems are often used along side with the non-linear system to make a program faster and doesn't involve extra computation which is usually required for the non-linear type of systems.
     For Example: Again consider a drone, but we are not taking in account all the factors that we took previously. So, now the varaibles are less so is the accuracy, but it can be improved by just verification by the non-linear model whenever required.
-# Control system for copter
+## Control system for copter
+We are using **PID controller** for our hexacopter. 
