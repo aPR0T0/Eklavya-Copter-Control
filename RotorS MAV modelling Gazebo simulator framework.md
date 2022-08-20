@@ -44,6 +44,7 @@ For now please refer the block diagram below and checkout the link below for bet
 ## State Estimation
 ![State Estimation](Images/State_representation.png "Image")
 <<<<<<< HEAD:Basic Concepts Required/RotorS MAV modelling Gazebo simulator framework.md
+<<<<<<< HEAD:Basic Concepts Required/RotorS MAV modelling Gazebo simulator framework.md
 
 It combines both IMU measurements which come at a higher rate and with lower delay, and methods of estimation of 6 DoF (Degrees of Freedom) which are of lower drift or no drift due to complex computation needed. Once, they are combined we get almost drift free estimate of the state, at high rate and with low delay. To combine these two it uses **EKF formulation** EKF is Extended Karman Filter 
 
@@ -52,5 +53,7 @@ It combines both IMU measurements which come at a higher rate and with lower del
 IMU provides basic readings for the angular velocity and acceleration of the MAV through its MPU and gyroscope. 
 
 [Reference for IMU](Resources/Rotors_Sim.pdf "pdf")
+=======
+>>>>>>> parent of 5323910... Added IMU sensot model description:RotorS MAV modelling Gazebo simulator framework.md
 =======
 >>>>>>> parent of 5323910... Added IMU sensot model description:RotorS MAV modelling Gazebo simulator framework.md
