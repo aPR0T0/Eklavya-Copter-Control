@@ -34,10 +34,23 @@ A system’s __**step response**__ is just the behavior of the system output in 
 
 * Example:
     1. Precision Actuator
-        * ![](Images/Actuator_speaker.png)
-        * ![](Images/Diff_Actuator.png)
-        * ![](Images/Actuator_Step.png)
+
+        ![](Images/Actuator_speaker.png)
+
+        ![](Images/Diff_Actuator.png)
+
+        ![](Images/Actuator_Step.png)
+
     2. Temperature Control
-        * ![](Images/Heating_system.png)
-        * ![](Images/Heating_diff.png)
-        * ![](Images/Heating_graph.png)
+
+        ![](Images/Heating_system.png)
+
+        ![](Images/Heating_diff.png)
+
+        ![](Images/Heating_graph.png)
+
+
+### Notes for better understanding:
+
+![Notes](Images\PID_Controller.jpeg "Notes")
+

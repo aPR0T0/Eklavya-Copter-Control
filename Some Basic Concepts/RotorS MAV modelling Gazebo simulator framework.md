@@ -51,3 +51,13 @@ It combines both IMU measurements which come at a higher rate and with lower del
 IMU provides basic readings for the angular velocity and acceleration of the MAV through its MPU and gyroscope. 
 
 [Reference for IMU](https://drive.google.com/file/d/1psTlkN6moLHDshecLDnJdyQ80qUk-Von/view?usp=sharing "pdf")
+
+### Notes for better understanding:
+
+![Gazebo Simulator](Images\Gazebo_sim.jpeg "Page 1")
+
+![Gazebo Simulator 1](Images\Gazebo_sim_2.jpeg "Page 2")
+
+![Gazebo Simulator 2](Images\Gazebo_sim_3.jpeg "Page 3")
+
+![Gazebo Simulator 3](Images\Gazebo_sim_4.jpeg "Page 4")

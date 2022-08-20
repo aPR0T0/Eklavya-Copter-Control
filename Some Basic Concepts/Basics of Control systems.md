@@ -12,3 +12,27 @@ How they interact with the environment and what should be their behavior is deci
     For Example: Again consider a drone, but we are not taking in account all the factors that we took previously. So, now the varaibles are less so is the accuracy, but it can be improved by just verification by the non-linear model whenever required.
 ## Control system for copter
 We are using **PID controller** for our hexacopter. 
+
+### Notes:
+
+* Control system outline for our Project:
+
+![Our Control Structure](Images\Our_controller.jpeg "Page 1")
+
+![Our Control Structure](Images\Our_controller_2.jpeg "Page 2")
+
+![Our Control Structure](Images\Our_controller_3.jpeg "Page 3")
+
+![Our Control Structure](Images\Our_controller_4.jpeg "Page 4")
+
+![Our Control Structure](Images\Our_controller_5.jpeg "Page 5")
+
+![Our Control Structure](Images\Our_controller_6.jpeg "Page 6")
+
+* Control System Structure:
+
+![System Structure](Images\Control_sys.jpeg "Notes Page 1")
+
+![System Examples](Images\Control_sys_2.jpeg "Notes Page 2")
+
+![System Examples](Images\Control_sys_3.jpeg "Notes Page 3")
