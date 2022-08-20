@@ -11,12 +11,16 @@
 
 - each of these terms describe how the error term is treated prior to being summed and sent into the plant(process)
 
-Eg - Line Following Bot
+## Eg - Line Following Bot
 - The proportional term gives the maximum change and try to bring the bot on the line
 - But if we only give Proportional term it could lead to oscillations
 - Hence Derivative Term is used which will give a curve which has reducing amplitude
 - But there is a problem with this as once the bot becomes parallel to the line then with very less displacement then the bot will not center itself to the line
 - Hence we need the Integral Term which will bring the bot to the center of the line.
+
+## Scenario
+Consider a hexacopter that we are using here, suppose we have set the cartesian co-ordinates w.r.t the body frame of refernce.
+Now, if we want to fly the hexacopter to (x,y,z) cordinates (here, we ar not bothering the control system, we are just understanding whats happeining) it may offshoot from the point by (dx,dy,dz) term in order to get back at the desired position we should add or subtract the error.
 
 * **Proportional**: Take the error and multiply it by a constant Kp.
 ![Proportional](./References/Proportional.png)
