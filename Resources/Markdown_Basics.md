@@ -107,7 +107,7 @@ term
 
 ### Task List
 
-- [x] Write the press release
+- [ ] Write the press release
 - [ ] Update the website
 - [ ] Contact the media
 
@@ -128,3 +128,9 @@ H~2~O
 ### Superscript
 
 X^2^
+
+
+
+### References -
+
+- [Markdown syntax Cheat sheet](https://www.youtube.com/watch?v=bpdvNwvEeSE&feature=youtu.be)

@@ -11,3 +11,7 @@ If above link doesn't work use [Handwritten Quick Notes](./References/Git%20and%
 [GitHub Cheat Sheet](https://drive.google.com/file/d/1sAOkFqqFSuonPi1zuy7xoTOFJYeIcekX/view?usp=sharing "Cheat Sheet")
 
 If above link doesn't work use [GitHub Cheat Sheet](./References/git-cheat-sheet-education-1.pdf "Cheat Sheet")
+
+### References -
+
+- [Learn complete Git and Github in 1 video | Open-source Contribution | Linux commands & tricks](https://www.youtube.com/watch?v=uaeKhfhYE0U)

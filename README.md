@@ -12,3 +12,8 @@ The copter we are considering is a hexacopter with tilt brushless motors.
 - To learn about types of drones and types of rotors.
 - Make the control system.
 - Implementation
+
+
+## Follow Installation Guide for Installation Instructions on Ubuntu 20.04 for ROS NOETIC
+
+[Installation Guide](./Installations.md "Installation")
