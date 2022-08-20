@@ -35,4 +35,4 @@ We are using **PID controller** for our hexacopter.
 
 ![System Examples](Images/Control_sys_2.jpeg "Notes Page 2")
 
-![System Examples](Images/Control_sys_3.jpeg "Notes Page 3")
+![System Examples](Images/Controller_3.jpegControl_sys_3.jpeg "Notes Page 3")
