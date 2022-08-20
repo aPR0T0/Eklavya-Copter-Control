@@ -17,22 +17,22 @@ We are using **PID controller** for our hexacopter.
 
 * Control system outline for our Project:
 
-![Our Control Structure](Images\Our_controller.jpeg "Page 1")
+![Our Control Structure](Images/Our_controller.jpeg "Page 1")
 
-![Our Control Structure](Images\Our_controller_2.jpeg "Page 2")
+![Our Control Structure](Images/Our_controller_2.jpeg "Page 2")
 
-![Our Control Structure](Images\Our_controller_3.jpeg "Page 3")
+![Our Control Structure](Images/Our_controller_3.jpeg "Page 3")
 
-![Our Control Structure](Images\Our_controller_4.jpeg "Page 4")
+![Our Control Structure](Images/Our_controller_4.jpeg "Page 4")
 
-![Our Control Structure](Images\Our_controller_5.jpeg "Page 5")
+![Our Control Structure](Images/Our_controller_5.jpeg "Page 5")
 
-![Our Control Structure](Images\Our_controller_6.jpeg "Page 6")
+![Our Control Structure](Images/Our_controller_6.jpeg "Page 6")
 
 * Control System Structure:
 
-![System Structure](Images\Control_sys.jpeg "Notes Page 1")
+![System Structure](Images/Control_sys.jpeg "Notes Page 1")
 
-![System Examples](Images\Control_sys_2.jpeg "Notes Page 2")
+![System Examples](Images/Control_sys_2.jpeg "Notes Page 2")
 
-![System Examples](Images\Control_sys_3.jpeg "Notes Page 3")
+![System Examples](Images/Control_sys_3.jpeg "Notes Page 3")
