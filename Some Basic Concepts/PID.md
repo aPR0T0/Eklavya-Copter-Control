@@ -31,7 +31,7 @@ A system’s __**step response**__ is just the behavior of the system output in 
 ![Step Response](Images/Step_response.png "Graph")
 
 * **Note: Step response of different systems vary differently according to their specifiic properties**
-
+---
 * Example:
     1. Precision Actuator
         * ![](Images/Actuator_speaker.png)
