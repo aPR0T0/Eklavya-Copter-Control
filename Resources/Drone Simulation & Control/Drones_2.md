@@ -184,6 +184,8 @@ controllers in fact if we just look at the controller portion of this feedback s
 
 ![](./References/2_21.png)
 
+![](./References/2_99.png)
+
 - The Simulink model has pretty much the exact same controller architecture that we've built
 - the outer loop XY position controller is generating the reference pitch and roll angles for the inner loop controller
 - there's also the yaw and altitude controllers in each of them feed into the motor mixing algorithm
@@ -193,3 +195,5 @@ controllers in fact if we just look at the controller portion of this feedback s
 ### References -
 
 - [Drone Simulation and Control, Part 2: How Do You Get a Drone to Hover?](https://www.youtube.com/watch?v=GK1t8YIvGM8&list=PLn8PRpmsu08oOLBVYYIwwN_nvuyUqEjrj&index=2)
+
+- [Introduction to Simulink Hardware Support for PARROT Minidrones](https://in.mathworks.com/videos/introduction-to-simulink-hardware-support-for-parrot-minidrones-1503608358675.html?s_eid=PSM_15028)

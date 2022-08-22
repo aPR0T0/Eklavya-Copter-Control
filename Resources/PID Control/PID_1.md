@@ -7,6 +7,7 @@
     - Proportional
     - Integral
     - Derivative
+
 ![](./References/1_1.jpeg)
 
 - each of these terms describe how the error term is treated prior to being summed and sent into the plant(process)
@@ -20,13 +21,18 @@
 
 ## Scenario
 Consider a hexacopter that we are using here, suppose we have set the cartesian co-ordinates w.r.t the body frame of refernce.
-Now, if we want to fly the hexacopter to (x,y,z) cordinates (here, we ar not bothering the control system, we are just understanding whats happeining) it may offshoot from the point by (dx,dy,dz) term in order to get back at the desired position we should add or subtract the error.
+Now, if we want to fly the hexacopter to (x,y,z) cordinates (here, we ar not bothering the control system, we are just understanding whats happening) it may offshoot from the point by (dx,dy,dz) term in order to get back at the desired position we should add or subtract the error.
 
 * **Proportional**: Take the error and multiply it by a constant Kp.
+
 ![Proportional](./References/Proportional.png)
+
 * **Integral**: Take the cumulative total error and multiply it by a constant Ki.
+
 ![Integral](./References/Integral.png)
+
 * **Derivative**: Take the rate of change in error and multiply it by a constant Kd.
+
 ![Derivative](./References/Derivative.png)
 
 > Block Diagram
