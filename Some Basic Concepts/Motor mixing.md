@@ -3,7 +3,7 @@ It is nothing but the logic used to make the body go in the way we want it to.
 So, there are basically main 3 conditions that we need to satisfy: 
 
 ---
-![Illustration](/Images/Copter_illustration.jpeg "Image")
+![Illustration](Images/Copter_illustration.jpeg "Image")
 ---
 
 * **Roll**: To rotate about X-axis
