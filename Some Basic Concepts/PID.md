@@ -20,7 +20,11 @@ Now, if we want to fly the hexacopter to (x,y,z) cordinates (here, we ar not bot
 
 ## Example of Plants
 **Motor & Gear**
+
+
 ![DC motor with Potentiometer](Images/Plant1.png "Motor & Gear Image")
+
+
 The plant is a motor driving a gear train, with the output position of the gear train being monitored by a __potentiometer__ or some other position reading device. You might see this kind of mechanism driving a carriage on a printer, or a throttle mechanism in a cruise control system or almost any other moderately precise position controller. The motor is driven by a voltage which is commanded by software and applied to its terminals. The motor output is geared down to drive the actual mechanism. The position of this final drive is measured by the potentiometer (__“pot”__ in the figure) which outputs a voltage proportional to the motor position. 
 A DC motor driven by a voltage will go at a constant speed, proportional to the applied voltage. Usually the motor __armature__ has some resistance that __limits its ability to accelerate__, so the motor will have some delay between the input voltage changing and the speed changing. __The gear train takes the movement of the motor and multiplies it by a constant__. Finally, the potentiometer measures the position of the output shaft.
 > Mathematical logic behind the motor output __here T<sub>0</sub> is response time taken for the motor to settle at a constant speed__ 
