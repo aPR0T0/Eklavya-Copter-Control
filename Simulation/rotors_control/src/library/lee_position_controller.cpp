@@ -21,7 +21,7 @@
 #include "rotors_control/lee_position_controller.h"
 
 namespace rotors_control {
-
+  
 LeePositionController::LeePositionController()
     : initialized_params_(false),
       controller_active_(false) {
@@ -113,7 +113,7 @@ void LeePositionController::ComputeDesiredAcceleration(Eigen::Vector3d* accelera
 // Implementation from the T. Lee et al. paper
 // Control of complex maneuvers for a quadrotor UAV using geometric methods on SE(3)
 void LeePositionController::ComputeDesiredAngularAcc(const Eigen::Vector3d& acceleration,
-                                                     Eigen::Vector3d* angular_acceleration) const {
+                                                      Eigen::Vector3d* angular_acceleration) const {
   assert(angular_acceleration);
 
   Eigen::Matrix3d R = odometry_.orientation.toRotationMatrix();
@@ -147,7 +147,7 @@ void LeePositionController::ComputeDesiredAngularAcc(const Eigen::Vector3d& acce
   Eigen::Vector3d angular_rate_error = odometry_.angular_velocity - R_des.transpose() * R * angular_rate_des;
 
   *angular_acceleration = -1 * angle_error.cwiseProduct(normalized_attitude_gain_)
-                           - angular_rate_error.cwiseProduct(normalized_angular_rate_gain_)
+                            - angular_rate_error.cwiseProduct(normalized_angular_rate_gain_)
                            + odometry_.angular_velocity.cross(odometry_.angular_velocity); // we don't need the inertia matrix here
 }
 }
