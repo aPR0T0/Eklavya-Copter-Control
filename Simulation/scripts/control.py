@@ -168,7 +168,7 @@ def alt_control(gps, vel, imu, odo):
     # Gets drones current velocity
     calVelocity(vel)
     # Gets drones current rpy
-    # calImu(imu)
+    calImu(imu)
     # Gets drones current altitude
     calAltitude(gps)
     # Gets drones roll pitch yaw
