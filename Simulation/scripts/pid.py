@@ -9,6 +9,7 @@ from geometry_msgs.msg import Vector3Stamped
 from geometry_msgs.msg import Vector3
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
+from mav_msgs.msg import Actuators  
 
 #Gets the target values and current values of rpy,x,y adn alt; and applies PID to all the errors and minimizes them
 def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag): 
@@ -180,37 +181,38 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     
-    speed = rotor_speed()
+    speed_publisher = Actuators()
+    speed = Float64MultiArray()
 
-    speed.prop1 = (thrust + output_yaw + output_pitch - 0.5*output_roll) 
+    speed.data[0] = (thrust + output_yaw + output_pitch - 0.5*output_roll) 
 
-    speed.prop2 = (thrust - output_yaw + output_pitch + 0.5*output_roll) 
+    speed.data[1] = (thrust - output_yaw + output_pitch + 0.5*output_roll) 
 
-    speed.prop3 = (thrust + output_yaw + 0 - output_roll) 
+    speed.data[2] = (thrust + output_yaw + 0 - output_roll) 
 
-    speed.prop4 = (thrust - output_yaw - output_pitch + 0.5*output_roll) 
+    speed.data[3] = (thrust - output_yaw - output_pitch + 0.5*output_roll) 
 
-    speed.prop5 = (thrust + output_yaw - output_pitch - 0.5*output_roll)
+    speed.data[4] = (thrust + output_yaw - output_pitch - 0.5*output_roll)
 
-    speed.prop6 = (thrust - output_yaw - 0 + output_roll)
+    speed.data[5] = (thrust - output_yaw - 0 + output_roll)
 
     #limit the speed
-    if(speed.prop1 > 800): speed.prop1 = 800
-    if(speed.prop2 > 800): speed.prop2 = 800
-    if(speed.prop3 > 800): speed.prop3 = 800
-    if(speed.prop4 > 800): speed.prop4 = 800
-    if(speed.prop5 > 800): speed.prop5 = 800
-    if(speed.prop6 > 800): speed.prop6 = 800
+    if(speed.data[0] > 800): speed.data[0] = 800
+    if(speed.data[1] > 800): speed.data[1] = 800
+    if(speed.data[2] > 800): speed.data[2] = 800
+    if(speed.data[3] > 800): speed.data[3] = 800
+    if(speed.data[4] > 800): speed.data[4] = 800
+    if(speed.data[5] > 800): speed.data[5] = 800
 
-    if(speed.prop1 < 10): speed.prop1 = 10
-    if(speed.prop2 < 10): speed.prop2 = 10
-    if(speed.prop3 < 10): speed.prop3 = 10
-    if(speed.prop4 < 10): speed.prop4 = 10 
-    if(speed.prop5 < 10): speed.prop5 = 10 
-    if(speed.prop6 < 10): speed.prop6 = 10 
+    if(speed.data[0] < 10): speed.data[0] = 10
+    if(speed.data[1] < 10): speed.data[1] = 10
+    if(speed.data[2] < 10): speed.data[2] = 10
+    if(speed.data[3] < 10): speed.data[3] = 10
+    if(speed.data[4] < 10): speed.data[4] = 10
+    if(speed.data[5] < 10): speed.data[5] = 10
     rospy.loginfo(speed) 
-
-    return(speed)
+    speed_publisher.angular_velocities = speed
+    return(speed_publisher)
 
 
 #Controller which applies PID to errors in x,y,vel_x and vel_y(target values of vel being 0) and gives setpoint pitch and roll as output to correct the errors

@@ -12,6 +12,7 @@ from geometry_msgs.msg import Vector3
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 from gazebo_msgs.msg import ModelStates
+from mav_msgs.msg import Actuators  
 
 
 # Initilization of all Parameters
@@ -55,7 +56,7 @@ kd_vel_y = 0.0071
 # Flag for checking for the first time the script is run
 flag = 0
 # Message to publish final motor speeds to propellers
-message_pub = rospy.Publisher("/firefly/motor_speed", rotor_speed, queue_size=1000)
+message_pub = rospy.Publisher("/firefly/command/motor_speed", Actuators, queue_size=1000)
 
 # Ask the user for the required target coordinates the drone should hover at
 target_x,target_y,req_alt = map(float,input("Enter X,Y,Z coordinates of target : ").split())
@@ -131,6 +132,15 @@ def calImu(msg):
     pitch = pitch * (180/3.14159265)
     yaw = yaw * (180/3.14159265)
 
+# Gets current roll, pitch, yaw of the drone from the odometry
+# def calOdo(msg):
+#     orinetation_list = [msg.x, msg.y, msg.z, msg.w]
+#     global roll, pitch, yaw 
+#     (roll,pitch,yaw) = euler_from_quaternion(orinetation_list)
+#     roll = roll * (180/3.14159265)
+#     pitch = pitch * (180/3.14159265)
+#     yaw = yaw * (180/3.14159265)
+
 #Gets current x,y posiiton of drone
 def calPosition(pos):
     global x,y
@@ -151,16 +161,18 @@ def setPID_vel_y(msg):
     kd_vel_y = msg.data[2]
 
 
-def alt_control(gps, vel, imu):
+def alt_control(gps, vel, imu, odo):
     # Set all variables to global so as to keep them updated values
     global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw,target_x,target_y
 
     # Gets drones current velocity
     calVelocity(vel)
     # Gets drones current rpy
-    calImu(imu)
+    # calImu(imu)
     # Gets drones current altitude
     calAltitude(gps)
+    # Gets drones roll pitch yaw
+    # calOdo(odo)
     #Gets drones current x and y position so that we can know the difference between it and the target value
     rospy.Subscriber("/gazebo/model_states",ModelStates,calPosition )
 
@@ -196,11 +208,11 @@ def alt_control(gps, vel, imu):
     
     #the goal is to get a function that stabilises the r p y x and y of the drone as per the given target while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw,x,y, target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
+    speed_publisher = PID_alt(roll, pitch, yaw,x,y, target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
     flag += 1 #Indicates completion of 1st run of function
 
     # Publish the final motor speeds to the propellers
-    message_pub.publish(speed)
+    message_pub.publish(speed_publisher)
 
 
 def control():
@@ -215,7 +227,6 @@ def control():
     vel_sub = message_filters.Subscriber("/firefly/gps_velocity", Vector3Stamped)
     imu_sub = message_filters.Subscriber("/firefly/imu/data", Imu)
     ts = message_filters.TimeSynchronizer([gps_sub, vel_sub, imu_sub], 2)
-
     #one of these publishers is slower than the others
     #which is why the messages are loading relatively slowly
     ts.registerCallback(alt_control)
