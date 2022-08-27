@@ -161,11 +161,6 @@ that will store data as a **.mat** file locally on the drone and then we can dow
 
 
 
-
-
-
-
-
 ### References -
 
 - [Drone Simulation and Control, Part 3: How to Build the Flight Code](https://www.youtube.com/watch?v=3Gtb5Eq1Lvk&list=PLn8PRpmsu08oOLBVYYIwwN_nvuyUqEjrj&index=4)
