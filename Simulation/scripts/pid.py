@@ -184,17 +184,23 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     speed_publisher = Actuators()
     speed = Float64MultiArray()
 
-    speed.data[0] = (thrust + output_yaw + output_pitch - 0.5*output_roll) 
+    # speed.data[0] = (thrust + output_yaw + output_pitch - 0.5*output_roll) 
+    speed.data.append(thrust + output_yaw + output_pitch - 0.5*output_roll)
+    speed.data.append(thrust - output_yaw + output_pitch + 0.5*output_roll)
+    speed.data.append(thrust + output_yaw + 0 - output_roll)
+    speed.data.append(thrust - output_yaw - output_pitch + 0.5*output_roll)
+    speed.data.append(thrust + output_yaw - output_pitch - 0.5*output_roll)
+    speed.data.append(thrust - output_yaw - 0 + output_roll)
 
-    speed.data[1] = (thrust - output_yaw + output_pitch + 0.5*output_roll) 
+    # speed.data[1] = (thrust - output_yaw + output_pitch + 0.5*output_roll) 
 
-    speed.data[2] = (thrust + output_yaw + 0 - output_roll) 
+    # speed.data[2] = (thrust + output_yaw + 0 - output_roll) 
 
-    speed.data[3] = (thrust - output_yaw - output_pitch + 0.5*output_roll) 
+    # speed.data[3] = (thrust - output_yaw - output_pitch + 0.5*output_roll) 
 
-    speed.data[4] = (thrust + output_yaw - output_pitch - 0.5*output_roll)
+    # speed.data[4] = (thrust + output_yaw - output_pitch - 0.5*output_roll)
 
-    speed.data[5] = (thrust - output_yaw - 0 + output_roll)
+    # speed.data[5] = (thrust - output_yaw - 0 + output_roll)
 
     #limit the speed
     if(speed.data[0] > 800): speed.data[0] = 800

@@ -2,30 +2,34 @@
 # license removed for brevity
 import rospy
 from std_msgs.msg import String
-from drone.msg import rotor_speed
+from mav_msgs.msg import Actuators
+from std_msgs.msg import Float64, Float64MultiArray
 
 def takeoff():
-    pub = rospy.Publisher('/firefly/command/motor_speed', rotor_speed, queue_size=10)
+    pub = rospy.Publisher('/firefly/command/motor_speed', Actuators, queue_size=10)
     rospy.init_node('takeoff_node', anonymous=True)
     rate = rospy.Rate(1) # 10hz
-    speed = rotor_speed()
-    speed.prop1 = 510
-    speed.prop2 = 510
-    speed.prop3 = 510
-    speed.prop4 = 510
-    speed.prop5 = 510
-    speed.prop6 = 510
+    #so by experimenting with some values we finally have a 546.5 as better just takeoff speed of the rotors
+    speed_publisher = Actuators()
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+
     i = 0
     while not rospy.is_shutdown():
-        if i == 10:
-            speed.prop1 = 508.5
-            speed.prop2 = 508.5
-            speed.prop3 = 508.5
-            speed.prop4 = 508.5
-            speed.prop5 = 508.5
-            speed.prop6 = 508.5
-        rospy.loginfo(speed)
-        pub.publish(speed)
+        if i == 10 :
+
+            speed_publisher.angular_velocities[0] = 546.5
+            speed_publisher.angular_velocities[1] = 546.5  
+            speed_publisher.angular_velocities[2] = 546.5
+            speed_publisher.angular_velocities[3] = 546.5  
+            speed_publisher.angular_velocities[4] = 546.5  
+            speed_publisher.angular_velocities[5] = 546.5
+        rospy.loginfo(speed_publisher)
+        pub.publish(speed_publisher)
         i+=1
         rate.sleep()
 
