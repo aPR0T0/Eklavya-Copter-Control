@@ -46,22 +46,22 @@ def takeoff():
     rate = rospy.Rate(1) # 10hz
     #so by experimenting with some values we finally have a 546.5 as better just takeoff speed of the rotors
     speed_publisher = Actuators()
-    speed_publisher.angular_velocities.append(546)
-    speed_publisher.angular_velocities.append(546)
-    speed_publisher.angular_velocities.append(546)
-    speed_publisher.angular_velocities.append(546)
-    speed_publisher.angular_velocities.append(546)
-    speed_publisher.angular_velocities.append(546)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
+    speed_publisher.angular_velocities.append(547)
 
     i = 0
     while not rospy.is_shutdown():
         if i == 10 :
-            speed_publisher.angular_velocities[0] = 542.5
-            speed_publisher.angular_velocities[1] = 542.5
-            speed_publisher.angular_velocities[2] = 542.5
-            speed_publisher.angular_velocities[3] = 542.5  
-            speed_publisher.angular_velocities[4] = 542.5 
-            speed_publisher.angular_velocities[5] = 542.5
+            speed_publisher.angular_velocities[0] = 546.35
+            speed_publisher.angular_velocities[1] = 546.35
+            speed_publisher.angular_velocities[2] = 546.35
+            speed_publisher.angular_velocities[3] = 546.35
+            speed_publisher.angular_velocities[4] = 546.35
+            speed_publisher.angular_velocities[5] = 546.35
         rospy.loginfo(speed_publisher)
         rospy.Subscriber("/firefly/ground_speed", TwistStamped,calVelocity)
         rospy.Subscriber("/firefly/gps", NavSatFix,calAltitude)

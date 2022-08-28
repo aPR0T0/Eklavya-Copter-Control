@@ -17,7 +17,7 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt
     global prevTime,kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
     global kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,target_x,target_y,req_alt
-    global kp_thrust, ki_thrust, kd_thrust
+    global kp_thrust, ki_thrust, kd_thrust, it
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     req_alt = target[2]
     sample_time = 0.005 #sampling time
     current_time = time.time()
-
+    it=0
     #Controller for x,y,vel_x and vel_y tuning. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, velocity, k_vel, flag)
 
@@ -69,7 +69,7 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
 
 
     #Speed found from testing at which drone hovers at a fixed height
-    hover_speed = 508.75 
+    hover_speed = 546.5 
     # Flag for checking for the first time the function is called so that values can initilized
     if flag == 0:
         prevTime = 0
@@ -171,7 +171,7 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
         thrust = 800
     elif(thrust < 10):
         thrust = 10    
-    # print("Thrust = ",thrust)
+    print("Thrust = ",thrust)
 
     #uncomment for only altitutde PID testing
     # output_roll=0 
@@ -182,42 +182,44 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     
     
     speed_publisher = Actuators()
-    speed = Float64MultiArray()
 
-    # speed.data[0] = (thrust + output_yaw + output_pitch - 0.5*output_roll) 
-    speed.data.append(thrust + output_yaw + output_pitch - 0.5*output_roll)
-    speed.data.append(thrust - output_yaw + output_pitch + 0.5*output_roll)
-    speed.data.append(thrust + output_yaw + 0 - output_roll)
-    speed.data.append(thrust - output_yaw - output_pitch + 0.5*output_roll)
-    speed.data.append(thrust + output_yaw - output_pitch - 0.5*output_roll)
-    speed.data.append(thrust - output_yaw - 0 + output_roll)
+    if(it == 0):
+        speed_publisher.angular_velocities.append(thrust + output_yaw + output_pitch - 0.5*output_roll)
+        speed_publisher.angular_velocities.append(thrust - output_yaw + output_pitch + 0.5*output_roll)
+        speed_publisher.angular_velocities.append(thrust + output_yaw + 0 - output_roll)
+        speed_publisher.angular_velocities.append(thrust - output_yaw - output_pitch + 0.5*output_roll)
+        speed_publisher.angular_velocities.append(thrust + output_yaw - output_pitch - 0.5*output_roll)
+        speed_publisher.angular_velocities.append(thrust - output_yaw - 0 + output_roll)
+        it=it+1
+    else:
+        speed_publisher.angular_velocities[0] = (thrust + output_yaw + output_pitch - 0.5*output_roll)
 
-    # speed.data[1] = (thrust - output_yaw + output_pitch + 0.5*output_roll) 
+        speed_publisher.angular_velocities[1] = (thrust - output_yaw + output_pitch + 0.5*output_roll) 
 
-    # speed.data[2] = (thrust + output_yaw + 0 - output_roll) 
+        speed_publisher.angular_velocities[2] = (thrust + output_yaw + 0 - output_roll) 
 
-    # speed.data[3] = (thrust - output_yaw - output_pitch + 0.5*output_roll) 
+        speed_publisher.angular_velocities[3] = (thrust - output_yaw - output_pitch + 0.5*output_roll) 
 
-    # speed.data[4] = (thrust + output_yaw - output_pitch - 0.5*output_roll)
+        speed_publisher.angular_velocities[4] = (thrust + output_yaw - output_pitch - 0.5*output_roll)
 
-    # speed.data[5] = (thrust - output_yaw - 0 + output_roll)
+        speed_publisher.angular_velocities[5] = (thrust - output_yaw - 0 + output_roll)
 
     #limit the speed
-    if(speed.data[0] > 800): speed.data[0] = 800
-    if(speed.data[1] > 800): speed.data[1] = 800
-    if(speed.data[2] > 800): speed.data[2] = 800
-    if(speed.data[3] > 800): speed.data[3] = 800
-    if(speed.data[4] > 800): speed.data[4] = 800
-    if(speed.data[5] > 800): speed.data[5] = 800
+    if(speed_publisher.angular_velocities[0] > 800): speed_publisher.angular_velocities[0] = 800
+    if(speed_publisher.angular_velocities[1] > 800): speed_publisher.angular_velocities[1] = 800
+    if(speed_publisher.angular_velocities[2] > 800): speed_publisher.angular_velocities[2] = 800
+    if(speed_publisher.angular_velocities[3] > 800): speed_publisher.angular_velocities[3] = 800
+    if(speed_publisher.angular_velocities[4] > 800): speed_publisher.angular_velocities[4] = 800
+    if(speed_publisher.angular_velocities[5] > 800): speed_publisher.angular_velocities[5] = 800
 
-    if(speed.data[0] < 10): speed.data[0] = 10
-    if(speed.data[1] < 10): speed.data[1] = 10
-    if(speed.data[2] < 10): speed.data[2] = 10
-    if(speed.data[3] < 10): speed.data[3] = 10
-    if(speed.data[4] < 10): speed.data[4] = 10
-    if(speed.data[5] < 10): speed.data[5] = 10
-    rospy.loginfo(speed) 
-    speed_publisher.angular_velocities = speed
+    if(speed_publisher.angular_velocities[0] < 10): speed_publisher.angular_velocities[0] = 10
+    if(speed_publisher.angular_velocities[1] < 10): speed_publisher.angular_velocities[1] = 10
+    if(speed_publisher.angular_velocities[2] < 10): speed_publisher.angular_velocities[2] = 10
+    if(speed_publisher.angular_velocities[3] < 10): speed_publisher.angular_velocities[3] = 10
+    if(speed_publisher.angular_velocities[4] < 10): speed_publisher.angular_velocities[4] = 10
+    if(speed_publisher.angular_velocities[5] < 10): speed_publisher.angular_velocities[5] = 10
+
+    rospy.loginfo(speed_publisher) 
     return(speed_publisher)
 
 
