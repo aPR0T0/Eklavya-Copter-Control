@@ -40,6 +40,22 @@ Now that we know what topic is the node connected to, so we need more info about
 
 ![Example](Images/Rostopic_list.png)
 
+Now, we needed to know what type of data is actually being published o subscribed through the given topic
+So we use `rostopic info` for the same.
+
+![Info](Images/rostopic_list.png)
+
+>Now, from the above image it is clear that it is communicating the message as `nav_msgs/Odometry`.
+
+* `rosmsg list` : rosmsg list gives you all the information about the specific messages that are being published or subscribed to.
+In our, example we needed to correctly distinguish the message data type and then if required, need to convert the data and then use it for our controller.
+
+![List](Images/rosmsg_list.png)
+
+But still, it is not clear what is the __data types__ that we are gonna extract from it. So we use `rosmsg info`.
+
+![rosmsg info](Images/rosmsg_info.png)
+
 Now, One of the major problems faced by us was to identify what readings to take and from which sensors.
 So, we took the following reading along with their sensors
 
