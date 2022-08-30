@@ -20,10 +20,14 @@ Here, you and your friend are the `nodes`.
 First initializing the node
 
   ![Image](Images/Takeoff.png "Notes")
+
+
 `rosnode list` : This commands gives you the list of all the active nodes
 Once you know what are your nodes, and then you need to know what topics are they connected to and you should be able to **extract** its relevant data.
 
   ![Image](Images/rosnode_list_2.png)
+
+
 Now, here we see that we need to know about the various parameters to know about the current state of the drone.
 
   ![Info](Images/rosnode_info.png)
