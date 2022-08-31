@@ -5,6 +5,11 @@ Controlling a hexacopter with coaxial tilt rotors in simulation, understanding t
 
 The copter we are considering is a hexacopter with tilt brushless motors. 
 
-## Project workflow
+> ## Project workflow
 - To learn about different control systems and make gazebo simulation of a modelled hexacopter by ETH-Zürich
 - Make the control system
+- Implementation
+---
+### Follow Installation Guide for Installation Instructions on Ubuntu 20.04 for ROS NOETIC
+
+[Installation Guide](./Installations.md "Installation")
