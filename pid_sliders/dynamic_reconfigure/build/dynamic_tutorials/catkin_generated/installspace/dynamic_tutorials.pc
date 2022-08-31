@@ -1,0 +1,8 @@
+prefix=/home/proto/omav_ws/install
+
+Name: dynamic_tutorials
+Description: Description of dynamic_tutorials
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

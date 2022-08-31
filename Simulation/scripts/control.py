@@ -14,7 +14,6 @@ from gazebo_msgs.msg import ModelStates
 from mav_msgs.msg import Actuators  
 from geometry_msgs.msg import TwistStamped
 
-
 # Initilization of all Parameters
 altitude = 0.30999
 thrust = 0

@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/proto/omav_ws/devel/.private/dynamic_tutorials/setup.sh

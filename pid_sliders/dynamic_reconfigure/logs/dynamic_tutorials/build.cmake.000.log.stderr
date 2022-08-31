@@ -1,0 +1,14 @@
+[31m[1mCMake Error[0m at /home/proto/omav_ws/src/dynamic_tutorials/CMakeLists.txt:132 (add_executable):
+  Cannot find source file:
+
+    src/dynamic_reconfigure_node.cpp
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
+
+
+[31m[1mCMake Error[0m at /home/proto/omav_ws/src/dynamic_tutorials/CMakeLists.txt:132 (add_executable):
+  No SOURCES given to target: dynamic_reconfigure_node
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
