@@ -1,6 +1,0 @@
-devel_space: /home/proto/omav_ws/devel
-install: false
-install_space: /home/proto/omav_ws/install
-profile: default
-source_space: /home/proto/omav_ws/src
-workspace: /home/proto/omav_ws
