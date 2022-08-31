@@ -1,1 +1,0 @@
-/home/proto/omav_ws/devel/.private/dynamic_tutorials/include/dynamic_tutorials/TutorialsConfig.h
