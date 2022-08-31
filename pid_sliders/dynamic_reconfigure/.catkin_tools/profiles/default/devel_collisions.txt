@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 /home/proto/omav_ws/devel/./cmake.lock 1
+=======
+/home/proto/omav_ws/devel/./cmake.lock 1
+>>>>>>> ef571fe5f5a1329a2d8b7a543695276933320691
