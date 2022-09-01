@@ -14,3 +14,9 @@
 ![](Images/Quote6.png)
 
 ![](Images/Quote7.png)
+
+![](Images/Quote8.png)
+
+![](Images/Quote9.png)
+
+![](Images/Quote10.png)
