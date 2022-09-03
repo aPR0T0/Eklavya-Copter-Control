@@ -1,5 +1,0 @@
-[35m[1mScanning dependencies of target dynamic_tutorials_gencfg[0m
-[100%] [34m[1mGenerating dynamic reconfigure files from cfg/Tutorials.cfg: /home/proto/omav_ws/devel/.private/dynamic_tutorials/include/dynamic_tutorials/TutorialsConfig.h /home/proto/omav_ws/devel/.private/dynamic_tutorials/lib/python3/dist-packages/dynamic_tutorials/cfg/TutorialsConfig.py[0m
-Generating reconfiguration files for Tutorials in dynamic_tutorials
-Wrote header file in /home/proto/omav_ws/devel/.private/dynamic_tutorials/include/dynamic_tutorials/TutorialsConfig.h
-[100%] Built target dynamic_tutorials_gencfg

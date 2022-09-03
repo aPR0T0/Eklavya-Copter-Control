@@ -1,8 +1,0 @@
-prefix=/home/proto/omav_ws/devel/.private/dynamic_tutorials
-
-Name: dynamic_tutorials
-Description: Description of dynamic_tutorials
-Version: 0.0.0
-Cflags: -I/home/proto/omav_ws/devel/.private/dynamic_tutorials/include
-Libs: -L${prefix}/lib 
-Requires: 
