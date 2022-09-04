@@ -47,7 +47,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime
     global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
     global kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,target_x,target_y,req_alt
-    global kp_thrust, ki_thrust, kd_thrust
+    global kp_thrust, ki_thrust, kd_thrust, pos_mat
 
     #Assigning target, altitude
     setpoint_roll = 0  #this should change according to the desired r,p,y
@@ -178,6 +178,8 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     output_yaw = pMem_yaw + iMem_yaw + kd_yaw * dMem_yaw 
 
     control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag)
+    
+    pos_mat = np.matrix([[err_x],[err_y],[curr_alt_err]])
 
 # ===================== Control Allocation Starts here ======================== #
 
@@ -225,10 +227,27 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
             ang_acc_yaw = ang_vel_yaw / dTime
         
         #<-----------------------Defining Matrices--------------------------->#
-
+        
+        #rotational matrix ->> We need this to transform  
         Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
-        A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-kap*len],[0],[-kap*len],[0],[kap*0.5*len],[0],[kap*0.5*len],[0],[kap*len*0.5],[0],[kap*len*0.5],[0]],[[],[],[],[],[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[],[],[],[],[]]]) #6x12 matrix
+        
+        #allocation matrix ->> We need to find its transpose and then its pseudo inverse
+        A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-Mu*len],[-kap],[Mu*len],[-kap],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[Mu*len*0.5],[kap*0.5]],[[0],[-kap],[0],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[-kap]],[[Mu*len],[-kap],[Mu*len],[kap],[0.5*len*Mu],[-kap*0.5],[Mu*len*0.5],[kap*0.5],[Mu*0.5*len],[kap*0.5],[Mu*0.5*len],[kap*0.5]]]) #6x12 matrix
 
+        #Transpose of A
+        A_trans = np.asmatrix(np.transpose(A))
+
+    # <-------------------------------pseudo inverse----------------------------->
+        X = np.matmul(A_trans,A)
+
+    # Now, for the pseudo inverse we need X^-1s
+        X_inv = np.linalg.inv(X)
+
+        A_pseudo_inv = np.matmul(X_inv,A_trans)
+
+    # Now, we have the pseudo inverse ready for the given matrix
+        
+        
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
@@ -252,7 +271,7 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     #global variables are declared to avoid their values resetting to 0
     global current_time,prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y
-    global kp_x,ki_x,kd_x
+    global kp_x,ki_x,kd_x,err_x,err_y
     global kp_y,ki_y,kd_y
     global setpoint_pitch,setpoint_roll
     
@@ -280,7 +299,6 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     dErr_y = err_y - prevErr_y
 
     sample_time = 0.005
-
 
     if(dTime >= sample_time):
         
