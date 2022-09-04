@@ -4,7 +4,9 @@
 """
         #> - means that the particular value needs to be changed while tuning
 """
+from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 import time
+import numpy as np
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
 kp_thrust = 20
@@ -175,14 +177,29 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 """
 <-----------------------------------Matrices Used------------------------------------->
 
-    1. Rotation matrix:
-            | p |      |  | 
-            | q |  =   |  |
-            | r |      |  |
+    1. Rotation matrix: 
+            | p |      | ang_vel(roll) |        |   1       0       0      |        |       0      |        |   1       0       0      | |cos(roll)  0      sin(roll)|      |      0       |
+            | q |  =   |       0       |    +   |   0   cos(roll) sin(roll)|    *   |ang_vel(pitch)|    +   |   0   cos(roll) sin(roll)|*|   0       1          0    |  *   |      0       |
+            | r |      |       0       |        |   0  -sin(roll) cos(roll)|        |       0      |        |   0  -sin(roll) cos(roll)| |-sin(roll) 0      cos(roll)|      | ang_vel(yaw) | 
+    2. Static Allocation matrix:
+            A = [constants](6x12)
+    3. Hybrid matrix:
+            x = [ xc1   xs1   xc2   xs2   xc3   xs3   xc4   xs4   xc5   xs5   xc6   xs6]^T
+            Where, xci = cos(αi) and xsi = sin(αi) (Here, αi = Tilt angles of the ith rotor)   
+    
+    4. Transformation matrix for the Static allocation matrix:
+            I = I(6x6) ---> An identity matrix for the transformation so that we can find the inverse of the corresponding matrix
 """
 
 def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight ):
-        
+        global F_des, M_des # F_des --> Force desired and M_des --> Desired moment
+        theta = output_pitch
+        phi = output_roll
+        gamma = output_yaw
+        #Declaring Rotation matrix#
+        Rot_Matrix = np.matrix([[],[],[]])
+
+        F_des = 
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
