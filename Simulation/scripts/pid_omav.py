@@ -247,7 +247,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
 
     # Now, we have the pseudo inverse ready for the given matrix
         
-        
+
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
@@ -346,5 +346,3 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     
     setpoint_roll = 10 if setpoint_roll > 10 else setpoint_roll
     setpoint_roll = -10 if setpoint_roll <-10 else setpoint_roll
-
-
