@@ -168,11 +168,21 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     output_pitch = pMem_pitch + iMem_pitch + kd_pitch * dMem_pitch
     output_yaw = pMem_yaw + iMem_yaw + kd_yaw * dMem_yaw 
 
-
+    control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight )
 
 # ===================== Control Allocation Starts here ======================== #
 
-    
+"""
+<-----------------------------------Matrices Used------------------------------------->
+
+    1. Rotation matrix:
+            | p |      |  | 
+            | q |  =   |  |
+            | r |      |  |
+"""
+
+def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight ):
+        
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
