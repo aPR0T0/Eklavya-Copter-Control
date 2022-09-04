@@ -4,11 +4,12 @@
 """
         #> - means that the particular value needs to be changed while tuning
 """
+from cmath import cos, sin
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 from random import sample
 import time
 import numpy as np 
-import math
+import cmath 
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
 kp_thrust = 20
@@ -36,6 +37,10 @@ kp_vel_y = 0.01
 ki_vel_y = 0.0
 kd_vel_y = 0.0071
 g = 9.81 #gravitational acceleration
+kap = 3 #> constant for the matrix
+Mu = 3 #> constant for the matrix
+t1 = 0.86603 #> sqrt(3)/2
+len = 0.3 #> assuming that length is 0.3m 
 
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     #global variables are declared to avoid their values resetting to 0
@@ -180,29 +185,23 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 <-----------------------------------Matrices Used------------------------------------->
 
     1. Rotation matrix: 
-            | p |      | ang_vel(roll) |        |   1       0       0      |        |       0      |        |   1       0       0      | |cos(pitch)  0      sin(pitch)|      |      0       |
-            | q |  =   |       0       |    +   |   0   cos(roll) sin(roll)|    *   |ang_vel(pitch)|    +   |   0   cos(roll) sin(roll)|*|     0       1          0    |  *   |      0       |
-            | r |      |       0       |        |   0  -sin(roll) cos(roll)|        |       0      |        |   0  -sin(roll) cos(roll)| |-sin(pitch) 0      cos(pitch)|      | ang_vel(yaw) | 
+            R(from ground to the body frame) = R(phi)^T*R(theta)^T*R(gamma)^T
     2. Static Allocation matrix:
             A = [constants](6x12)
     3. Hybrid matrix:
             x = [ xc1   xs1   xc2   xs2   xc3   xs3   xc4   xs4   xc5   xs5   xc6   xs6]^T
             Where, xci = cos(αi) and xsi = sin(αi) (Here, αi = Tilt angles of the ith rotor)   
-    
-    4. Transformation matrix for the Static allocation matrix:
-            I = I(6x6) ---> An identity matrix for the transformation so that we can find the inverse of the corresponding matrix
+    4. We also need a pseudo inverse for the static allocation matrix
+
 """
 
 def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
         global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
         global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
         global current_time,prevTime,dTime
-        theta = output_pitch
-        phi = output_roll
-        gamma = output_yaw
-
-        #Declaring Rotation matrix#
-        Rot_Matrix = np.matrix([[],[],[]])
+        theta = output_pitch #required pitch
+        phi = output_roll #required Roll
+        gamma = output_yaw #required yaw
         if (flag == 0):
             prevTime = 0
             prevoutRoll = 0
@@ -225,6 +224,10 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
             ang_acc_pitch = ang_vel_pitch / dTime
             ang_acc_yaw = ang_vel_yaw / dTime
         
+        #<-----------------------Defining Matrices--------------------------->#
+
+        Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
+        A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-kap*len],[0],[-kap*len],[0],[kap*0.5*len],[0],[kap*0.5*len],[0],[kap*len*0.5],[0],[kap*len*0.5],[0]],[[],[],[],[],[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[],[],[],[],[]]]) #6x12 matrix
 
 
 """
