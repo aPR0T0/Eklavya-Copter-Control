@@ -5,8 +5,10 @@
         #> - means that the particular value needs to be changed while tuning
 """
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
+from random import sample
 import time
-import numpy as np
+import numpy as np 
+import math
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
 kp_thrust = 20
@@ -84,7 +86,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 
     weight = 4.04*g
 
-    hover_speed  = 546 #just taking an assumption later will correct it based on the experimanetal data
+    hover_speed  = 678 #just taking an assumption later will correct it based on the experimanetal data
 
     # Flag for checking for the first time the function is called so that values can initilized
     # because if we don't check so then, we will encounter the error that we had no prevtime only
@@ -170,7 +172,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     output_pitch = pMem_pitch + iMem_pitch + kd_pitch * dMem_pitch
     output_yaw = pMem_yaw + iMem_yaw + kd_yaw * dMem_yaw 
 
-    control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight )
+    control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag)
 
 # ===================== Control Allocation Starts here ======================== #
 
@@ -178,9 +180,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 <-----------------------------------Matrices Used------------------------------------->
 
     1. Rotation matrix: 
-            | p |      | ang_vel(roll) |        |   1       0       0      |        |       0      |        |   1       0       0      | |cos(roll)  0      sin(roll)|      |      0       |
-            | q |  =   |       0       |    +   |   0   cos(roll) sin(roll)|    *   |ang_vel(pitch)|    +   |   0   cos(roll) sin(roll)|*|   0       1          0    |  *   |      0       |
-            | r |      |       0       |        |   0  -sin(roll) cos(roll)|        |       0      |        |   0  -sin(roll) cos(roll)| |-sin(roll) 0      cos(roll)|      | ang_vel(yaw) | 
+            | p |      | ang_vel(roll) |        |   1       0       0      |        |       0      |        |   1       0       0      | |cos(pitch)  0      sin(pitch)|      |      0       |
+            | q |  =   |       0       |    +   |   0   cos(roll) sin(roll)|    *   |ang_vel(pitch)|    +   |   0   cos(roll) sin(roll)|*|     0       1          0    |  *   |      0       |
+            | r |      |       0       |        |   0  -sin(roll) cos(roll)|        |       0      |        |   0  -sin(roll) cos(roll)| |-sin(pitch) 0      cos(pitch)|      | ang_vel(yaw) | 
     2. Static Allocation matrix:
             A = [constants](6x12)
     3. Hybrid matrix:
@@ -191,15 +193,39 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
             I = I(6x6) ---> An identity matrix for the transformation so that we can find the inverse of the corresponding matrix
 """
 
-def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight ):
-        global F_des, M_des # F_des --> Force desired and M_des --> Desired moment
+def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
+        global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
+        global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
+        global current_time,prevTime,dTime
         theta = output_pitch
         phi = output_roll
         gamma = output_yaw
+
         #Declaring Rotation matrix#
         Rot_Matrix = np.matrix([[],[],[]])
+        if (flag == 0):
+            prevTime = 0
+            prevoutRoll = 0
+            prevoutPitch = 0
+            prevoutYaw = 0
 
-        F_des = 
+        dTime = current_time - prevTime
+        sample_time = 0.005
+
+        dRoll = phi - prevoutRoll
+        dPitch = theta - prevoutPitch
+        dYaw = gamma - prevoutYaw
+
+        if (dTime >= sample_time):
+            ang_vel_roll = dRoll / dTime
+            ang_vel_pitch = dPitch / dTime
+            ang_vel_yaw = dYaw / dTime
+            #The below parameters will be used for calculation of the desired Moment --> Mdes = Imatrix*AngAccMatrixxxx
+            ang_acc_roll = ang_vel_roll / dTime
+            ang_acc_pitch = ang_vel_pitch / dTime
+            ang_acc_yaw = ang_vel_yaw / dTime
+        
+
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
