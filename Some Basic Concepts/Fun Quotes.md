@@ -22,3 +22,7 @@
 ![](Images/Quote10.png)
  
 ![](Images/Quote11.png)
+
+![](Images/Quote12.png)
+
+![](Images/Quote13.png)
