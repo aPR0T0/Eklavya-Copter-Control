@@ -4,7 +4,7 @@
 """
         #> - means that the particular value needs to be changed while tuning
 """
-from cmath import cos, sin
+from cmath import cos, sin, sqrt
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 from random import sample
 from this import d
@@ -215,7 +215,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
     global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
-    global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose
+    global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed
     theta = output_pitch #required pitch
     phi = output_roll #required Roll
     gamma = output_yaw #required yaw
@@ -271,25 +271,36 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
 
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
 
-    I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]])
+    I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]]) 
+    # The above matrix is already defined in the urdf
     
     # angular velocities
-    omega = np.matrix([phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*cos(theta)*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)])
+    # 3x
+    omega = np.matrix([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*cos(theta)*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
+    omega_3x3 = np.matrix([[[0],[-omega[2]],[omega[1]]],[[omega[2]],[0],[-omega[0]]],[[-omega[1]],[omega[0]],[0]]])
     # angular accelerations
     if( dTime >= sample_time):
         ang_acc_roll = omega[0] / dTime
         ang_acc_pitch = omega[1] / dTime
         ang_acc_yaw = omega[2] / dTime
-    alpha = np.matrix([ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw])
+    alpha = np.matrix([[ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw]])
     Iw = np.asmatrix(np.matmul(I,omega))
 
     # made for desired moment == I*α + ωxIω
-    M_des = np.asmatrix(np.matmul(I,alpha)+np.cross(omega,Iw))
+    M_des = np.asmatrix(np.matmul(I,alpha)+np.cross(omega_3x3,Iw))
 
     Final_mat = np.matrix([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
+    
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     relation_matrix = np.matrix(np.matmul( A_pseudo_inv , Final_mat ))
+    
+    # Now, we are going to get the angles and the velocities for the rotors
+
+    ang_vel = np.zeros([12,1])
+    
+
+
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
