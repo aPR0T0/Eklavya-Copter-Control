@@ -242,7 +242,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
         ang_vel_yaw = dYaw / dTime
     
 #===============================Defining Matrices==================================>#
-    
+    #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
     
@@ -266,7 +266,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddMem_alt)
 
     # F_desired calculation
-    F_des = np.asmatrix(np.matmul( Rot_Matrix , res_matrix))
+    F_des = np.matmul( Rot_Matrix , res_matrix)
 
     # So, now we have 3x1 force vector
 
@@ -277,7 +277,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     
     # angular velocities
     # 3x
-    omega = np.matrix([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
+    omega = np.array([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
     omega_3x3 = np.matrix([[[0],[-omega[2]],[omega[1]]],[[omega[2]],[0],[-omega[0]]],[[-omega[1]],[omega[0]],[0]]])
     # angular accelerations
     if( dTime >= sample_time):
@@ -288,7 +288,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     Iw = np.asmatrix(np.matmul(I,omega))
 
     # made for desired moment == I*α + ωxIω
-    M_des = np.asmatrix(np.matmul(I,alpha)+np.cross(omega_3x3,Iw))
+    M_des = np.matmul(I,alpha)+np.cross(omega_3x3,Iw)
 
     Final_mat = np.matrix([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
