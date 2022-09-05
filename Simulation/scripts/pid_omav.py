@@ -216,10 +216,11 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
     global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
-    global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed
+    global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed, prevOmega
     theta = output_pitch #required pitch
     phi = output_roll #required Roll
     gamma = output_yaw #required yaw
+    prevOmega = np.zeros([3,1])
     Kp_pose = 0
     Ki_pose = 0
     Kd_pose = 2
@@ -228,6 +229,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
         prevoutRoll = 0
         prevoutPitch = 0
         prevoutYaw = 0
+        prevOmega = np.zeros([3,1])
 
     dTime = current_time - prevTime
     sample_time = 0.005
@@ -276,14 +278,16 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     # The above matrix is already defined in the urdf
     
     # angular velocities
-    # 3x
+    # 3x1
     omega = np.array([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
     omega_3x3 = np.matrix([[[0],[-omega[2]],[omega[1]]],[[omega[2]],[0],[-omega[0]]],[[-omega[1]],[omega[0]],[0]]])
     # angular accelerations
     if( dTime >= sample_time):
-        ang_acc_roll = omega[0] / dTime
-        ang_acc_pitch = omega[1] / dTime
-        ang_acc_yaw = omega[2] / dTime
+        ang_acc_roll = (omega[0] - prevOmega[0] )/ dTime
+        ang_acc_pitch = (omega[1] - prevOmega[1]) / dTime
+        ang_acc_yaw = (omega[2] - prevOmega[2]) / dTime
+    #updating previous terms
+    prevOmega = omega
     alpha = np.matrix([[ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw]])
     Iw = np.asmatrix(np.matmul(I,omega))
 
