@@ -285,6 +285,8 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
 
     Final_mat = np.matrix([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
+    # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
+    relation_matrix = np.matrix(np.matmul( A_pseudo_inv , Final_mat ))
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
