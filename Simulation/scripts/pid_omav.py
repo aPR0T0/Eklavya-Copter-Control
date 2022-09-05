@@ -6,6 +6,7 @@
 """
 from cmath import cos, sin, sqrt
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
+from math import atan2
 from random import sample
 from this import d
 import time
@@ -276,7 +277,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     
     # angular velocities
     # 3x
-    omega = np.matrix([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*cos(theta)*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
+    omega = np.matrix([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
     omega_3x3 = np.matrix([[[0],[-omega[2]],[omega[1]]],[[omega[2]],[0],[-omega[0]]],[[-omega[1]],[omega[0]],[0]]])
     # angular accelerations
     if( dTime >= sample_time):
@@ -296,9 +297,14 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     relation_matrix = np.matrix(np.matmul( A_pseudo_inv , Final_mat ))
     
     # Now, we are going to get the angles and the velocities for the rotors
+    #Note: that we have not before just considered the real values from sins and cos it may cause some problem
+    ang_vel= np.zeros([6,1])
+    for i in range(6):
+        ang_vel[i] = abs(sqrt(sqrt(pow(Final_mat[i],2) + pow(Final_mat[i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
-    ang_vel = np.zeros([12,1])
-    
+    tilt_ang = np.zeros([6,1])
+    for i in range(6):
+        tilt_ang[6+i] = atan2((Final_mat[i+1]/Final_mat[i])) # atan2(sin/cos)
 
 
 
