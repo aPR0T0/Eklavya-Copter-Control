@@ -239,10 +239,6 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
         ang_vel_roll = dRoll / dTime
         ang_vel_pitch = dPitch / dTime
         ang_vel_yaw = dYaw / dTime
-        #The below parameters will be used for calculation of the desired Moment --> Mdes = Imatrix*AngAccMatrixxxx
-        ang_acc_roll = ang_vel_roll / dTime
-        ang_acc_pitch = ang_vel_pitch / dTime
-        ang_acc_yaw = ang_vel_yaw / dTime
     
 #===============================Defining Matrices==================================>#
     
@@ -276,8 +272,15 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
 
     I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]])
+    
+    # angular velocities
+    omega = np.matrix([phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*cos(theta)*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)])
+    # angular accelerations
+    if( dTime >= sample_time):
+        ang_acc_roll = omega[0] / dTime
+        ang_acc_pitch = omega[1] / dTime
+        ang_acc_yaw = omega[2] / dTime
     alpha = np.matrix([ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw])
-    omega = np.matrix([ang_vel_roll],[ang_vel_pitch],[ang_vel_yaw])
     Iw = np.asmatrix(np.matmul(I,omega))
 
     # made for desired moment == I*α + ωxIω
