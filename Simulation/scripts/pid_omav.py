@@ -44,7 +44,7 @@ kap = 3 #> constant for the matrix
 Mu = 3 #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
-
+xz = 0.55
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
@@ -303,15 +303,59 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
     ang_vel= np.zeros([6,1])
+    i = 0
     for i in range(6):
         ang_vel[i] = abs(sqrt(sqrt(pow(Final_mat[i],2) + pow(Final_mat[i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
     tilt_ang = np.zeros([6,1])
+    i = 0
     for i in range(6):
-        tilt_ang[6+i] = atan2((Final_mat[i+1]/Final_mat[i])) # atan2(sin/cos)
+        tilt_ang[i] = atan2((Final_mat[i+1]/Final_mat[i])) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
+    ang_vel_rot = xz*ang_vel
+    
+    t = 0
+    if ( t == 0 ):
+        speed.angular_velocities.append(ang_vel_rot[4])
+        speed.angular_velocities.append(ang_vel_rot[1])
+        speed.angular_velocities.append(ang_vel_rot[0])
+        speed.angular_velocities.append(ang_vel_rot[3])
+        speed.angular_velocities.append(ang_vel_rot[5])
+        speed.angular_velocities.append(ang_vel_rot[2])
+        speed.angular_velocities.append(ang_vel_rot[4])
+        speed.angular_velocities.append(ang_vel_rot[1])
+        speed.angular_velocities.append(ang_vel_rot[0])
+        speed.angular_velocities.append(ang_vel_rot[3])
+        speed.angular_velocities.append(ang_vel_rot[5])
+        speed.angular_velocities.append(ang_vel_rot[2])
+        speed.angular_velocities.append(tilt_ang[4])
+        speed.angular_velocities.append(tilt_ang[1])
+        speed.angular_velocities.append(tilt_ang[0])
+        speed.angular_velocities.append(tilt_ang[3])
+        speed.angular_velocities.append(tilt_ang[5])
+        speed.angular_velocities.append(tilt_ang[2])
+    speed.angular_velocities[0] = ang_vel_rot[4]
+    speed.angular_velocities[1] = ang_vel_rot[1]
+    speed.angular_velocities[2] = ang_vel_rot[0]
+    speed.angular_velocities[3] = ang_vel_rot[3]
+    speed.angular_velocities[4] = ang_vel_rot[5]
+    speed.angular_velocities[5] = ang_vel_rot[2]
+    speed.angular_velocities[6] = ang_vel_rot[4]
+    speed.angular_velocities[7] = ang_vel_rot[1]
+    speed.angular_velocities[8] = ang_vel_rot[0]
+    speed.angular_velocities[9] = ang_vel_rot[3]
+    speed.angular_velocities[10] = ang_vel_rot[5]
+    speed.angular_velocities[11] = ang_vel_rot[2]
+    speed.angular_velocities[12] = tilt_ang[4]
+    speed.angular_velocities[13] = tilt_ang[1]
+    speed.angular_velocities[14] = tilt_ang[0]
+    speed.angular_velocities[15] = tilt_ang[3]
+    speed.angular_velocities[16] = tilt_ang[5]
+    speed.angular_velocities[17] = tilt_ang[2]
 
+    return(speed)
+    
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
             Here, We are considering CCW as +ve and CW as -ve
