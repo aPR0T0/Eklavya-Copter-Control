@@ -179,7 +179,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 
     control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag)
     
-    pos_mat = np.matrix([[err_x],[err_y],[curr_alt_err]])
+    pos_mat = np.matrix([[err_x],[err_y],[curr_alt_err]]) #position error matrix
 
 # ===================== Control Allocation Starts here ======================== #
 
@@ -200,10 +200,13 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
         global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
         global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
-        global current_time,prevTime,dTime
+        global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose
         theta = output_pitch #required pitch
         phi = output_roll #required Roll
         gamma = output_yaw #required yaw
+        Kp_pose = 0
+        Ki_pose = 0
+        Kd_pose = 2
         if (flag == 0):
             prevTime = 0
             prevoutRoll = 0
@@ -243,10 +246,16 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     # Now, for the pseudo inverse we need X^-1s
         X_inv = np.linalg.inv(X)
 
-        A_pseudo_inv = np.matmul(X_inv,A_trans)
+        A_pseudo_inv = np.matmul(X_inv,A_trans)# Now, we have the pseudo inverse ready for the given matrix
 
-    # Now, we have the pseudo inverse ready for the given matrix
-        
+        # Gravitational matrix
+        grav_matrix = np.matrix([[0],[0],[g]])
+        # The below given matrix is the result of total F-des without its rotation 
+        res_matrix = ( mass_total*grav_matrix +  Kp_pose*pos_mat )
+
+        # F_desired calculation
+
+        F_des = np.matmul(Rot_Matrix , res_matrix)
 
 
 """
