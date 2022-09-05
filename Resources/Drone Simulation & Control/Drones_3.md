@@ -155,11 +155,6 @@ that will store data as a **.mat** file locally on the drone and then we can dow
 - independent of those two we have the yaw and altitude controllers
 - 6 PID controllers that work together to control the position and orientation of the mini drone
 
-> Altitude Controller -
-
-
-
-
 
 ### References -
 
