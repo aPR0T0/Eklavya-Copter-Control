@@ -53,10 +53,7 @@ def calOrientation(msg):
     orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.ws]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
-    #the output recieved for the RPY is in radians but we need it to be in degrees
-    roll = (roll*180)/pi
-    pitch = (pitch*180)/pi
-    yaw = (yaw*180)/pi
+    #we need RPY in radians only
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values
