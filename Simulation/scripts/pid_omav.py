@@ -7,6 +7,7 @@
 from cmath import cos, sin
 from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 from random import sample
+from this import d
 import time
 import numpy as np 
 import cmath 
@@ -44,10 +45,10 @@ len = 0.3 #> assuming that length is 0.3m
 
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     #global variables are declared to avoid their values resetting to 0
-    global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime
+    global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
     global kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,target_x,target_y,req_alt
-    global kp_thrust, ki_thrust, kd_thrust, pos_mat
+    global kp_thrust, ki_thrust, kd_thrust, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat
 
     #Assigning target, altitude
     setpoint_roll = 0  #this should change according to the desired r,p,y
@@ -112,6 +113,8 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
         prev_alt_err = 0
         iMem_alt = 0
         dMem_alt = 0
+        prevdMem_alt = 0
+        ddMem_alt = 0
 
     #defining time for the differential terms
     dTime = current_time - prevTime
@@ -153,23 +156,26 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
         dMem_roll = dErr_roll / dTime
         dMem_pitch = dErr_pitch / dTime
         dMem_yaw = dErr_yaw / dTime
-    
-    #limit integrand values
-    if(iMem_alt > 800): iMem_alt = 800
-    if(iMem_alt <-800): iMem_alt = -800
-    if(iMem_roll > 400): iMem_roll = 400
-    if(iMem_roll < -400): iMem_roll = -400
-    if(iMem_pitch > 400): iMem_pitch = 400
-    if(iMem_pitch < -400): iMem_pitch = -400
-    if(iMem_yaw > 40): iMem_yaw = 40
-    if(iMem_yaw < -40): iMem_yaw = 40
 
+        #limit integrand values
+        if(iMem_alt > 800): iMem_alt = 800
+        if(iMem_alt <-800): iMem_alt = -800
+        if(iMem_roll > 400): iMem_roll = 400
+        if(iMem_roll < -400): iMem_roll = -400
+        if(iMem_pitch > 400): iMem_pitch = 400
+        if(iMem_pitch < -400): iMem_pitch = -400
+        if(iMem_yaw > 40): iMem_yaw = 40
+        if(iMem_yaw < -40): iMem_yaw = 40
+
+
+        ddMem_alt = (dMem_alt - prevdMem_alt) / dTime
     #Updating previous error terms
 
     prev_alt_err = curr_alt_err
     prevErr_roll = err_roll
     prevErr_pitch = err_pitch
     prevErr_yaw = err_yaw
+    prevdMem_alt = dMem_alt
 
     # Final output correction terms after combining PID
     output_alt = pMem_alt + iMem_alt + kd_thrust*dMem_alt
@@ -177,11 +183,19 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     output_pitch = pMem_pitch + iMem_pitch + kd_pitch * dMem_pitch
     output_yaw = pMem_yaw + iMem_yaw + kd_yaw * dMem_yaw 
 
-    control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag)
+        
+    prop_pos_mat = np.matrix([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
     
-    pos_mat = np.matrix([[err_x],[err_y],[curr_alt_err]]) #position error matrix
+    diff_pose_mat = np.matrix([[dMem_x],[dMem_y],[dMem_alt]])
 
-# ===================== Control Allocation Starts here ======================== #
+    i_pose_mat = np.matrix([[iMem_x],[iMem_y],[iMem_alt]])
+    
+    ddiff_pose_mat = np.matrix([[ddMem_x],[ddMem_y],[ddMem_alt]])
+
+    control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag)
+
+
+# ======================= Control Allocation Starts here ========================== #
 
 """
 <-----------------------------------Matrices Used------------------------------------->
@@ -198,65 +212,69 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 """
 
 def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
-        global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
-        global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
-        global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose
-        theta = output_pitch #required pitch
-        phi = output_roll #required Roll
-        gamma = output_yaw #required yaw
-        Kp_pose = 0
-        Ki_pose = 0
-        Kd_pose = 2
-        if (flag == 0):
-            prevTime = 0
-            prevoutRoll = 0
-            prevoutPitch = 0
-            prevoutYaw = 0
+    global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
+    global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
+    global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose
+    theta = output_pitch #required pitch
+    phi = output_roll #required Roll
+    gamma = output_yaw #required yaw
+    Kp_pose = 0
+    Ki_pose = 0
+    Kd_pose = 2
+    if (flag == 0):
+        prevTime = 0
+        prevoutRoll = 0
+        prevoutPitch = 0
+        prevoutYaw = 0
 
-        dTime = current_time - prevTime
-        sample_time = 0.005
+    dTime = current_time - prevTime
+    sample_time = 0.005
 
-        dRoll = phi - prevoutRoll
-        dPitch = theta - prevoutPitch
-        dYaw = gamma - prevoutYaw
+    dRoll = phi - prevoutRoll
+    dPitch = theta - prevoutPitch
+    dYaw = gamma - prevoutYaw
 
-        if (dTime >= sample_time):
-            ang_vel_roll = dRoll / dTime
-            ang_vel_pitch = dPitch / dTime
-            ang_vel_yaw = dYaw / dTime
-            #The below parameters will be used for calculation of the desired Moment --> Mdes = Imatrix*AngAccMatrixxxx
-            ang_acc_roll = ang_vel_roll / dTime
-            ang_acc_pitch = ang_vel_pitch / dTime
-            ang_acc_yaw = ang_vel_yaw / dTime
-        
-        #<-----------------------Defining Matrices--------------------------->#
-        
-        #rotational matrix ->> We need this to transform  
-        Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
-        
-        #allocation matrix ->> We need to find its transpose and then its pseudo inverse
-        A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-Mu*len],[-kap],[Mu*len],[-kap],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[Mu*len*0.5],[kap*0.5]],[[0],[-kap],[0],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[-kap]],[[Mu*len],[-kap],[Mu*len],[kap],[0.5*len*Mu],[-kap*0.5],[Mu*len*0.5],[kap*0.5],[Mu*0.5*len],[kap*0.5],[Mu*0.5*len],[kap*0.5]]]) #6x12 matrix
+    if (dTime >= sample_time):
+        ang_vel_roll = dRoll / dTime
+        ang_vel_pitch = dPitch / dTime
+        ang_vel_yaw = dYaw / dTime
+        #The below parameters will be used for calculation of the desired Moment --> Mdes = Imatrix*AngAccMatrixxxx
+        ang_acc_roll = ang_vel_roll / dTime
+        ang_acc_pitch = ang_vel_pitch / dTime
+        ang_acc_yaw = ang_vel_yaw / dTime
+    
+    #<-----------------------Defining Matrices--------------------------->#
+    
+    #rotational matrix ->> We need this to transform  
+    Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
+    
+    #allocation matrix ->> We need to find its transpose and then its pseudo inverse
+    A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-Mu*len],[-kap],[Mu*len],[-kap],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[Mu*len*0.5],[kap*0.5]],[[0],[-kap],[0],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[-kap]],[[Mu*len],[-kap],[Mu*len],[kap],[0.5*len*Mu],[-kap*0.5],[Mu*len*0.5],[kap*0.5],[Mu*0.5*len],[kap*0.5],[Mu*0.5*len],[kap*0.5]]]) #6x12 matrix
 
-        #Transpose of A
-        A_trans = np.asmatrix(np.transpose(A))
+    #Transpose of A
+    A_trans = np.asmatrix(np.transpose(A))
 
-    # <-------------------------------pseudo inverse----------------------------->
-        X = np.matmul(A_trans,A)
+# <--------------------------------pseudo inverse------------------------------>
+    X = np.matmul(A_trans,A)
 
-    # Now, for the pseudo inverse we need X^-1s
-        X_inv = np.linalg.inv(X)
+# Now, for the pseudo inverse we need X^-1s
+    X_inv = np.linalg.inv(X)
 
-        A_pseudo_inv = np.matmul(X_inv,A_trans)# Now, we have the pseudo inverse ready for the given matrix
+    A_pseudo_inv = np.matmul(X_inv,A_trans)# Now, we have the pseudo inverse ready for the given matrix
 
-        # Gravitational matrix
-        grav_matrix = np.matrix([[0],[0],[g]])
-        # The below given matrix is the result of total F-des without its rotation 
-        res_matrix = ( mass_total*grav_matrix +  Kp_pose*pos_mat )
+    # Gravitational matrix
+    grav_matrix = np.matrix([[0],[0],[g]])
+    # The below given matrix is the result of total F-des without its rotation 
+    res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddMem_alt)
 
-        # F_desired calculation
+    # F_desired calculation
+    F_des = np.matmul( Rot_Matrix , res_matrix)
 
-        F_des = np.matmul(Rot_Matrix , res_matrix)
+    # So, now we have 3x1 force vector
 
+#<--------------Intertia matrix for the Moment desired calc-------------------------->
+
+    I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]])
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
@@ -280,8 +298,8 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     #global variables are declared to avoid their values resetting to 0
     global current_time,prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y
-    global kp_x,ki_x,kd_x,err_x,err_y
-    global kp_y,ki_y,kd_y
+    global kp_x,ki_x,kd_x,err_x,err_y,dErr_x,dErr_y
+    global kp_y,ki_y,kd_y, prevdMem_x, prevdMem_y, ddMem_x, ddMem_y
     global setpoint_pitch,setpoint_roll
     
     vel_x = velocity[0]
@@ -290,12 +308,16 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
         prevTime = 0
         prevErr_x = 0
         prevErr_y = 0
+        prevdMem_x = 0
+        prevdMem_y = 0
         pMem_x = 0
         pMem_y = 0
         iMem_x = 0
         iMem_y = 0
         dMem_x = 0
         dMem_y = 0
+        ddMem_x = 0
+        ddMem_y = 0
 
     #setting dTime for derivative and integral terms
     dTime = current_time - prevTime
@@ -325,10 +347,16 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
         dMem_y = kd_y*(dErr_y / dTime)
 
 
+        ddMem_x = (dMem_x - prevdMem_x) / dTime
+        ddMem_y = (dMem_y - prevdMem_y) / dTime
     #updating previous terms
     prevErr_x = err_x
     prevErr_y = err_y
-
+    #the below given terms will help us find the rate of change of (rate of change of) position vector
+    prevdMem_x = dMem_x
+    prevdMem_y = dMem_y
+    
+    
     output_x = pMem_x + iMem_x + dMem_x
     output_y = pMem_y + iMem_y + dMem_y
 
