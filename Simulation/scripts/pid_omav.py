@@ -306,7 +306,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     for i in range(6):
         tilt_ang[6+i] = atan2((Final_mat[i+1]/Final_mat[i])) # atan2(sin/cos)
 
-
+    #Now, we need to allocate the speed to each rotor
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
