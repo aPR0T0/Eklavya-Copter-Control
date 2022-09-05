@@ -335,6 +335,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
         speed.angular_velocities.append(tilt_ang[3])
         speed.angular_velocities.append(tilt_ang[5])
         speed.angular_velocities.append(tilt_ang[2])
+        t += 1
     speed.angular_velocities[0] = ang_vel_rot[4]
     speed.angular_velocities[1] = ang_vel_rot[1]
     speed.angular_velocities[2] = ang_vel_rot[0]
