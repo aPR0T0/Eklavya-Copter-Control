@@ -244,7 +244,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
         ang_acc_pitch = ang_vel_pitch / dTime
         ang_acc_yaw = ang_vel_yaw / dTime
     
-    #<-----------------------Defining Matrices--------------------------->#
+#===============================Defining Matrices==================================>#
     
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
