@@ -13,6 +13,7 @@ import numpy as np
 import cmath 
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
+from mav_msgs.msg import Actuators
 kp_thrust = 20
 ki_thrust = 0.001
 kd_thrust = 35
@@ -260,7 +261,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
 # Now, for the pseudo inverse we need X^-1s
     X_inv = np.linalg.inv(X)
 
-    A_pseudo_inv = np.matmul(X_inv,A_trans)# Now, we have the pseudo inverse ready for the given matrix
+    A_pseudo_inv = np.asmatrix(np.matmul(X_inv,A_trans))# Now, we have the pseudo inverse ready for the given matrix
 
     # Gravitational matrix
     grav_matrix = np.matrix([[0],[0],[g]])
@@ -268,13 +269,22 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddMem_alt)
 
     # F_desired calculation
-    F_des = np.matmul( Rot_Matrix , res_matrix)
+    F_des = np.asmatrix(np.matmul( Rot_Matrix , res_matrix))
 
     # So, now we have 3x1 force vector
 
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
 
     I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]])
+    alpha = np.matrix([ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw])
+    omega = np.matrix([ang_vel_roll],[ang_vel_pitch],[ang_vel_yaw])
+    Iw = np.asmatrix(np.matmul(I,omega))
+
+    # made for desired moment == I*α + ωxIω
+    M_des = np.asmatrix(np.matmul(I,alpha)+np.cross(omega,Iw))
+
+    Final_mat = np.matrix([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
+    speed = Actuators()
 
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
