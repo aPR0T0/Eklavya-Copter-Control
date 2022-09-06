@@ -103,6 +103,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     #     ang_acc_yaw = (omega[2] - prevOmega[2]) / dTime
     # #updating previous terms
     # prevOmega = omega
+    # omega_3x3 = np.matrix([[[0],[-w_z_current],[w_y_current]],[[w_z_current],[0],[-w_x_current]],[[-w_y_current],[w_x_current],[0]]])
     # alpha = np.matrix([[ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw]])
     # Iw = np.asmatrix(np.matmul(I,omega))
 
