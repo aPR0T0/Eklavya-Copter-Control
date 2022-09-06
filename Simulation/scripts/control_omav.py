@@ -32,6 +32,7 @@ speed_pub = rospy.Publisher("/omav/command/motor_speed",queue_size=100) #here we
 
 # Asking user for the desired coordinates
 target_x, target_y, req_alt = map( float , input("Enter X Y (position) and Altitude : ".split()))
+roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired orientation (in degrees) Roll, Pitch, Yaw (resp): ".split()))
 # We need x,y and altitude of the model
 # split() : Return a list of the words in the string, using sep as the delimiter string
 # map() : Basically provides the value recieved in it to the variables on the left with the given data type()
@@ -53,11 +54,14 @@ def calOrientation(msg):
     orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.ws]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
-    #we need RPY in radians only
+    #we need RPY in degrees
+    roll = (roll*180)/pi
+    pitch = (pitch*180)/pi
+    yaw = (yaw*180)/pi
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y
+    global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
     calOrientation(imu)
 
@@ -80,7 +84,7 @@ def alt_control(imu,odo):
 
     
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
     flag += 1
 
     speed_pub.publish(speed)

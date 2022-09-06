@@ -45,7 +45,7 @@ Mu = 3 #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
 xz = 0.55
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
@@ -79,7 +79,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 
 
     # Publishing error values to be plotted in rqt
-    alt_err_pub = rospy.Publisher("/alst_err", Float64, queue_size=10)
+    alt_err_pub = rospy.Publisher("/alt_err", Float64, queue_size=10)
     alt_err_pub.publish(curr_alt_err)
     roll_err_pub = rospy.Publisher("/roll_err", Float64, queue_size=10)
     roll_err_pub.publish(err_roll)
@@ -198,7 +198,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     
     ddiff_pose_mat = np.matrix([[ddMem_x],[ddMem_y],[ddMem_alt]])
 
-    control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag)
+    control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired)
 
 
 # ======================= Control Allocation Starts here ========================== #
@@ -217,7 +217,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
 
 """
 
-def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag):
+def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired):
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
     global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
     global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed, prevOmega
@@ -248,73 +248,36 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
         ang_vel_yaw = dYaw / dTime
     
 #===============================Defining Matrices==================================>#
-    #problem may occur so better use arrays
-    #rotational matrix ->> We need this to transform  
-    Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
-    Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
-    #allocation matrix ->> We need to find its transpose and then its pseudo inverse
-    A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-Mu*len],[-kap],[Mu*len],[-kap],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[Mu*len*0.5],[kap*0.5]],[[0],[-kap],[0],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[-kap]],[[Mu*len],[-kap],[Mu*len],[kap],[0.5*len*Mu],[-kap*0.5],[Mu*len*0.5],[kap*0.5],[Mu*0.5*len],[kap*0.5],[Mu*0.5*len],[kap*0.5]]]) #6x12 matrix
-
-    #Transpose of A
-    A_trans = np.asmatrix(np.transpose(A))
-
-# <--------------------------------pseudo inverse------------------------------>
-    X = np.matmul(A_trans,A)
-
-# Now, for the pseudo inverse we need X^-1s
-    X_inv = np.linalg.inv(X)
-
-    A_pseudo_inv = np.asmatrix(np.matmul(X_inv,A_trans))# Now, we have the pseudo inverse ready for the given matrix
-
-    # Gravitational matrix
-    grav_matrix = np.matrix([[0],[0],[g]])
-    # The below given matrix is the result of total F-des without its rotation 
-    res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddiff_pose_mat)
-
-    # F_desired calculation
-    F_des = np.matmul( Rot_Matrix , res_matrix)
-
-    # So, now we have 3x1 force vector
+    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat)
+    
 
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
-
-    I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]]) 
-    # The above matrix is already defined in the urdf
-    
     # angular velocities
     # 3x1
     omega = np.array([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
     omega_3x3 = np.matrix([[[0],[-omega[2]],[omega[1]]],[[omega[2]],[0],[-omega[0]]],[[-omega[1]],[omega[0]],[0]]])
-    # angular accelerations
-    if( dTime >= sample_time):
-        ang_acc_roll = (omega[0] - prevOmega[0] )/ dTime
-        ang_acc_pitch = (omega[1] - prevOmega[1]) / dTime
-        ang_acc_yaw = (omega[2] - prevOmega[2]) / dTime
-    #updating previous terms
-    prevOmega = omega
-    alpha = np.matrix([[ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw]])
-    Iw = np.asmatrix(np.matmul(I,omega))
-
-    # made for desired moment == I*α + ωxIω
-    M_des = np.matmul(I,alpha)+np.cross(omega_3x3,Iw)
-
-    Final_mat = np.matrix([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
+    
+    I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]]) 
+    # The above matrix is already defined in the urdf
+    M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0], omega[1], omega[2], I)
+    
+    Final_mat = np.array([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
     
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
-    relation_matrix = np.matrix(np.matmul( A_pseudo_inv , Final_mat ))
+    relation_matrix = np.array(np.matmul( A_pseudo_inv , Final_mat ))
     
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
     ang_vel= np.zeros([6,1])
     i = 0
     for i in range(6):
-        ang_vel[i] = abs(sqrt(sqrt(pow(Final_mat[i],2) + pow(Final_mat[i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
+        ang_vel[i] = abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
     tilt_ang = np.zeros([6,1])
     i = 0
     for i in range(6):
-        tilt_ang[i] = atan2((Final_mat[i+1]/Final_mat[i])) # atan2(sin/cos)
+        tilt_ang[i] = atan2((relation_matrix[2*i+1]/relation_matrix[2*i])) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = xz*ang_vel
