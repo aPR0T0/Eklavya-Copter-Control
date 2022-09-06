@@ -52,7 +52,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, q_x_current, q_y_cu
 
     q_intermediate_2_1 = np.matmul(J, w_current)
 
-    q_intermediate_2_1 = np(w_current, q_intermediate_2_1)
+    q_intermediate_2_1 = np.cross(w_current, q_intermediate_2_1)
 
     M_desired = q_intermediate_1 + q_intermediate_2_1
 
