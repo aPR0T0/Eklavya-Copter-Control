@@ -3,15 +3,15 @@
 
 """
         #> - means that the particular value needs to be changed while tuning
+
+        d(X)  =  Derivative
+        dd(X) =  Double Derivative
+        _mat  =  Matrix
 """
 from cmath import cos, sin, sqrt
-from concurrent.futures.process import _MAX_WINDOWS_WORKERS
 from math import atan2
-from random import sample
-from this import d
 import time
 import numpy as np 
-import cmath 
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
@@ -185,7 +185,11 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag):
     output_pitch = pMem_pitch + iMem_pitch + kd_pitch * dMem_pitch
     output_yaw = pMem_yaw + iMem_yaw + kd_yaw * dMem_yaw 
 
-        
+    # Now, For tuning purposes we will be limiting output altitude
+    
+    output_alt = 1 if output_alt > 2 else output_alt
+
+
     prop_pos_mat = np.matrix([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
     
     diff_pose_mat = np.matrix([[dMem_x],[dMem_y],[dMem_alt]])
@@ -247,7 +251,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
-    
+    Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     A = np.matrix([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-Mu*len],[-kap],[Mu*len],[-kap],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[Mu*len*0.5],[kap*0.5]],[[0],[-kap],[0],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[-kap]],[[Mu*len],[-kap],[Mu*len],[kap],[0.5*len*Mu],[-kap*0.5],[Mu*len*0.5],[kap*0.5],[Mu*0.5*len],[kap*0.5],[Mu*0.5*len],[kap*0.5]]]) #6x12 matrix
 
@@ -265,7 +269,7 @@ def control_allocation( output_alt, output_roll, output_pitch, output_yaw, hover
     # Gravitational matrix
     grav_matrix = np.matrix([[0],[0],[g]])
     # The below given matrix is the result of total F-des without its rotation 
-    res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddMem_alt)
+    res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddiff_pose_mat)
 
     # F_desired calculation
     F_des = np.matmul( Rot_Matrix , res_matrix)
@@ -381,7 +385,7 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y
     global kp_x,ki_x,kd_x,err_x,err_y,dErr_x,dErr_y
     global kp_y,ki_y,kd_y, prevdMem_x, prevdMem_y, ddMem_x, ddMem_y
-    global setpoint_pitch,setpoint_roll
+    global setpoint_pitch, setpoint_roll
     
     vel_x = velocity[0]
     vel_y = velocity[1]
