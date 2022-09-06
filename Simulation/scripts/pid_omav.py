@@ -255,10 +255,10 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     # angular velocities
     # 3x1
     omega = np.array([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
-    omega_3x3 = np.matrix([[[0],[-omega[2]],[omega[1]]],[[omega[2]],[0],[-omega[0]]],[[-omega[1]],[omega[0]],[0]]])
     
     I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]]) 
     # The above matrix is already defined in the urdf
+    
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0], omega[1], omega[2], I)
     
     Final_mat = np.array([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
