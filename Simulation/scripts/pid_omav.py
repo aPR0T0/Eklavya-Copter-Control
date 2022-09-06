@@ -269,11 +269,16 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
+    
+
+    # Angular velocties deduction
     ang_vel= np.zeros([6,1])
     i = 0
     for i in range(6):
         ang_vel[i] = abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
+
+    # Tilt Angles deduction
     tilt_ang = np.zeros([6,1])
     i = 0
     for i in range(6):
@@ -281,8 +286,8 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = xz*ang_vel
-    
     t = 0
+
     if ( t == 0 ):
         speed.angular_velocities.append(ang_vel_rot[4])
         speed.angular_velocities.append(ang_vel_rot[1])
@@ -303,6 +308,8 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
         speed.angular_velocities.append(tilt_ang[5])
         speed.angular_velocities.append(tilt_ang[2])
         t += 1
+
+
     speed.angular_velocities[0] = ang_vel_rot[4]
     speed.angular_velocities[1] = ang_vel_rot[1]
     speed.angular_velocities[2] = ang_vel_rot[0]
@@ -324,6 +331,8 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
 
     return(speed)
     
+
+
 """
     Note : CW -> Clockwise Rotation and CCW -> Anti Clockwise Rotation or Counter clockwise Rotation
             Here, We are considering CCW as +ve and CW as -ve
