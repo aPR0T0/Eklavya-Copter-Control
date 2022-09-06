@@ -12,6 +12,11 @@ import numpy as np
 
 def moment_desired(roll_desired, pitch_desired, yaw_desired, q_x_current, q_y_current, q_z_current, q_w_current, w_x_current, w_y_current, w_z_current):
 
+    # Since angles will be given in degrees we need to convert to radians which is standard convention
+    roll_desired = roll_desired * (math.pi/180)
+    pitch_desired = pitch_desired * (math.pi/180)
+    yaw_desired = yaw_desired * (math.pi/180)
+
     quaternion_desired = quaternion_from_euler(roll_desired,pitch_desired,yaw_desired)
 
     q_x_desired = quaternion_desired[0]
@@ -25,9 +30,9 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, q_x_current, q_y_cu
     p3 = q_z_desired
 
     q0 = q_w_current
-    q1 = q_x_current
-    q2 = q_y_current
-    q3 = q_z_current
+    q1 = -q_x_current
+    q2 = -q_y_current
+    q3 = -q_z_current
 
 
     q_w_error = (p0*q0 - p1*q1 - p2*q2 - p3*q3)
