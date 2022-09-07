@@ -254,16 +254,16 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
     # angular velocities
     # 3x1
-    omega = np.array([[phi - gamma*sin(theta)],[ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi)],[ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)]])
+    omega = np.array([phi - gamma*sin(theta),ang_vel_pitch*cos(phi)+ang_vel_yaw*(cos(theta))*sin(phi),ang_vel_yaw*cos(phi)*cos(theta)-ang_vel_pitch*sin(phi)])
     
-    I = np.matrix([[[0.0075],[0],[0]],[[0],[0.010939],[0]],[[0],[0],[0.01369]]]) 
+    I = np.array([[0.0075,0,0],[0,0.010939,0],[0,0,0.01369]]) 
     # The above matrix is already defined in the urdf
     
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0], omega[1], omega[2], I)
     
     Final_mat = np.array([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
-    
+
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     relation_matrix = np.array(np.matmul( A_pseudo_inv , Final_mat ))
     
@@ -272,21 +272,26 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     
 
     # Angular velocties deduction
-    ang_vel= np.zeros([6,1])
+    ang_vel= np.array([0,0,0,0,0,0])
     i = 0
     for i in range(6):
-        ang_vel[i] = abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
+        ang_vel[i]= abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
-    tilt_ang = np.zeros([6,1])
+    tilt_ang = np.array([0,0,0,0,0,0])
     i = 0
     for i in range(6):
-        tilt_ang[i] = atan2((relation_matrix[2*i+1]/relation_matrix[2*i])) # atan2(sin/cos)
+        x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
+        x2 = pow(sqrt(relation_matrix[2*i]).real,2)
+        # print(x1) Uses this to get the real value from the matrix
+        tilt_ang[i] = atan2(x1,x2) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = xz*ang_vel
     t = 0
+    # Uncomment for debugging only
+    print(ang_vel_rot,tilt_ang)
 
     if ( t == 0 ):
         speed.angular_velocities.append(ang_vel_rot[4])

@@ -31,8 +31,8 @@ flag = 0
 speed_pub = rospy.Publisher("/omav/command/motor_speed",queue_size=100) #here we will use angles section to give angles to the tilt rotors
 
 # Asking user for the desired coordinates
-target_x, target_y, req_alt = map( float , input("Enter X Y (position) and Altitude : ".split()))
-roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired orientation (in degrees) Roll, Pitch, Yaw (resp): ".split()))
+target_x, target_y, req_alt = map( float , input("Enter X Y (position) and Altitude : ").split())
+roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired orientation (in degrees) Roll, Pitch, Yaw (resp): ").split())
 # We need x,y and altitude of the model
 # split() : Return a list of the words in the string, using sep as the delimiter string
 # map() : Basically provides the value recieved in it to the variables on the left with the given data type()
@@ -96,7 +96,7 @@ def control():
     rospy.init_node('controller_node', anonymous=False)
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
     imu_sub = message_filters.Subscriber("/omav/ground_truth/imu", Imu)
-    odo_sub = message_filters.Subscriber("/omav/ground_truth/Odometry", Odometry)
+    odo_sub = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry)
     tr = message_filters.TimeSynchronizer([imu_sub,odo_sub],2) #2 specifies the number of messages it should take from each sensor
     tr.registerCallback(alt_control)
     rospy.spin()

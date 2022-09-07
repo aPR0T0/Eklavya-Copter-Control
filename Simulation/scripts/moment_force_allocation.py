@@ -4,30 +4,30 @@ import numpy as np
 import math
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
-g = 9.81
+g  = 9.81
 kq = 0
 kr = 0
 def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat):
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
-    Rot_Matrix = np.matrix([[[cos(theta)*cos(gamma)],[sin(gamma)*cos(theta)],[-sin(phi)]],[[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma)],[sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma)],[sin(phi)*cos(theta)]],[[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma)],[cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)],[cos(phi)*cos(theta)]]])
+    Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])
     Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
-    A = np.array([[[0],[-Mu],[0],[Mu],[0],[Mu*0.5],[0],[-Mu*0.5],[0],[-Mu*0.5],[0],[Mu*0.5]],[[0],[0],[0],[0],[0],[Mu*t1],[0],[-Mu*t1],[0],[Mu*t1],[0],[-Mu*t1]],[[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0],[-Mu],[0]],[[-Mu*len],[-kap],[Mu*len],[-kap],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[-Mu*len*0.5],[kap*0.5],[Mu*len*0.5],[kap*0.5]],[[0],[-kap],[0],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[kap],[t1*len*Mu],[-kap],[-t1*len*Mu],[-kap]],[[Mu*len],[-kap],[Mu*len],[kap],[0.5*len*Mu],[-kap*0.5],[Mu*len*0.5],[kap*0.5],[Mu*0.5*len],[kap*0.5],[Mu*0.5*len],[kap*0.5]]]) #6x12 matrix
+    A = np.array([[0,-Mu,0,Mu,0,Mu*0.5,0,-Mu*0.5,0,-Mu*0.5,0,Mu*0.5],[0,0,0,0,0,Mu*t1,0,-Mu*t1,0,Mu*t1,0,-Mu*t1],[-Mu,0,-Mu,0,-Mu,0,-Mu,0,-Mu,0,-Mu,0],[-Mu*len,-kap,Mu*len,-kap,-Mu*len*0.5,kap*0.5,-Mu*len*0.5,kap*0.5,-Mu*len*0.5,kap*0.5,Mu*len*0.5,kap*0.5],[0,-kap,0,kap,t1*len*Mu,-kap,-t1*len*Mu,kap,t1*len*Mu,-kap,-t1*len*Mu,-kap],[Mu*len,-kap,Mu*len,kap,0.5*len*Mu,-kap*0.5,Mu*len*0.5,kap*0.5,Mu*0.5*len,kap*0.5,Mu*0.5*len,kap*0.5]]) #6x12 matrix
 
     #Transpose of A
     A_trans = np.transpose(A)
 
 # <--------------------------------pseudo inverse------------------------------>
-    X = np.array(np.matmul(A_trans,A))
+    X = np.array(np.matmul(A,A_trans))
 
 # Now, for the pseudo inverse we need X^-1s
-    X_inv = np.array(np.linalg.inv(X))
+    X_inv = np.linalg.inv(X)
 
-    A_pseudo_inv = np.matmul(X_inv,A_trans)# Now, we have the pseudo inverse ready for the given matrix
+    A_pseudo_inv = np.matmul(A_trans,X_inv)# Now, we have the pseudo inverse ready for the given matrix
 
     # Gravitational matrix
-    grav_matrix = np.matrix([[0],[0],[g]])
+    grav_matrix = np.array([[0],[0],[g]])
     # The below given matrix is the result of total F-des without its rotation 
     res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddiff_pose_mat)
 
@@ -79,15 +79,15 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     elif(q_w_error > 0):
         sign_q_error = 1
 
-    q_v_error = np.matrix([[q_x_error], [q_y_error], [q_z_error]])
+    q_v_error = [q_x_error, q_y_error, q_z_error]
 
-    w_desired = (kq * sign_q_error * q_v_error)
+    w_desired = [kq * sign_q_error *  q_x_error, kq * sign_q_error *  q_y_error, kq * sign_q_error *  q_z_error]
 
-    w_current = np.matrix([[w_x_current], [w_y_current], [w_z_current]])
+    w_current = [w_x_current, w_y_current,w_z_current]
 
-    w_error = w_desired - w_current
+    w_error = np.array(w_desired) - np.array(w_current)
     q_intermediate_1 = (kr * w_error)
-    q_intermediate_2_1 = np.matmul(I, w_current)
+    q_intermediate_2_1 = np.array(np.matmul(I, w_current))
     q_intermediate_2_1 = np.cross(w_current, q_intermediate_2_1)
     
     M_des =  np.zeros([3,1])
