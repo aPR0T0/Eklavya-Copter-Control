@@ -222,9 +222,10 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
     global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
     global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed, prevOmega
-    theta = output_pitch #required pitch
-    phi = output_roll #required Roll
-    gamma = output_yaw #required yaw
+    
+    theta = pitch #required pitch
+    phi = roll #required Roll
+    gamma = yaw #required yaw
     prevOmega = np.zeros([3,1])
     Kp_pose = 0
     Ki_pose = 0
@@ -248,6 +249,9 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
         ang_vel_pitch = dPitch / dTime
         ang_vel_yaw = dYaw / dTime
     
+    prevoutRoll = phi
+    prevoutPitch = theta
+    prevoutYaw = gamma
 #===============================Defining Matrices==================================>#
     F_des, A_pseudo_inv = moment_force_allocation.force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat)
     
