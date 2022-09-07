@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-import pid_omav
+from pid import *
 from cmath import pi
 import rospy #for basically any type of ros operations
 import time #to get definite time for the dTime
@@ -84,7 +84,7 @@ def alt_control(imu,odo):
 
     
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = pid_omav.PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
     flag += 1
 
     speed_pub.publish(speed)
