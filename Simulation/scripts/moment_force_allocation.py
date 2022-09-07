@@ -5,8 +5,8 @@ import math
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 g  = 9.81
-kq = 0
-kr = 0
+kq = 4
+kr = 4
 def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat):
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
