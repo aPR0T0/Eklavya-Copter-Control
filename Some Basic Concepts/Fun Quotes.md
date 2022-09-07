@@ -26,3 +26,7 @@
 ![](Images/Quote12.png)
 
 ![](Images/Quote13.png)
+
+![](Images/Quote14.png)
+
+![](Images/Quote15.png)
