@@ -8,6 +8,7 @@
         dd(X) =  Double Derivative
         _mat  =  Matrix
 """
+import moment_force_allocation
 from cmath import cos, sin, sqrt
 from math import atan2
 import time
@@ -248,7 +249,7 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
         ang_vel_yaw = dYaw / dTime
     
 #===============================Defining Matrices==================================>#
-    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat)
+    F_des, A_pseudo_inv = moment_force_allocation.force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat)
     
 
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
@@ -259,7 +260,7 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     I = np.array([[0.0075,0,0],[0,0.010939,0],[0,0,0.01369]]) 
     # The above matrix is already defined in the urdf
     
-    M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0], omega[1], omega[2], I)
+    M_des = moment_force_allocation.moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0], omega[1], omega[2], I)
     
     Final_mat = np.array([[F_des[0]],[F_des[1]],[F_des[2]],[M_des[0]],[M_des[1]],[M_des[2]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
@@ -272,14 +273,14 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     
 
     # Angular velocties deduction
-    ang_vel= np.array([0,0,0,0,0,0])
+    ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
     for i in range(6):
         ang_vel[i]= abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
-    tilt_ang = np.array([0,0,0,0,0,0])
+    tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
     for i in range(6):
         x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)

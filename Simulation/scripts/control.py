@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-
+import pid_omav
 from cmath import pi
 import rospy #for basically any type of ros operations
 import time #to get definite time for the dTime
@@ -28,7 +28,7 @@ z  = 0
 flag = 0
 
 #creating publisher for the speeds of the rotors
-speed_pub = rospy.Publisher("/omav/command/motor_speed",queue_size=100) #here we will use angles section to give angles to the tilt rotors
+speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=100) #here we will use angles section to give angles to the tilt rotors
 
 # Asking user for the desired coordinates
 target_x, target_y, req_alt = map( float , input("Enter X Y (position) and Altitude : ").split())
@@ -51,7 +51,7 @@ def calVel(msg):
 def calOrientation(msg):
     global roll, pitch, yaw
     #the data recieved from the sensor in in quaternion form
-    orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.ws]
+    orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
     #we need RPY in degrees
@@ -84,7 +84,7 @@ def alt_control(imu,odo):
 
     
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
+    speed = pid_omav.PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
     flag += 1
 
     speed_pub.publish(speed)
