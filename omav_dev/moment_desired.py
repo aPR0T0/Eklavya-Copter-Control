@@ -1,49 +1,7 @@
 import numpy as np
 
 
-# INITIALIZING PARAMETERS USED IN CALCULATIONS
-
-# Since Equations are to be made smaller_name variables used
-# Quaternion Desired x, y, z & w
-p0 = 0
-p1 = 0
-p2 = 0
-p3 = 0
-# Quaternion Current x, y, z & w
-q0 = 0
-q1 = 0
-q2 = 0
-q3 = 0
-# Quaternion Error x, y, z & w
-q_w_error = 0
-q_x_error = 0
-q_y_error = 0
-q_z_error = 0
-# Sign of Quaternion Error w
-sign_q_w_error = 0
-# 3*1 Matrix of the vector part of Quaternion Error
-q_v_error = np.zeros((3, 1))
-# 3*1 Matrix of Desired Angular Velocity
-w_desired = np.zeros((3, 1))
-# 3*1 Matrix of the Current Angular Velocity
-w_current= np.zeros((3, 1))
-# 3*1 Matrix of Error in Angular Velocity
-w_error = np.zeros((3, 1))
-# 3*1 Matrix to calculate 1st term in Moment Desired Matrix
-q_intermediate_1 = np.zeros((3, 1))
-# 3*1 Matrix to calculate 2nd term in Moment Desired Matrix
-q_intermediate_2 = np.zeros((3, 1))
-# 3*1 Matrix to calculate intermediate part of 3rd term in Moment Desired Matrix
-q_intermediate_3_1 = np.zeros((3, 1))
-# 3*1 Matrix to calculate 3rd term in Moment Desired Matrix
-q_intermediate_3_2 = np.zeros((3, 1))
-# 3*1 Matrix of Moment_Desired
-M_desired = np.zeros((3, 1))
-
-M_desired = np.zeros((3, 1))
-
-
-def moment_desired(q_x_desired, q_y_desired, q_z_desired, q_w_desired, q_x_current, q_y_current, q_z_current, q_w_current, w_x_current, w_y_current, w_z_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired):
+def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired):
     """
     Quaternion Error Equations : 
         qerr = qdes,IB ⊗ q̂IB = | qw,err |
@@ -76,34 +34,71 @@ def moment_desired(q_x_desired, q_y_desired, q_z_desired, q_w_desired, q_x_curre
                J = Inertial Matrix, which is a 3*3 Matrix
     """
 
-    # Global variables are declared to avoid their values resetting to 0
-    global p0, p1, p2, p3, q0, q1, q2, q3, q_w_error, q_x_error, q_y_error, q_z_error, sign_q_w_error
-    global q_v_error, w_desired, w_current, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1,q_intermediate_3_2, M_desired
+    #For Initial Start to prevent Garbage Values being used or Local Variable referenced before assignment error
 
-    # For Initial Start
+    # Global variables are declared to avoid their values resetting to 0
+    global q_w_desired, q_x_desired, q_y_desired, q_z_desired, q_w_current, q_x_current, q_y_current, q_z_current
+    global p0, p1, p2, p3, q0, q1, q2, q3, q_w_error, q_x_error, q_y_error, q_z_error, sign_q_w_error
+    global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1,q_intermediate_3_2, M_desired
+
+    # INITIALIZING PARAMETERS USED IN CALCULATIONS
     if(flag==0):
+        # Quaternion Desired
+        q_w_desired = 0
+        q_x_desired = 0
+        q_y_desired = 0
+        q_z_desired = 0
+        # Quaternion Current
+        q_w_current = 0
+        q_x_current = 0
+        q_y_current = 0
+        q_z_current = 0
+        # Since Equations are to be made smaller_name variables used
+        # Quaternion Desired x, y, z & w
         p0 = 0
         p1 = 0
         p2 = 0
         p3 = 0
+        # Quaternion Current x, y, z & w
         q0 = 0
         q1 = 0
         q2 = 0
         q3 = 0
+        # Quaternion Error x, y, z & w
         q_w_error = 0
         q_x_error = 0
         q_y_error = 0
         q_z_error = 0
+        # Sign of Quaternion Error w
         sign_q_w_error = 0
+        # 3*1 Matrix of the vector part of Quaternion Error
         q_v_error = np.zeros((3, 1))
+        # 3*1 Matrix of Desired Angular Velocity
         w_desired = np.zeros((3, 1))
-        w_current= np.zeros((3, 1))
+        # 3*1 Matrix of Error in Angular Velocity
         w_error = np.zeros((3, 1))
+        # 3*1 Matrix to calculate 1st term in Moment Desired Matrix
         q_intermediate_1 = np.zeros((3, 1))
+        # 3*1 Matrix to calculate 2nd term in Moment Desired Matrix
         q_intermediate_2 = np.zeros((3, 1))
+        # 3*1 Matrix to calculate intermediate part of 3rd term in Moment Desired Matrix
         q_intermediate_3_1 = np.zeros((3, 1))
+        # 3*1 Matrix to calculate 3rd term in Moment Desired Matrix
         q_intermediate_3_2 = np.zeros((3, 1))
+        # 3*1 Matrix of Moment_Desired
         M_desired = np.zeros((3, 1))
+
+    # Assigning values to Quaternion Desired
+    q_x_desired = quaternion_desired[0, 0]
+    q_y_desired = quaternion_desired[0, 1]
+    q_z_desired = quaternion_desired[0, 2]
+    q_w_desired = quaternion_desired[0, 3]
+
+    # Assigning values to Quaternion Current
+    q_x_current = quaternion_current[0, 0]
+    q_y_current = quaternion_current[0, 1]
+    q_z_current = quaternion_current[0, 2]
+    q_w_current = quaternion_current[0, 3]
 
     # Assigning values to smaller_name variables
     p0 = q_w_desired
@@ -135,11 +130,6 @@ def moment_desired(q_x_desired, q_y_desired, q_z_desired, q_w_desired, q_x_curre
 
     # Desired Angular Velocity :
     w_desired = (kq * sign_q_w_error * q_v_error)
-
-    # Initializing the 3*1 Matrix of the Current Angular Velocity
-    w_current[0, 0] = w_x_current
-    w_current[1, 0] = w_y_current
-    w_current[2, 0] = w_z_current
 
 
     # Intermediate Calculation Terms to find Moment_Desired :

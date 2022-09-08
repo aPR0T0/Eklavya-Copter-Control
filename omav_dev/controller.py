@@ -16,10 +16,15 @@ from nav_msgs.msg import Odometry #It contains overall type of readings getting 
 from mav_msgs.msg import Actuators
 
 #Call functions in other files
-from pid import * 
+from moment_desired import * 
 
-#from now on we will be call (roll pitch yaw) as 'RPY' in this module
+# Defining 3*3 Inertial Matrix - Defined in xacro file of model
+# Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible)
+Inertial_Matrix = np.array([[],[],[]])
+# 3*1 Matrix of Moment_Desired
+M_desired = np.zeros((3, 1))
 
+"""
 # Initilization of all Parameters
 altitude = 0
 thrust = 0
@@ -50,14 +55,14 @@ def calPos(msg):
     x = round(msg.pose.pose.position.x,3)
     y = round(msg.pose.pose.position.y,3)
     altitude = round(msg.pose.pose.position.z,3)
-"""
+
 # We need current velocity of the model so that we know when to stop and when to go
 def calVel(msg):
     global vel_x,vel_y,vel_z
     vel_x = msg.twist.twist.linear.x
     vel_y = msg.twist.twist.linear.y
     vel_z = msg.twist.twist.linear.z
-"""
+
 # We also need its current orientation for RPY respectively
 def calOrientation(msg):
     global roll, pitch, yaw
@@ -69,8 +74,10 @@ def calOrientation(msg):
     roll = (roll*180)/pi
     pitch = (pitch*180)/pi
     yaw = (yaw*180)/pi
+"""
 
 def alt_control(imu,odo):
+    """
     # Set all variables to global so as to keep them updated values
     global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
@@ -99,6 +106,10 @@ def alt_control(imu,odo):
     flag += 1
 
     speed_pub.publish(speed)
+    """
+    global M_desired
+
+    M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
 
 
 #defining the control function to assign rotor speeds to the omav
