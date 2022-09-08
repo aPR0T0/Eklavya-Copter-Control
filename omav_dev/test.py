@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-a1 = np.array([1, 2, 3])
+a1 = np.array([1],[1],[1])
 print(a1)
 print(type(a1))
 

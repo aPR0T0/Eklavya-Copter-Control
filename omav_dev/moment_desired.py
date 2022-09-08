@@ -40,6 +40,8 @@ q_intermediate_3_2 = np.zeros((3, 1))
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
 
+M_desired = np.zeros((3, 1))
+
 
 def moment_desired(q_x_desired, q_y_desired, q_z_desired, q_w_desired, q_x_current, q_y_current, q_z_current, q_w_current, w_x_current, w_y_current, w_z_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired):
     """
