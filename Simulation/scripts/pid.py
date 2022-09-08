@@ -188,16 +188,16 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
 
     # Now, For tuning purposes we will be limiting output altitude
     
-    output_alt = 1 if output_alt > 2 else output_alt
+    output_alt = 1 if output_alt > 1 else output_alt
 
 
-    prop_pos_mat = np.matrix([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
+    prop_pos_mat = np.array([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
     
-    diff_pose_mat = np.matrix([[dMem_x],[dMem_y],[dMem_alt]])
+    diff_pose_mat = np.array([[dMem_x],[dMem_y],[dMem_alt]])
 
-    i_pose_mat = np.matrix([[iMem_x],[iMem_y],[iMem_alt]])
+    i_pose_mat = np.array([[iMem_x],[iMem_y],[iMem_alt]])
     
-    ddiff_pose_mat = np.matrix([[ddMem_x],[ddMem_y],[ddMem_alt]])
+    ddiff_pose_mat = np.array([[ddMem_x],[ddMem_y],[ddMem_alt]])
 
     control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired)
 
