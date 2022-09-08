@@ -82,11 +82,10 @@ def alt_control(imu,odo):
     print("X = ",x)
     print("Y = ",y)
 
-    
+    speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
     speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
     flag += 1
-
     speed_pub.publish(speed)
 
 
