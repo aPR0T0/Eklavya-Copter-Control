@@ -183,6 +183,7 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
 
     w_current = get_current_angular_velocity(imu_subscriber)
 
+
     # GAINS Subscribers
     rospy.Subscriber("Proportional_Gain", Float64, set_proportional_gain)
     rospy.Subscriber("Derivative_Gain", Float64, set_derivative_gain)
@@ -193,9 +194,16 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
 
 
+    # Force Desired Calculations Function Call
+
 
     # Moment Desired Calculations Function Call
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
+
+    # F_dec Calculations Function Call
+
+
+    # speed_publisher Calculations Function Call
 
     flag+=1
 
