@@ -1,130 +1,243 @@
 #! /usr/bin/env python3     #For a ROS Node makes sure the script is executed as a Python script
-
 import rospy #for ROS operations
-import time #We require Time for PID Controller
-
 import numpy as np
 import math
-from cmath import pi
-from tf.transformations import euler_from_quaternion, quaternion_from_euler #For Interconversions between Euler and Quaternion
+from tf.transformations import euler_from_quaternion, quaternion_from_euler #For Inter-conversions between Euler and Quaternion
 import message_filters
 
 # For all ros_msgs/ros_topics
-from std_msgs.msg import Float64MultiArray,Float64
-from sensor_msgs.msg import Imu #It contains overall type of readings getting from the Imu sensor
-from nav_msgs.msg import Odometry #It contains overall type of readings getting from the Odometry sensor
-from mav_msgs.msg import Actuators
+from std_msgs.msg import Float64MultiArray,Float64 # Standard msg files for sending/receiving data, will be used for Tuning from rqt
+from sensor_msgs.msg import Imu # Msg for Imu - msg file has variables defined which /omav/imu will contain
+from nav_msgs.msg import Odometry # Msg for Odometry - msg file has variables defined which /omav/odometry_sensor1/odometry will contain
+from mav_msgs.msg import Actuators # Msg for Actuators - msg file has variables defined which /omav/command/motor_speed will contain
+from rosgraph_msgs.msg import Clock # Msg for Clock - msg file has variables defined which /clock will contain
 
 #Call functions in other files
+from utilities import *
 from moment_desired import * 
 
-# Defining 3*3 Inertial Matrix - Defined in xacro file of model
-# Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible)
-Inertial_Matrix = np.array([[],[],[]])
+
+
+# DECLARING / INITIALIZING ALL PARAMETERS
+
+# Flag for 1st Time Calculation Functions running, to prevent Garbage Values or Local Variable referenced before assignment error
+flag = 0
+# Current Time - which is a floating point number, its in seconds+nano-seconds format
+current_time = 0
+"""
+Defining 3*3 Inertial Matrix - Defined in xacro file of model, omav.xacro
+Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible, due to which other values equated to 0)
+Inertial_Matrix = | Ixx  Ixy  Ixz |
+                  | Iyx  Iyy  Iyz |
+                  | Izx  Izy  Izz |
+"""
+Inertial_Matrix = np.array([[0.0075, 0, 0], [0, 0.010939, 0], [0, 0, 0.01369]])
+"""
+Gravity Matrix, which is a 3*1 Matrix - Defined in xacro file of model, omav.xacro
+Since, on Earth Gravity only in z-direction, hence rest values are 0
+gravity = | g_x |
+          | g_y |
+          | g_z |
+"""
+gravity = np.array([[0], [0], [-9.80]])
+"""
+Mass of Drone at COM(Centre of Mass) in kg - Defined in xacro file of model, omav.xacro
+It is a scalar
+"""
+mass = 4.04
+"""
+Arm Length of Drone in m from COM to thrust-providing Rotor - Defined in xacro file of model, omav.xacro
+It is a scalar
+"""
+arm_length = 0.300
+"""
+Center of Mass Offset Matrix, which is a 3*1 Matrix - Defined in xacro file of model, omav.xacro
+"""
+r_offset = np.array([[0], [0], [0]])
+# Position (Co-ordinates) Desired Matrix, which is a 3*1 Matrix
+position_desired = np.zeros((3, 1))
+# Position (Co-ordinates) Current Matrix, which is a 3*1 Matrix
+position_current = np.zeros((3, 1))
+"""
+Offset of Sensor from Origin at launch, this is due to sensor placed at the COM(Centre-of-Mass) which is slightly higher than the ground, 
+since the drone rests on its legs and the main-frame is slightly higher than the ground, for clearance from ground for rotors, so they don't touch ground.
+This offset is for the sensor being at COM - is mostly in the z-axis(in height/altitude format) as it subtracted from readings.
+This subtraction is done, so when the drone lands it's desired altitude will be 0, but due to this error, 
+it will not land softly on the ground, but crash or have a rough landing, hence it is required to subtract this error.
+
+Many Times sensors might not be placed at COM of Drone, for which the error, will cause the drone to reach wrong co-ordinate, 
+and land at wrong co-ordinate, hence we require to subtract this array
+
+It is an array of Length = 3
+position_current_error = | Error_x  Error_y  Error_z |
+Calculated/Found by echoing rostopic of sensor which supplies Position(Co-ordinates) with drone at Launch Position(stationary)
+"""
+position_current_error = np.array([0, 0, 0.1749999999801301])
+# Orientation (Euler_Angles) Desired Array, which is an array of Length = 3
+euler_desired = np.zeros(3)
+# Orientation (Euler_Angles) Current Array, which is an array of Length = 3
+euler_current = np.zeros(3)
+# Quaternion Orientation Desired Array, which is an array of Length = 4
+quaternion_desired = np.zeros(4)
+# Quaternion Orientation Current Array, which is an array of Length = 4
+quaternion_current = np.zeros(4)
+# Current Angular Velocity Matrix of Drone, which is a 3*1 Matrix
+w_current = np.zeros((3, 1))
+# Proportional Gain of PID Controller of F_desired Calculation
+kp = 0
+# Derivative Gain of PID Controller of F_desired Calculation
+kd = 0
+# Integral Gain of PID Controller of F_desired Calculation
+ki = 0
+# Tuning Parameter of M_desired Calculation
+kq = 0
+# Rate Controller Gain of M_desired Calculation
+kr = 0
+# Lift Force Coefficient
+Mu = 0
+# Drag Torque Coefficient
+kappa = 0
+
+#
+#F_desired = 
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
 
-"""
-# Initilization of all Parameters
-altitude = 0
-thrust = 0
-vel_x = 0 
-vel_y = 0 
-vel_z = 0
-roll = 0
-pitch = 0
-yaw = 0
-x = 0
-y = 0
-z  = 0
 
-# Flag for checking for the first time the script is run
-flag = 0
+# GAINS FUNCTIONS
+def set_proportional_gain(msg):
+    global kp
+    kp = msg.data
 
-#creating publisher for the speeds of the rotors
-speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=100) #here we will use angles section to give angles to the tilt rotors
+def set_derivative_gain(msg):
+    global kd
+    kd = msg.data
 
-# Asking user for the desired coordinates
-target_x, target_y, req_alt = map( float , input("Enter X Y (position) and Altitude : ").split())
-roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired orientation (in degrees) Roll, Pitch, Yaw (resp): ").split())
-# We need x,y and altitude of the model
-# split() : Return a list of the words in the string, using sep as the delimiter string
-# map() : Basically provides the value recieved in it to the variables on the left with the given data type()
-def calPos(msg):
-    global x,y,altitude
-    x = round(msg.pose.pose.position.x,3)
-    y = round(msg.pose.pose.position.y,3)
-    altitude = round(msg.pose.pose.position.z,3)
+def set_integral_gain(msg):
+    global ki
+    ki = msg.data
 
-# We need current velocity of the model so that we know when to stop and when to go
-def calVel(msg):
-    global vel_x,vel_y,vel_z
-    vel_x = msg.twist.twist.linear.x
-    vel_y = msg.twist.twist.linear.y
-    vel_z = msg.twist.twist.linear.z
+def set_tuning_parameter(msg):
+    global kq
+    kq = msg.data
 
-# We also need its current orientation for RPY respectively
-def calOrientation(msg):
-    global roll, pitch, yaw
-    #the data recieved from the sensor in in quaternion form
-    orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
-    #So, we need to convert that data from quaternion to euler using an in-built function
-    roll, pitch, yaw = euler_from_quaternion(orientation)
-    #we need RPY in degrees
-    roll = (roll*180)/pi
-    pitch = (pitch*180)/pi
-    yaw = (yaw*180)/pi
-"""
+def set_rate_controller_gain(msg):
+    global kr
+    kr = msg.data
 
-def alt_control(imu,odo):
+def set_lift_force_coefficient(msg):
+    global Mu
+    Mu = msg.data
+
+def set_drag_torque_coefficient(msg):
+    global kappa
+    kappa = msg.data
+
+
+
+def get_position_desired():
     """
-    # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired
-    #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
-    calOrientation(imu)
-
-    calPos(odo)
-
-    #calVel(odo)
-    #Making tuples for the velcities and target
-    #velocity = (vel_x, vel_y, vel_z)
-    target = (target_x,target_y,req_alt)
-
-
-    # Logging for debugging purposes
-    print("\nAltitude = " + str(altitude))
-    print("Required alt = ",req_alt)
-    print("Roll =", roll)
-    print("Pitch =", pitch)
-    print("Yaw =", yaw)
-    print("X = ",x)
-    print("Y = ",y)
-
-    
-    # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
-    flag += 1
-
-    speed_pub.publish(speed)
+    Calls Function, call_position_desired() from utilities.py which takes Desired Position - in Co-ordinates Format
     """
-    global M_desired
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
+    global position_desired
 
+    position_desired = call_position_desired()
+
+def get_orientation_desired():
+    """
+    Calls Function, call_orientation_desired() from utilities.py which takes Desired Orientation - in Euler Angles Format
+    But for Calculations we required Desired Orientation - in Quaternion Format
+    Hence it also calls function, euler_to_quaternion() from utilities.py which converts Euler Angles to Quaternion Orientation
+    """
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
+    global euler_desired, quaternion_desired
+
+    euler_desired = call_orientation_desired()
+    # Since we require orientation in Quaternion format, hence converting euler-to-quaternion
+    quaternion_desired = euler_to_quaternion(euler_desired)
+
+
+
+# MASTER CALLING FUNCTION
+def master(imu_subscriber, odometry_subscriber, clock_subscriber):
+    """
+    Master Function which makes calls to all functions, to get, process and publish data
+    """
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
+    global flag, current_time, position_current, quaternion_current, euler_current, position_current_error, w_current
+    global position_desired, quaternion_desired
+    global M_desired, Inertial_Matrix, gravity, mass, arm_length, r_offset
+    global kp, kd, ki, kq, kr, Mu, kappa
+
+
+    # SENSOR READINGS FUNCTION CALLS
+    current_time = get_time(clock_subscriber)
+
+    position_current = get_position_current(odometry_subscriber, position_current_error)
+
+    quaternion_current = get_orientation_current(imu_subscriber)
+
+    # Since for a few calculations we need Current Orientation in Euler Angles format
+    euler_current = quaternion_to_euler(quaternion_current)
+
+    w_current = get_current_angular_velocity(imu_subscriber)
+
+
+    # GAINS Subscribers
+    rospy.Subscriber("Proportional_Gain", Float64, set_proportional_gain)
+    rospy.Subscriber("Derivative_Gain", Float64, set_derivative_gain)
+    rospy.Subscriber("Integral_Gain", Float64, set_integral_gain)
+    rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)
+    rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
+    rospy.Subscriber("Lift_Force_Coefficient", Float64, set_lift_force_coefficient)
+    rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
+
+
+    # Force Desired Calculations Function Call
+
+
+    # Moment Desired Calculations Function Call
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
 
+    # F_dec Calculations Function Call
 
-#defining the control function to assign rotor speeds to the omav
+
+    # speed_publisher Calculations Function Call
+
+    flag+=1
+
+
+
+# CONTROL FUNCTION - node & subscribers
 def control():
-    #We can get literally everything we need from the odometry sensor alone, but for extreme real life case we are taking atleast two sensors to start with, so that we are less proned to errors
-    rospy.init_node('controller_node', anonymous=False)
-    #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
-    imu_sub = message_filters.Subscriber("/omav/ground_truth/imu", Imu)
-    odo_sub = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry)
-    tr = message_filters.TimeSynchronizer([imu_sub,odo_sub],2) #2 specifies the number of messages it should take from each sensor
-    tr.registerCallback(alt_control)
-    rospy.spin()
+    """
+    This is the main control function called by main
+    It initializes node
+    Subscribes to Topics
+    """
+    #Initializing Node
+    rospy.init_node('Omav_Controller_Node', anonymous=False)
+
+    # Subscribers to get all relevant sensor readings - Multiple Sensors are used for redundancy
+    imu_subscriber = message_filters.Subscriber("/omav/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
+    odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
+    clock_subscriber = message_filters.Subscriber("/clock", Clock) # For Time
+    # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
+    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber, clock_subscriber], 10)
+
+    # register multiple callbacks with this method, which will get called in the order they are registered
+    ts.registerCallback(master)
+    
+    rospy.spin() # For code to run in a loop several times
+    # Please note, any code written after this will not run, it will only run when ROS is Interrupted/Closed
+
+
 
 if __name__=='__main__':
     try:
+        get_position_desired()
+        get_orientation_desired()
         control()
     except rospy.ROSInterruptException:
         pass

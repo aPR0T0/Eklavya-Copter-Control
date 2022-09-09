@@ -33,13 +33,12 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
                BFdes= Force Desired in x, y and z directions respectively, which is a 3*1 Matrix
                J = Inertial Matrix, which is a 3*3 Matrix
     """
-
     #For Initial Start to prevent Garbage Values being used or Local Variable referenced before assignment error
 
-    # Global variables are declared to avoid their values resetting to 0
+    # Global variables are declared to avoid their values initialized/reset to 0
     global q_w_desired, q_x_desired, q_y_desired, q_z_desired, q_w_current, q_x_current, q_y_current, q_z_current
     global p0, p1, p2, p3, q0, q1, q2, q3, q_w_error, q_x_error, q_y_error, q_z_error, sign_q_w_error
-    global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1,q_intermediate_3_2, M_desired
+    global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1, q_intermediate_3_2, M_desired
 
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
     if(flag==0):
@@ -89,16 +88,16 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
         M_desired = np.zeros((3, 1))
 
     # Assigning values to Quaternion Desired
-    q_x_desired = quaternion_desired[0, 0]
-    q_y_desired = quaternion_desired[0, 1]
-    q_z_desired = quaternion_desired[0, 2]
-    q_w_desired = quaternion_desired[0, 3]
+    q_x_desired = quaternion_desired[0]
+    q_y_desired = quaternion_desired[1]
+    q_z_desired = quaternion_desired[2]
+    q_w_desired = quaternion_desired[3]
 
     # Assigning values to Quaternion Current
-    q_x_current = quaternion_current[0, 0]
-    q_y_current = quaternion_current[0, 1]
-    q_z_current = quaternion_current[0, 2]
-    q_w_current = quaternion_current[0, 3]
+    q_x_current = quaternion_current[0]
+    q_y_current = quaternion_current[1]
+    q_z_current = quaternion_current[2]
+    q_w_current = quaternion_current[3]
 
     # Assigning values to smaller_name variables
     p0 = q_w_desired
