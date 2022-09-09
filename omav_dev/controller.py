@@ -34,13 +34,13 @@ Inertial_Matrix = np.array([[0.0075, 0, 0],[0, 0.010939, 0],[0, 0, 0.01369]])
 position_desired = np.zeros((3, 1))
 # Position (Co-ordinates) Current Matrix, which is a 3*1 Matrix
 #position_current = np.zeros((3, 1))
-# Orientation (Euler_Angles) Desired Matrix, which is a 3*1 Matrix
+# Orientation (Euler_Angles) Desired Array, which is an array of Length = 3
 euler_desired = np.zeros(3)
-# Orientation (Euler_Angles) Current Matrix, which is a 3*1 Matrix
+# Orientation (Euler_Angles) Current Array, which is an array of Length = 3
 #euler_current = np.zeros(3)
-# Quaternion Orientation Desired Matrix, which is a 4*1 Matrix
+# Quaternion Orientation Desired Array, which is an array of Length = 4
 quaternion_desired = np.zeros(4)
-# Quaternion Orientation Current Matrix, which is a 4*1 Matrix
+# Quaternion Orientation Current Array, which is an array of Length = 4
 #quaternion_current = np.zeros(4)
 
 #w_current = np.zeros((3, 1))

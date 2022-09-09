@@ -38,7 +38,7 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
     # Global variables are declared to avoid their values initialized/reset to 0
     global q_w_desired, q_x_desired, q_y_desired, q_z_desired, q_w_current, q_x_current, q_y_current, q_z_current
     global p0, p1, p2, p3, q0, q1, q2, q3, q_w_error, q_x_error, q_y_error, q_z_error, sign_q_w_error
-    global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1,q_intermediate_3_2, M_desired
+    global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1, q_intermediate_3_2, M_desired
 
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
     if(flag==0):
