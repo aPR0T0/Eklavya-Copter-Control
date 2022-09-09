@@ -22,6 +22,8 @@ from moment_desired import *
 
 # Flag for 1st Time Calculation Functions running, to prevent Garbage Values or Local Variable referenced before assignment error
 flag = 0
+# Current Time - which is a floating point number, its in seconds+nano-seconds format
+current_time = 0
 """
 Defining 3*3 Inertial Matrix - Defined in xacro file of model
 Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible)
@@ -33,7 +35,21 @@ Inertial_Matrix = np.array([[0.0075, 0, 0],[0, 0.010939, 0],[0, 0, 0.01369]])
 # Position (Co-ordinates) Desired Matrix, which is a 3*1 Matrix
 position_desired = np.zeros((3, 1))
 # Position (Co-ordinates) Current Matrix, which is a 3*1 Matrix
-#position_current = np.zeros((3, 1))
+position_current = np.zeros((3, 1))
+"""
+Offset of Sensor from Origin at launch, this is due to sensor placed at the COM(Centre-of-Mass) which is slightly higher than the ground, 
+since the drone rests on its legs and the main-frame is slightly higher than the ground, for clearance from ground for rotors, so they don't touch ground.
+This offset is for the sensor being at COM - is mostly in the z-axis(in height/altitude format) as it subtracted from readings.
+This subtraction is done, so when the drone lands it's desired altitude will be 0, but due to this error, 
+it will not land softly on the ground, but crash or have a rough landing, hence it is required to subtract this error.
+
+Many Times sensors might not be placed at COM of Drone, for which the error, will cause the drone to reach wrong co-ordinate, 
+and land at wrong co-ordinate, hence we require to subtract this array
+
+It is an array of Length = 3
+position_current_error = | Error_x  Error_y  Error_z |
+"""
+position_current_error = np.array([0, 0, 0.1749999999801301])
 # Orientation (Euler_Angles) Desired Array, which is an array of Length = 3
 euler_desired = np.zeros(3)
 # Orientation (Euler_Angles) Current Array, which is an array of Length = 3
@@ -74,13 +90,20 @@ def get_orientation_desired():
 
 
 
-def master(imu,odometry):
+def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     """
     Master Function which makes calls to all functions, to get, process and publish data
     """
-
-    global flag
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
+    global flag, current_time, position_current
     global M_desired, Inertial_Matrix
+
+    current_time = get_time(clock_subscriber)
+
+    position_current = get_position_current(odometry_subscriber, position_current_error)
+
+
+
 
 
 
@@ -97,14 +120,14 @@ def control():
     Subscribes to Topics
     """
     #Initializing Node
-    rospy.init_node('controller_node', anonymous=False)
+    rospy.init_node('Omav_Controller_Node', anonymous=False)
 
-    # Subscribers to get all relevant sensor readings
-    imu_subscriber = message_filters.Subscriber("/omav/ground_truth/imu", Imu) # For Quaternion Orientation & Angular Velocity
-    odometry_subscriber = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry) # For Position, Time & Linear Velocity
-    
+    # Subscribers to get all relevant sensor readings - Multiple Sensors are used for redundancy
+    imu_subscriber = message_filters.Subscriber("/omav/ground_truth/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
+    odometry_subscriber = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry) # For Position, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
+    clock_subscriber = message_filters.Subscriber("/clock", Clock) # For Time
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
-    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
+    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber, clock_subscriber], 10)
 
     # register multiple callbacks with this method, which will get called in the order they are registered
     ts.registerCallback(master)

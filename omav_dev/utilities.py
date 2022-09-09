@@ -1,9 +1,23 @@
+#! /usr/bin/env python3
+from os import times_result
+import rospy
+import message_filters
 import math
 import numpy as np
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from rosgraph_msgs.msg import Clock
+from nav_msgs.msg import Odometry
+
+
 
 # Declaring Variables
 
+# Desired Position Returned which is a 3*1 Matrix
+desired_position_returned = np.zeros((3, 1))
+# Desired Orientation Returned which is an array of Length = 3
+desired_orientation_returned = np.zeros(3)
+
+# Roll, Pitch & Yaw for calculations during conversions
 roll_conversion = 0
 pitch_conversion = 0
 yaw_conversion = 0
@@ -11,10 +25,13 @@ yaw_conversion = 0
 quaternion_returned = np.zeros(4)
 # Euler Angles Returned which is an array of Length = 3
 euler_returned = np.zeros(3)
-# Desired Position Returned which is a 3*1 Matrix
-desired_position_returned = np.zeros((3, 1))
-# Desired Orientation Returned which is an array of Length = 3
-desired_orientation_returned = np.zeros(3)
+
+# Getting Time from Clock, and calculating/converting it to required format
+secs = 0
+nsecs = 0
+time_returned = 0
+# Current Position Returned which is a 3*1 Matrix
+current_position_returned = np.zeros((3, 1))
 
 
 
@@ -80,3 +97,38 @@ def quaternion_to_euler(quaternion_supplied):
     euler_returned = np.array(euler_returned)
     # Since for calculations we require angles in radians, hence we retain them in radians, rather than converting them to degrees
     return(euler_returned)
+
+
+
+# GET DATA FROM SENSORS
+def get_time(msg):
+    """
+    Get Current Time Readings from Clock
+    Clock publishes readings in Seconds and Nano-seconds format, which we convert to single term per our requirement
+    Time is used in the Derivative Term of the PID Controller which calculates the F_desired term to be used in Control Allocation Equation
+    """
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
+    global secs, nsecs, time_returned
+
+    # Since we get values from sensor in secs and nsecs format, and we require it as a single term
+    secs = msg.clock.secs
+    nsecs = (msg.clock.nsecs)
+    time_returned = secs + (nsecs/1000000000)
+
+    return(time_returned)
+
+
+def get_position_current(msg, position_current_error):
+    """
+    Get Current Position(Co-ordinates) of Drone from Sensor - Odometry
+    Taken in X, Y and Altitude(Z) Format of Co-ordinates
+    """
+    #
+    global current_position_returned
+
+    current_position_returned[0, 0] = (msg.pose.pose.position.x - position_current_error[0])
+    current_position_returned[1, 0] = (msg.pose.pose.position.y - position_current_error[1])
+    current_position_returned[2, 0] = (msg.pose.pose.position.z - position_current_error[2])
+
+
+
