@@ -89,16 +89,16 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
         M_desired = np.zeros((3, 1))
 
     # Assigning values to Quaternion Desired
-    q_x_desired = quaternion_desired[0, 0]
-    q_y_desired = quaternion_desired[0, 1]
-    q_z_desired = quaternion_desired[0, 2]
-    q_w_desired = quaternion_desired[0, 3]
+    q_x_desired = quaternion_desired[0]
+    q_y_desired = quaternion_desired[1]
+    q_z_desired = quaternion_desired[2]
+    q_w_desired = quaternion_desired[3]
 
     # Assigning values to Quaternion Current
-    q_x_current = quaternion_current[0, 0]
-    q_y_current = quaternion_current[0, 1]
-    q_z_current = quaternion_current[0, 2]
-    q_w_current = quaternion_current[0, 3]
+    q_x_current = quaternion_current[0]
+    q_y_current = quaternion_current[1]
+    q_z_current = quaternion_current[2]
+    q_w_current = quaternion_current[3]
 
     # Assigning values to smaller_name variables
     p0 = q_w_desired

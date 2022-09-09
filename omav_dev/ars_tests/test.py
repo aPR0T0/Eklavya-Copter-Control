@@ -1,17 +1,18 @@
 import numpy as np
 import math
 
-a1 = np.array([[1],[1],[1]])
-print(a1)
-print(type(a1))
+def control(a1):
+    print(5)
+    return (5)
 
-a2 = np.array([[2],[3],[4]])
+def control1(a1):
+    print(10)
+    return(10)
 
-a3 = np.cross(a1, a2, axis=0)
-print(a3)
-print(type(a3))
-print(a3[0])
+def med(a1):
+    b1 = control(a1)
+    b2 = control1(a1)
+    print(b1*b2)
 
-b1 = a2[(0,0)]
-print(b1)
-print(type(b1))
+if __name__=='__main__':
+    med(5)
