@@ -48,19 +48,19 @@ and land at wrong co-ordinate, hence we require to subtract this array
 
 It is an array of Length = 3
 position_current_error = | Error_x  Error_y  Error_z |
+Calculated/Found by echoing rostopic of sensor which supplies Position(Co-ordinates) with drone at Launch Position(stationary)
 """
 position_current_error = np.array([0, 0, 0.1749999999801301])
 # Orientation (Euler_Angles) Desired Array, which is an array of Length = 3
 euler_desired = np.zeros(3)
 # Orientation (Euler_Angles) Current Array, which is an array of Length = 3
-#euler_current = np.zeros(3)
+euler_current = np.zeros(3)
 # Quaternion Orientation Desired Array, which is an array of Length = 4
 quaternion_desired = np.zeros(4)
 # Quaternion Orientation Current Array, which is an array of Length = 4
-#quaternion_current = np.zeros(4)
-
-#w_current = np.zeros((3, 1))
-
+quaternion_current = np.zeros(4)
+# Current Angular Velocity Matrix of Drone, which is a 3*1 Matrix
+w_current = np.zeros((3, 1))
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
 
@@ -95,18 +95,25 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     Master Function which makes calls to all functions, to get, process and publish data
     """
     # To prevent Garbage Values being used or variables being initialized/reset as zero
-    global flag, current_time, position_current
+    global flag, current_time, position_current, quaternion_current, euler_current
+    global position_desired, quaternion_desired
     global M_desired, Inertial_Matrix
 
+    # SENSOR READINGS FUNCTION CALLS
     current_time = get_time(clock_subscriber)
 
     position_current = get_position_current(odometry_subscriber, position_current_error)
 
+    quaternion_current = get_orientation_current(imu_subscriber)
+
+    # Since for a few calculations we need Current Orientation in Euler Angles format
+    euler_current = quaternion_to_euler(quaternion_current)
+
+    w_current = get_current_angular_velocity(imu_subscriber)
 
 
 
-
-
+    # Moment Desired Calculations Function Call
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
 
     flag+=1
@@ -123,8 +130,8 @@ def control():
     rospy.init_node('Omav_Controller_Node', anonymous=False)
 
     # Subscribers to get all relevant sensor readings - Multiple Sensors are used for redundancy
-    imu_subscriber = message_filters.Subscriber("/omav/ground_truth/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
-    odometry_subscriber = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry) # For Position, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
+    imu_subscriber = message_filters.Subscriber("/omav/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
+    odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
     clock_subscriber = message_filters.Subscriber("/clock", Clock) # For Time
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
     ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber, clock_subscriber], 10)
