@@ -257,6 +257,9 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
     theta = pitch #current pitch
     phi = roll #current Roll
     gamma = yaw #current yaw
+    theta = theta * ( math.pi/180 )
+    phi = phi * ( math.pi/180 )
+    gamma = gamma * ( math.pi/180 )
     prevOmega = np.zeros([3,1])
     Kp_pose = 0
     Ki_pose = 0
