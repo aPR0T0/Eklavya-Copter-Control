@@ -17,6 +17,7 @@ from utilities import *
 from moment_desired import * 
 
 
+
 # DECLARING / INITIALIZING ALL PARAMETERS
 
 # Flag for 1st Time Calculation Functions running, to prevent Garbage Values or Local Variable referenced before assignment error
@@ -48,14 +49,15 @@ quaternion_desired = np.zeros(4)
 M_desired = np.zeros((3, 1))
 
 
+
 def get_position_desired():
     """
-    Calls Function, call_position_desired() from utilities.py
+    Calls Function, call_position_desired() from utilities.py which takes Desired Position - in Co-ordinates Format
     """
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
     global position_desired
-    position_desired = call_position_desired()
-    
 
+    position_desired = call_position_desired()
 
 def get_orientation_desired():
     """
@@ -63,14 +65,19 @@ def get_orientation_desired():
     But for Calculations we required Desired Orientation - in Quaternion Format
     Hence it also calls function, euler_to_quaternion() from utilities.py which converts Euler Angles to Quaternion Orientation
     """
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
     global euler_desired, quaternion_desired
+
     euler_desired = call_orientation_desired()
+    # Since we require orientation in Quaternion format, hence converting euler-to-quaternion
     quaternion_desired = euler_to_quaternion(euler_desired)
 
 
 
 def master(imu,odometry):
-
+    """
+    Master Function which makes calls to all functions, to get, process and publish data
+    """
 
     global flag
     global M_desired, Inertial_Matrix
@@ -82,29 +89,28 @@ def master(imu,odometry):
     flag+=1
 
 
+
 def control():
     """
     This is the main control function called by main
     It initializes node
     Subscribes to Topics
-
     """
-    
-
     #Initializing Node
     rospy.init_node('controller_node', anonymous=False)
 
     # Subscribers to get all relevant sensor readings
     imu_subscriber = message_filters.Subscriber("/omav/ground_truth/imu", Imu) # For Quaternion Orientation & Angular Velocity
     odometry_subscriber = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry) # For Position, Time & Linear Velocity
-    tr = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
-
+    
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
-    tr.registerCallback(master)
+    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
+
+    # register multiple callbacks with this method, which will get called in the order they are registered
+    ts.registerCallback(master)
+    
     rospy.spin() # For code to run in a loop several times
     # Please note, any code written after this will not run, it will only run when ROS is Interrupted/Closed
-
-
 
 
 

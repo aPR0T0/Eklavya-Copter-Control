@@ -12,13 +12,14 @@ required_position_returned = np.zeros(3)
 required_orientation_returned = np.zeros(3)
 
 
+
 # INPUT FROM USER - Functions
 def call_position_desired():
     """
     Taking Position Desired Input from User
     Taken in X, Y and Altitude(Z) Format of Co-ordinates
     """
-    # To prevent Garbage Values being used or variables being initialized as zero
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
     global required_position_returned
     
     # Taking Input from User
@@ -26,12 +27,13 @@ def call_position_desired():
     
     return(required_position_returned)
 
+
 def call_orientation_desired():
     """
     Taking Orientation Desired Input from User
     Taken in Roll, Pitch and Yaw Format of Euler Angles - Angles in Degrees
     """
-    # To prevent Garbage Values being used or variables being initialized as zero
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
     global required_orientation_returned
 
     # Taking Input from User
@@ -47,8 +49,7 @@ def euler_to_quaternion(euler_supplied):
     Convert Euler Angles - Roll, Pitch & Yaw
     To Corresponding Quaternion Orientation - X, Y, Z & W terms
     """
-
-    # To prevent Garbage Values being used or variables being initialized as zero
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
     global roll, pitch, yaw, quaternion_returned
 
     # Since we are supplying angles in degrees, but for actual calculations we need angles in radians
@@ -60,13 +61,13 @@ def euler_to_quaternion(euler_supplied):
 
     return(quaternion_returned)
 
+
 def quaternion_to_euler(quaternion_supplied):
     """
     Convert Quaternion Orientation - X, Y, Z & W
     To Corresponding Euler Angles - Roll, Pitch & Yaw terms
     """
-
-    # To prevent Garbage Values being used or variables being initialized as zero
+    # To prevent Garbage Values being used or variables being initialized/reset as zero
     global euler_returned
 
     euler_returned = euler_from_quaternion(quaternion_supplied)

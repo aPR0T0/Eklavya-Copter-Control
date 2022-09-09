@@ -19,14 +19,11 @@ x = 0
 y = 0
 z  = 0
 
-# Flag for checking for the first time the script is run
-flag = 0
-
 #creating publisher for the speeds of the rotors
 speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=100) #here we will use angles section to give angles to the tilt rotors
 
 # Asking user for the desired coordinates
-target_x, target_y, req_alt = map( float , input("Enter X Y (position) and Altitude : ").split())
+
 roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired orientation (in degrees) Roll, Pitch, Yaw (resp): ").split())
 # We need x,y and altitude of the model
 # split() : Return a list of the words in the string, using sep as the delimiter string
@@ -83,7 +80,7 @@ def calOrientation(msg):
     
     # sending the data to the PID_alt function which then calculates the speed using them
     speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
-    flag += 1
+
 
     speed_pub.publish(speed)
     """"""
