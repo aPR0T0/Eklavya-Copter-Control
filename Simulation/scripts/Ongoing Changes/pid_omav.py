@@ -42,8 +42,8 @@ kp_vel_y = 0.01
 ki_vel_y = 0.0
 kd_vel_y = 0.0071
 g = 9.81 # gravitational acceleration
-kap = 0.00035 #> constant for the matrix
-Mu = 0.0005  #> constant for the matrix
+kap = 0.0001 #> constant for the matrix
+Mu = 0.0008  #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
 xz = 1
@@ -70,15 +70,17 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, velocity, k_vel, flag)
 
-    err_pitch = pitch - roll_desired #Changed this from setpoint roll to roll desired
+    err_pitch = pitch - pitch_desired #Changed this from setpoint roll to roll desired
 
-    err_roll = roll - pitch_desired #Changed this from setpoint pitch to pitch desired
+    err_roll = roll - roll_desired #Changed this from setpoint pitch to pitch desired
 
     err_yaw = 0 - yaw #for our application we don't want the hexacopter to yaw like at all
 
     curr_alt_err = req_alt - altitude
-
-
+    #this is limiting case where we have reached the desired location in x and y
+    # if(-2.5 <=setpoint_pitch <=2.5 and -2.5<= setpoint_roll <= 2.5): 
+    #     err_roll = setpoint_roll
+    #     err_pitch = setpoint_pitch
 
     # Publishing error values to be plotted in rqt
     alt_err_pub = rospy.Publisher("/alt_err", Float64, queue_size=10)
@@ -127,12 +129,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
 
     dErr_alt = curr_alt_err - prev_alt_err
 
-    dErr_roll = err_roll - prevErr_roll
-
-    dErr_pitch = err_pitch - prevErr_pitch
-
-    dErr_yaw = err_yaw - prevErr_yaw
-
 
 # ================== Starting calculations for the error terms =================== #
 
@@ -142,54 +138,33 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
         # Proportional Terms
         
         pMem_alt = kp_thrust*curr_alt_err
-        pMem_roll = kp_roll*err_roll
-        pMem_pitch = kp_pitch*err_pitch
-        pMem_yaw = kp_yaw*err_yaw
         
         # Integral Terms
 
         iMem_alt += ki_thrust*curr_alt_err*dTime
-        iMem_roll += ki_roll*err_roll*dTime
-        iMem_pitch += ki_pitch*err_pitch*dTime
-        iMem_yaw += ki_yaw*err_yaw*dTime
 
 
         # Derivative Terms
         
         dMem_alt = dErr_alt / dTime
-        dMem_roll = dErr_roll / dTime
-        dMem_pitch = dErr_pitch / dTime
-        dMem_yaw = dErr_yaw / dTime
 
         #limit integrand values
-        if(iMem_alt > 800): iMem_alt = 800
-        if(iMem_alt <-800): iMem_alt = -800
-        if(iMem_roll > 40): iMem_roll = 40
-        if(iMem_roll < -40): iMem_roll = -40
-        if(iMem_pitch > 40): iMem_pitch = 40
-        if(iMem_pitch < -40): iMem_pitch = -40
-        if(iMem_yaw > 40): iMem_yaw = 40
-        if(iMem_yaw < -40): iMem_yaw = 40
+        if(iMem_alt > 400): iMem_alt = 400
+        if(iMem_alt <-400): iMem_alt = -400
 
 
         ddMem_alt = (dMem_alt - prevdMem_alt) / dTime
     #Updating previous error terms
 
     prev_alt_err = curr_alt_err
-    prevErr_roll = err_roll
-    prevErr_pitch = err_pitch
-    prevErr_yaw = err_yaw
     prevdMem_alt = dMem_alt
 
     # Final output correction terms after combining PID
-    output_alt = pMem_alt + iMem_alt + kd_thrust*dMem_alt
-    output_roll = pMem_roll +  iMem_roll + kd_roll * dMem_roll
-    output_pitch = pMem_pitch + iMem_pitch + kd_pitch * dMem_pitch
-    output_yaw = pMem_yaw + iMem_yaw + kd_yaw * dMem_yaw 
+    # output_alt = pMem_alt + iMem_alt + kd_thrust*dMem_alt
 
     # Now, For tuning purposes we will be limiting output altitude
     
-    output_alt = 1 if output_alt > 1 else output_alt
+    # output_alt = 1 if output_alt > 1 else output_alt
 
 
     prop_pos_mat = np.matrix([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
@@ -200,46 +175,46 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
     
     ddiff_pose_mat = np.matrix([[ddMem_x],[ddMem_y],[ddMem_alt]])
 
-    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired)
+    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired)
     t = 0
     if ( t == 0 ):
-        speed.angular_velocities.append(ang_vel_rot[4])
+        speed.angular_velocities.append(ang_vel_rot[1])
         speed.angular_velocities.append(ang_vel_rot[1])
         speed.angular_velocities.append(ang_vel_rot[0])
-        speed.angular_velocities.append(ang_vel_rot[3])
-        speed.angular_velocities.append(ang_vel_rot[5])
+        speed.angular_velocities.append(ang_vel_rot[0])
         speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(ang_vel_rot[4])
+        speed.angular_velocities.append(ang_vel_rot[2])
+        speed.angular_velocities.append(ang_vel_rot[1])
         speed.angular_velocities.append(ang_vel_rot[1])
         speed.angular_velocities.append(ang_vel_rot[0])
-        speed.angular_velocities.append(ang_vel_rot[3])
-        speed.angular_velocities.append(ang_vel_rot[5])
+        speed.angular_velocities.append(ang_vel_rot[0])
         speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(tilt_ang[4])
+        speed.angular_velocities.append(ang_vel_rot[2])
+        speed.angular_velocities.append(-tilt_ang[1])
         speed.angular_velocities.append(tilt_ang[1])
         speed.angular_velocities.append(tilt_ang[0])
-        speed.angular_velocities.append(tilt_ang[3])
-        speed.angular_velocities.append(tilt_ang[5])
+        speed.angular_velocities.append(-tilt_ang[0])
+        speed.angular_velocities.append(-tilt_ang[2])
         speed.angular_velocities.append(tilt_ang[2])
         t += 1
 
-    speed.angular_velocities[0] = ang_vel_rot[4]
+    speed.angular_velocities[0] = ang_vel_rot[1]
     speed.angular_velocities[1] = ang_vel_rot[1]
     speed.angular_velocities[2] = ang_vel_rot[0]
-    speed.angular_velocities[3] = ang_vel_rot[3]
-    speed.angular_velocities[4] = ang_vel_rot[5]
+    speed.angular_velocities[3] = ang_vel_rot[0]
+    speed.angular_velocities[4] = ang_vel_rot[2]
     speed.angular_velocities[5] = ang_vel_rot[2]
-    speed.angular_velocities[6] = ang_vel_rot[4]
+    speed.angular_velocities[6] = ang_vel_rot[1]
     speed.angular_velocities[7] = ang_vel_rot[1]
     speed.angular_velocities[8] = ang_vel_rot[0]
-    speed.angular_velocities[9] = ang_vel_rot[3]
-    speed.angular_velocities[10] = ang_vel_rot[5]
+    speed.angular_velocities[9] = ang_vel_rot[0]
+    speed.angular_velocities[10] = ang_vel_rot[2]
     speed.angular_velocities[11] = ang_vel_rot[2]
-    speed.angular_velocities[12] = tilt_ang[4]
+    speed.angular_velocities[12] = -tilt_ang[1]
     speed.angular_velocities[13] = tilt_ang[1]
     speed.angular_velocities[14] = tilt_ang[0]
-    speed.angular_velocities[15] = tilt_ang[3]
-    speed.angular_velocities[16] = tilt_ang[5]
+    speed.angular_velocities[15] = -tilt_ang[0]
+    speed.angular_velocities[16] = -tilt_ang[2]
     speed.angular_velocities[17] = tilt_ang[2]
 
     # Limiting the speeds to the permissible limits
@@ -275,13 +250,13 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
 
 """
 
-def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch, output_yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired):
+def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired):
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
     global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
     global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed, prevOmega
-    theta = output_pitch #required pitch
-    phi = output_roll #required Roll
-    gamma = output_yaw #required yaw
+    theta = pitch #current pitch
+    phi = roll #current Roll
+    gamma = yaw #current yaw
     prevOmega = np.zeros([3,1])
     Kp_pose = 0
     Ki_pose = 0
@@ -306,7 +281,7 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
         ang_vel_yaw = dYaw / dTime
     
 #===============================Defining Matrices==================================>#
-    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat)
+    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, err_x, err_y)
     
 
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
@@ -317,40 +292,29 @@ def control_allocation( roll, pitch, yaw, output_alt, output_roll, output_pitch,
     I = np.array([[0.0075,0,0],[0,0.010939,0],[0,0,0.01369]]) 
     # The above matrix is already defined in the urdf
     
-    # M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I)
-    if( dTime >= sample_time):
-        ang_acc_roll = (omega[0][0] - prevOmega[0][0] )/ dTime
-        ang_acc_pitch = (omega[1][0] - prevOmega[1][0]) / dTime
-        ang_acc_yaw = (omega[2][0] - prevOmega[2][0]) / dTime
-    #updating previous terms
-    prevOmega = omega
-    omega_3x3 = np.array([[0,-omega[2][0],omega[1][0]],[omega[2][0],0,-omega[0][0]],[-omega[1][0],omega[0][0],0]])
-    alpha = np.array([[ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw]])
-    Iw = np.matmul(I,omega)
+    M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I)
 
-    # made for desired moment == I*α + ωxIω
-    M_des = np.matmul(I,alpha)+np.matmul(omega_3x3,Iw)
     Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0]],[M_des[1][0]],[M_des[2][0]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
 
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
-    relation_matrix = np.array(np.matmul( A_pseudo_inv , Final_mat ))
+    relation_matrix = np.matmul( A_pseudo_inv , Final_mat )
     
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
-    
+    print(relation_matrix)
 
     # Angular velocties deduction
-    ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    ang_vel= np.array([0.0,0.0,0.0])
     i = 0
-    for i in range(6):
+    for i in range(3):
         ang_vel[i]= abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
-    tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    tilt_ang = np.array([0.0,0.0,0.0])
     i = 0
-    for i in range(6):
+    for i in range(3):
         x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
         x2 = pow(sqrt(relation_matrix[2*i]).real,2)
         # print(x1) Uses this to get the real value from the matrix
