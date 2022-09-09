@@ -42,8 +42,8 @@ kp_vel_y = 0.01
 ki_vel_y = 0.0
 kd_vel_y = 0.0071
 g = 9.81 # gravitational acceleration
-kap = 0.0001 #> constant for the matrix
-Mu = 0.0008  #> constant for the matrix
+kap = 0.0003 #> constant for the matrix
+Mu = 0.0003  #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
 xz = 1
@@ -178,43 +178,43 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired)
     t = 0
     if ( t == 0 ):
-        speed.angular_velocities.append(ang_vel_rot[1])
-        speed.angular_velocities.append(ang_vel_rot[1])
-        speed.angular_velocities.append(ang_vel_rot[0])
-        speed.angular_velocities.append(ang_vel_rot[0])
-        speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(ang_vel_rot[1])
+        speed.angular_velocities.append(ang_vel_rot[4])
         speed.angular_velocities.append(ang_vel_rot[1])
         speed.angular_velocities.append(ang_vel_rot[0])
+        speed.angular_velocities.append(ang_vel_rot[3])
+        speed.angular_velocities.append(ang_vel_rot[5])
+        speed.angular_velocities.append(ang_vel_rot[2])
+        speed.angular_velocities.append(ang_vel_rot[4])
+        speed.angular_velocities.append(ang_vel_rot[1])
         speed.angular_velocities.append(ang_vel_rot[0])
+        speed.angular_velocities.append(ang_vel_rot[3])
+        speed.angular_velocities.append(ang_vel_rot[5])
         speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(-tilt_ang[1])
+        speed.angular_velocities.append(tilt_ang[4])
         speed.angular_velocities.append(tilt_ang[1])
         speed.angular_velocities.append(tilt_ang[0])
-        speed.angular_velocities.append(-tilt_ang[0])
-        speed.angular_velocities.append(-tilt_ang[2])
+        speed.angular_velocities.append(tilt_ang[3])
+        speed.angular_velocities.append(tilt_ang[5])
         speed.angular_velocities.append(tilt_ang[2])
         t += 1
 
-    speed.angular_velocities[0] = ang_vel_rot[1]
+    speed.angular_velocities[0] = ang_vel_rot[4]
     speed.angular_velocities[1] = ang_vel_rot[1]
     speed.angular_velocities[2] = ang_vel_rot[0]
-    speed.angular_velocities[3] = ang_vel_rot[0]
-    speed.angular_velocities[4] = ang_vel_rot[2]
+    speed.angular_velocities[3] = ang_vel_rot[3]
+    speed.angular_velocities[4] = ang_vel_rot[5]
     speed.angular_velocities[5] = ang_vel_rot[2]
-    speed.angular_velocities[6] = ang_vel_rot[1]
+    speed.angular_velocities[6] = ang_vel_rot[4]
     speed.angular_velocities[7] = ang_vel_rot[1]
     speed.angular_velocities[8] = ang_vel_rot[0]
-    speed.angular_velocities[9] = ang_vel_rot[0]
-    speed.angular_velocities[10] = ang_vel_rot[2]
+    speed.angular_velocities[9] = ang_vel_rot[3]
+    speed.angular_velocities[10] = ang_vel_rot[5]
     speed.angular_velocities[11] = ang_vel_rot[2]
-    speed.angular_velocities[12] = -tilt_ang[1]
+    speed.angular_velocities[12] = tilt_ang[4]
     speed.angular_velocities[13] = tilt_ang[1]
     speed.angular_velocities[14] = tilt_ang[0]
-    speed.angular_velocities[15] = -tilt_ang[0]
-    speed.angular_velocities[16] = -tilt_ang[2]
+    speed.angular_velocities[15] = tilt_ang[3]
+    speed.angular_velocities[16] = tilt_ang[5]
     speed.angular_velocities[17] = tilt_ang[2]
 
     # Limiting the speeds to the permissible limits
@@ -257,9 +257,6 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
     theta = pitch #current pitch
     phi = roll #current Roll
     gamma = yaw #current yaw
-    theta = theta * ( math.pi/180 )
-    phi = phi * ( math.pi/180 )
-    gamma = gamma * ( math.pi/180 )
     prevOmega = np.zeros([3,1])
     Kp_pose = 0
     Ki_pose = 0
@@ -308,16 +305,16 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
     print(relation_matrix)
 
     # Angular velocties deduction
-    ang_vel= np.array([0.0,0.0,0.0])
+    ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
-    for i in range(3):
+    for i in range(6):
         ang_vel[i]= abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
-    tilt_ang = np.array([0.0,0.0,0.0])
+    tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
-    for i in range(3):
+    for i in range(6):
         x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
         x2 = pow(sqrt(relation_matrix[2*i]).real,2)
         # print(x1) Uses this to get the real value from the matrix
