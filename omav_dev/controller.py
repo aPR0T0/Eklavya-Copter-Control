@@ -25,13 +25,35 @@ flag = 0
 # Current Time - which is a floating point number, its in seconds+nano-seconds format
 current_time = 0
 """
-Defining 3*3 Inertial Matrix - Defined in xacro file of model
-Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible)
+Defining 3*3 Inertial Matrix - Defined in xacro file of model, omav.xacro
+Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible, due to which other values equated to 0)
 Inertial_Matrix = | Ixx  Ixy  Ixz |
                   | Iyx  Iyy  Iyz |
                   | Izx  Izy  Izz |
 """
-Inertial_Matrix = np.array([[0.0075, 0, 0],[0, 0.010939, 0],[0, 0, 0.01369]])
+Inertial_Matrix = np.array([[0.0075, 0, 0], [0, 0.010939, 0], [0, 0, 0.01369]])
+"""
+Gravity Matrix, which is a 3*1 Matrix - Defined in xacro file of model, omav.xacro
+Since, on Earth Gravity only in z-direction, hence rest values are 0
+gravity = | g_x |
+          | g_y |
+          | g_z |
+"""
+gravity = np.array([[0], [0], [-9.80]])
+"""
+Mass of Drone at COM(Centre of Mass) in kg - Defined in xacro file of model, omav.xacro
+It is a scalar
+"""
+mass = 4.04
+"""
+Arm Length of Drone in m from COM to thrust-providing Rotor - Defined in xacro file of model, omav.xacro
+It is a scalar
+"""
+arm_length = 0.300
+"""
+Center of Mass Offset Matrix, which is a 3*1 Matrix - Defined in xacro file of model, omav.xacro
+"""
+r_offset = np.array([[0], [0], [0]])
 # Position (Co-ordinates) Desired Matrix, which is a 3*1 Matrix
 position_desired = np.zeros((3, 1))
 # Position (Co-ordinates) Current Matrix, which is a 3*1 Matrix
@@ -61,6 +83,23 @@ quaternion_desired = np.zeros(4)
 quaternion_current = np.zeros(4)
 # Current Angular Velocity Matrix of Drone, which is a 3*1 Matrix
 w_current = np.zeros((3, 1))
+#
+kp = 
+#
+kd = 
+#
+ki = 
+#
+kq = 
+#
+kr = 
+#
+Mu = 
+#
+kappa = 
+
+#
+F_desired = 
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
 
@@ -95,9 +134,10 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     Master Function which makes calls to all functions, to get, process and publish data
     """
     # To prevent Garbage Values being used or variables being initialized/reset as zero
-    global flag, current_time, position_current, quaternion_current, euler_current
+    global flag, current_time, position_current, quaternion_current, euler_current, position_current_error, w_current
     global position_desired, quaternion_desired
-    global M_desired, Inertial_Matrix
+    global M_desired, Inertial_Matrix, gravity, mass, arm_length, r_offset
+
 
     # SENSOR READINGS FUNCTION CALLS
     current_time = get_time(clock_subscriber)
