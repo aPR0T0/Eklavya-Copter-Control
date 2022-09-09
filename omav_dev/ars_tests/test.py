@@ -1,18 +1,10 @@
+import re
 import numpy as np
 import math
 
-def control(a1):
-    print(5)
-    return (5)
+required_position_returned = np.zeros(3)
 
-def control1(a1):
-    print(10)
-    return(10)
+required_position_returned[0], required_position_returned[2], required_position_returned[2] = map(float, input("Enter X Y (Position) and Altitude Co-ordinates : ").split())
 
-def med(a1):
-    b1 = control(a1)
-    b2 = control1(a1)
-    print(b1*b2)
-
-if __name__=='__main__':
-    med(5)
+print(required_position_returned)
+print(type(required_position_returned))

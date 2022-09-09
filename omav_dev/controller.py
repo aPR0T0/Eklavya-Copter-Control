@@ -1,10 +1,7 @@
 #! /usr/bin/env python3     #For a ROS Node makes sure the script is executed as a Python script
-
 import rospy #for ROS operations
-
 import numpy as np
 import math
-
 from tf.transformations import euler_from_quaternion, quaternion_from_euler #For Inter-conversions between Euler and Quaternion
 import message_filters
 
@@ -34,29 +31,42 @@ Inertial_Matrix = | Ixx  Ixy  Ixz |
 Inertial_Matrix = np.array([[0.0075, 0, 0],[0, 0.010939, 0],[0, 0, 0.01369]])
 # Position (Co-ordinates) Desired Matrix, which is a 3*1 Matrix
 position_desired = np.zeros((3, 1))
+# Position (Co-ordinates) Current Matrix, which is a 3*1 Matrix
+#position_current = np.zeros((3, 1))
 # Orientation (Euler_Angles) Desired Matrix, which is a 3*1 Matrix
 euler_desired = np.zeros(3)
 # Orientation (Euler_Angles) Current Matrix, which is a 3*1 Matrix
-euler_current = np.zeros(3)
+#euler_current = np.zeros(3)
 # Quaternion Orientation Desired Matrix, which is a 4*1 Matrix
 quaternion_desired = np.zeros(4)
 # Quaternion Orientation Current Matrix, which is a 4*1 Matrix
-quaternion_current = np.zeros(4)
+#quaternion_current = np.zeros(4)
 
-w_current = np.zeros((3, 1))
+#w_current = np.zeros((3, 1))
 
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
 
 
 def get_position_desired():
+    """
+    Calls Function, call_position_desired() from utilities.py
+    """
     global position_desired
     position_desired = call_position_desired()
+    
 
 
 def get_orientation_desired():
-    global euler_desired
+    """
+    Calls Function, call_orientation_desired() from utilities.py which takes Desired Orientation - in Euler Angles Format
+    But for Calculations we required Desired Orientation - in Quaternion Format
+    Hence it also calls function, euler_to_quaternion() from utilities.py which converts Euler Angles to Quaternion Orientation
+    """
+    global euler_desired, quaternion_desired
     euler_desired = call_orientation_desired()
+    quaternion_desired = euler_to_quaternion(euler_desired)
+
 
 
 def master(imu,odometry):
