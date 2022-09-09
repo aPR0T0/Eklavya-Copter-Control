@@ -83,25 +83,55 @@ quaternion_desired = np.zeros(4)
 quaternion_current = np.zeros(4)
 # Current Angular Velocity Matrix of Drone, which is a 3*1 Matrix
 w_current = np.zeros((3, 1))
-#
-kp = 
-#
-kd = 
-#
-ki = 
-#
-kq = 
-#
-kr = 
-#
-Mu = 
-#
-kappa = 
+# Proportional Gain of PID Controller of F_desired Calculation
+kp = 0
+# Derivative Gain of PID Controller of F_desired Calculation
+kd = 0
+# Integral Gain of PID Controller of F_desired Calculation
+ki = 0
+# Tuning Parameter of M_desired Calculation
+kq = 0
+# Rate Controller Gain of M_desired Calculation
+kr = 0
+# Lift Force Coefficient
+Mu = 0
+# Drag Torque Coefficient
+kappa = 0
 
 #
-F_desired = 
+#F_desired = 
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
+
+
+# GAINS FUNCTIONS
+def set_proportional_gain(msg):
+    global kp
+    kp = msg.data
+
+def set_derivative_gain(msg):
+    global kd
+    kd = msg.data
+
+def set_integral_gain(msg):
+    global ki
+    ki = msg.data
+
+def set_tuning_parameter(msg):
+    global kq
+    kq = msg.data
+
+def set_rate_controller_gain(msg):
+    global kr
+    kr = msg.data
+
+def set_lift_force_coefficient(msg):
+    global Mu
+    Mu = msg.data
+
+def set_drag_torque_coefficient(msg):
+    global kappa
+    kappa = msg.data
 
 
 
@@ -129,6 +159,7 @@ def get_orientation_desired():
 
 
 
+# MASTER CALLING FUNCTION
 def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     """
     Master Function which makes calls to all functions, to get, process and publish data
@@ -137,6 +168,7 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     global flag, current_time, position_current, quaternion_current, euler_current, position_current_error, w_current
     global position_desired, quaternion_desired
     global M_desired, Inertial_Matrix, gravity, mass, arm_length, r_offset
+    global kp, kd, ki, kq, kr, Mu, kappa
 
 
     # SENSOR READINGS FUNCTION CALLS
@@ -151,6 +183,15 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
 
     w_current = get_current_angular_velocity(imu_subscriber)
 
+    # GAINS Subscribers
+    rospy.Subscriber("Proportional_Gain", Float64, set_proportional_gain)
+    rospy.Subscriber("Derivative_Gain", Float64, set_derivative_gain)
+    rospy.Subscriber("Integral_Gain", Float64, set_integral_gain)
+    rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)
+    rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
+    rospy.Subscriber("Lift_Force_Coefficient", Float64, set_lift_force_coefficient)
+    rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
+
 
 
     # Moment Desired Calculations Function Call
@@ -160,6 +201,7 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
 
 
 
+# CONTROL FUNCTION - node & subscribers
 def control():
     """
     This is the main control function called by main
