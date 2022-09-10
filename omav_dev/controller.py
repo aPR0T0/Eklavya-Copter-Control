@@ -87,7 +87,7 @@ w_current = np.zeros((3, 1))
 # Proportional Gain of PID Controller of F_desired Calculation
 kp = 10
 # Derivative Gain of PID Controller of F_desired Calculation
-kd = 0.5
+kd = 0
 # Integral Gain of PID Controller of F_desired Calculation
 ki = 0
 # Tuning Parameter of M_desired Calculation
@@ -95,9 +95,9 @@ kq = 0.05
 # Rate Controller Gain of M_desired Calculation
 kr = 0.05
 # Lift Force Coefficient
-Mu = 0.000064
+Mu = 0.0003
 # Drag Torque Coefficient
-kappa = 0.00003
+kappa = 0.0003
 
 #
 F_desired = np.zeros((3, 1))
@@ -228,7 +228,7 @@ def master(imu_subscriber, odometry_subscriber):
     # speed_publisher Calculations Function Call
     speed_publisher = Actuators()
     speed_publisher = get_speed_publisher(F_dec, Mu, flag)
-    print(speed_publisher)
+    #print(speed_publisher)
     
 
     flag+=1

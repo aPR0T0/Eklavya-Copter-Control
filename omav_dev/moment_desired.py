@@ -88,76 +88,79 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
         # 3*1 Matrix of Moment_Desired
         M_desired = np.zeros((3, 1))
 
-    # Assigning values to Quaternion Desired
-    q_x_desired = quaternion_desired[0]
-    q_y_desired = quaternion_desired[1]
-    q_z_desired = quaternion_desired[2]
-    q_w_desired = quaternion_desired[3]
+    if (flag != 0):
+        # Assigning values to Quaternion Desired
+        q_x_desired = quaternion_desired[0]
+        q_y_desired = quaternion_desired[1]
+        q_z_desired = quaternion_desired[2]
+        q_w_desired = quaternion_desired[3]
 
-    # Assigning values to Quaternion Current
-    q_x_current = quaternion_current[0]
-    q_y_current = quaternion_current[1]
-    q_z_current = quaternion_current[2]
-    q_w_current = quaternion_current[3]
+        # Assigning values to Quaternion Current
+        q_x_current = quaternion_current[0]
+        q_y_current = quaternion_current[1]
+        q_z_current = quaternion_current[2]
+        q_w_current = quaternion_current[3]
 
-    # Assigning values to smaller_name variables
-    p0 = q_w_desired
-    p1 = q_x_desired
-    p2 = q_y_desired
-    p3 = q_z_desired
+        # Assigning values to smaller_name variables
+        p0 = q_w_desired
+        p1 = q_x_desired
+        p2 = q_y_desired
+        p3 = q_z_desired
 
-    q0 = q_w_current
-    q1 = -q_x_current
-    q2 = -q_y_current
-    q3 = -q_z_current
+        q0 = q_w_current
+        q1 = -q_x_current
+        q2 = -q_y_current
+        q3 = -q_z_current
 
-    # Quaternion Error Equations :
-    q_w_error = (p0*q0 - p1*q1 - p2*q2 - p3*q3)
-    q_x_error = (p0*q1 + p1*q0 + p2*q3 - p3*q2)
-    q_y_error = (p0*q2 - p1*q3 + p2*q0 + p3*q1)
-    q_z_error = (p0*q3 + p1*q2 - p2*q1 + p3*q0)
+        # Quaternion Error Equations :
+        q_w_error = (p0*q0 - p1*q1 - p2*q2 - p3*q3)
+        q_x_error = (p0*q1 + p1*q0 + p2*q3 - p3*q2)
+        q_y_error = (p0*q2 - p1*q3 + p2*q0 + p3*q1)
+        q_z_error = (p0*q3 + p1*q2 - p2*q1 + p3*q0)
 
-    # We Require only the sign of q_w_error for further Calculation
-    if(q_w_error < 0):
-        sign_q_w_error = -1
-    elif(q_w_error > 0):
-        sign_q_w_error = 1
+        # We Require only the sign of q_w_error for further Calculation
+        if(q_w_error < 0):
+            sign_q_w_error = -1
+        elif(q_w_error > 0):
+            sign_q_w_error = 1
 
-    # Initializing the 3*1 Matrix of the vector part of Quaternion Error for Further Calculations
-    q_v_error[0, 0] = q_x_error
-    q_v_error[1, 0] = q_y_error
-    q_v_error[2, 0] = q_z_error
+        # Initializing the 3*1 Matrix of the vector part of Quaternion Error for Further Calculations
+        q_v_error[0, 0] = q_x_error
+        q_v_error[1, 0] = q_y_error
+        q_v_error[2, 0] = q_z_error
 
-    # Desired Angular Velocity :
-    w_desired = (kq * sign_q_w_error * q_v_error)
+        # Desired Angular Velocity :
+        w_desired = (kq * sign_q_w_error * q_v_error)
+        print(w_desired)
 
+        """
 
-    # Intermediate Calculation Terms to find Moment_Desired :
+        # Intermediate Calculation Terms to find Moment_Desired :
 
-    # To Find Error in Angular Velocity which is a 3*1 Matrix
-    # To Calculate : ωerror = (ωdes - ω̂ ) 
-    #                ωerror = (w_current - w_current)
-    w_error = w_desired - w_current
+        # To Find Error in Angular Velocity which is a 3*1 Matrix
+        # To Calculate : ωerror = (ωdes - ω̂ ) 
+        #                ωerror = (w_current - w_current)
+        w_error = w_desired - w_current
 
-    # To Calculate 1st Term in Moment_Desired Equation : q_intermediate_1 = kr.(ωdes - ω̂ )
-    #                                                                     = kr.ωerror
-    q_intermediate_1 = (kr * w_error)
+        # To Calculate 1st Term in Moment_Desired Equation : q_intermediate_1 = kr.(ωdes - ω̂ )
+        #                                                                     = kr.ωerror
+        q_intermediate_1 = (kr * w_error)
 
-    # To Calculate 2nd Term in Moment_Desired Equation : q_intermediate_2 = roff × BFdes
-    # Cross Product
-    q_intermediate_2 = np.cross(r_offset, F_desired, axis=0)
+        # To Calculate 2nd Term in Moment_Desired Equation : q_intermediate_2 = roff × BFdes
+        # Cross Product
+        q_intermediate_2 = np.cross(r_offset, F_desired, axis=0)
 
-    # To Calculate intermediate for 3rd term in Moment_Desired Equation : q_intermediate_3_1 = J.ω̂ 
-    # Dot Product
-    q_intermediate_3_1 = np.matmul(Inertial_Matrix, w_current)
+        # To Calculate intermediate for 3rd term in Moment_Desired Equation : q_intermediate_3_1 = J.ω̂ 
+        # Dot Product
+        q_intermediate_3_1 = np.matmul(Inertial_Matrix, w_current)
 
-    # To Calculate 3rd Term in Moment_Desired Equation : q_intermediate_3_2 = ω̂  × (J.ω̂ )
-    #                                                                       = ω̂  × q_intermediate_3_1
-    # Cross Product
-    q_intermediate_3_2 = np.cross(w_current, q_intermediate_3_1, axis=0)
-    
-    # To Calculate Moment_Desired using 1st, 2nd and 3rd Term Mdes = kr.(ωdes - ω̂ ) - (roff × BFdes) + (ω̂  × (J.ω̂ ))
-    #                                                             = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
-    M_desired = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
-
+        # To Calculate 3rd Term in Moment_Desired Equation : q_intermediate_3_2 = ω̂  × (J.ω̂ )
+        #                                                                       = ω̂  × q_intermediate_3_1
+        # Cross Product
+        q_intermediate_3_2 = np.cross(w_current, q_intermediate_3_1, axis=0)
+        
+        # To Calculate Moment_Desired using 1st, 2nd and 3rd Term Mdes = kr.(ωdes - ω̂ ) - (roff × BFdes) + (ω̂  × (J.ω̂ ))
+        #                                                             = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
+        M_desired = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
+    """
     return M_desired
