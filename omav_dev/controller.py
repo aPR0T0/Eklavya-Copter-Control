@@ -10,7 +10,6 @@ from std_msgs.msg import Float64MultiArray,Float64 # Standard msg files for send
 from sensor_msgs.msg import Imu # Msg for Imu - msg file has variables defined which /omav/imu will contain
 from nav_msgs.msg import Odometry # Msg for Odometry - msg file has variables defined which /omav/odometry_sensor1/odometry will contain
 from mav_msgs.msg import Actuators # Msg for Actuators - msg file has variables defined which /omav/command/motor_speed will contain
-from rosgraph_msgs.msg import Clock # Msg for Clock - msg file has variables defined which /clock will contain
 
 #Call functions in other files
 from utilities import *
@@ -88,17 +87,17 @@ w_current = np.zeros((3, 1))
 # Proportional Gain of PID Controller of F_desired Calculation
 kp = 10
 # Derivative Gain of PID Controller of F_desired Calculation
-kd = 0
+kd = 0.5
 # Integral Gain of PID Controller of F_desired Calculation
 ki = 0
 # Tuning Parameter of M_desired Calculation
-kq = 0
+kq = 0.05
 # Rate Controller Gain of M_desired Calculation
-kr = 0
+kr = 0.05
 # Lift Force Coefficient
-Mu = 0.001
+Mu = 0.000064
 # Drag Torque Coefficient
-kappa = 0
+kappa = 0.00003
 
 #
 F_desired = np.zeros((3, 1))
@@ -154,6 +153,7 @@ def get_position_desired():
     global position_desired
 
     position_desired = call_position_desired()
+    #print(position_desired)
 
 def get_orientation_desired():
     """
@@ -165,13 +165,15 @@ def get_orientation_desired():
     global euler_desired, quaternion_desired
 
     euler_desired = call_orientation_desired()
+    #print(euler_desired)
     # Since we require orientation in Quaternion format, hence converting euler-to-quaternion
     quaternion_desired = euler_to_quaternion(euler_desired)
+    #print(quaternion_desired)
 
 
 
 # MASTER CALLING FUNCTION
-def master(imu_subscriber, odometry_subscriber, clock_subscriber):
+def master(imu_subscriber, odometry_subscriber):
     """
     Master Function which makes calls to all functions, to get, process and publish data
     """
@@ -182,17 +184,23 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     global kp, kd, ki, kq, kr, Mu, kappa
 
 
-    # SENSOR READINGS FUNCTION CALLS
-    current_time = get_time(clock_subscriber)
 
-    position_current = get_position_current(odometry_subscriber, position_current_error)
+    # SENSOR READINGS FUNCTION CALLS
+    current_time = get_time(odometry_subscriber)
+    #print(current_time)
+
+    position_current = get_position_current(odometry_subscriber)
+    #print(position_current)
 
     quaternion_current = get_orientation_current(imu_subscriber)
+    #print(quaternion_current)
 
     # Since for a few calculations we need Current Orientation in Euler Angles format
     euler_current = quaternion_to_euler(quaternion_current)
+    #print(euler_current)
 
     w_current = get_current_angular_velocity(imu_subscriber)
+    #print(w_current)
 
 
     # GAINS Subscribers
@@ -204,19 +212,24 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     rospy.Subscriber("Lift_Force_Coefficient", Float64, set_lift_force_coefficient)
     rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
 
-
+    
     # Force Desired Calculations Function Call
     F_desired = force_desired(position_desired, position_current, euler_current, current_time, sample_time, kp, kd, ki, mass, gravity, flag)
+    #print(F_desired)
 
     # Moment Desired Calculations Function Call
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
+    #print(M_desired)
 
     # F_dec Calculations Function Call
     F_dec = force_dec(F_desired, M_desired, Mu, kappa, arm_length, flag)
-
+    #print(F_dec)
+    
     # speed_publisher Calculations Function Call
     speed_publisher = Actuators()
     speed_publisher = get_speed_publisher(F_dec, Mu, flag)
+    print(speed_publisher)
+    
 
     flag+=1
 
@@ -236,10 +249,10 @@ def control():
 
     # Subscribers to get all relevant sensor readings - Multiple Sensors are used for redundancy
     imu_subscriber = message_filters.Subscriber("/omav/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
-    odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
-    clock_subscriber = message_filters.Subscriber("/clock", Clock) # For Time
+    odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Time, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
+    
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
-    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber, clock_subscriber], 10)
+    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
 
     # register multiple callbacks with this method, which will get called in the order they are registered
     ts.registerCallback(master)

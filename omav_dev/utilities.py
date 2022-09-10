@@ -4,7 +4,6 @@ import message_filters
 import math
 import numpy as np
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
-from rosgraph_msgs.msg import Clock
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Float64MultiArray,Float64
@@ -38,7 +37,8 @@ current_orientation_returned = np.zeros(4)
 # Current Angular Velocity Returned which is a 3*1 Matrix
 current_angular_velocity_returned = np.zeros((3, 1))
 
-
+#
+position_current_error = np.array([0, 0, 0.1749999999801301])
 
 # INPUT FROM USER - Functions
 def call_position_desired():
@@ -117,14 +117,14 @@ def get_time(msg):
     global secs, nsecs, time_returned
 
     # Since we get values from sensor in secs and nsecs format, and we require it as a single term
-    secs = msg.clock.secs
-    nsecs = (msg.clock.nsecs)
+    secs = msg.header.stamp.secs
+    nsecs = (msg.header.stamp.nsecs)
     time_returned = secs + (nsecs/1000000000)
 
     return(time_returned)
 
 
-def get_position_current(msg, position_current_error):
+def get_position_current(msg):
     """
     Get Current Position(Co-ordinates) of Drone from Sensor - Odometry
     Taken in X, Y and Altitude(Z) Format of Co-ordinates
@@ -132,7 +132,7 @@ def get_position_current(msg, position_current_error):
     Returned as a 3*1 Matrix since we require that format for Calculations
     """
     # To prevent Garbage Values being used or variables being initialized/reset as zero
-    global current_position_returned
+    global current_position_returned, position_current_error
 
     # Subtracting Intial Launch Error from Current Position
     current_position_returned[0, 0] = (msg.pose.pose.position.x - position_current_error[0])
