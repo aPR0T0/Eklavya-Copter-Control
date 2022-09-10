@@ -6,21 +6,17 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 g  = 9.81
 kq = 4 #> 4
-kr = 1 #> 4
+kr = 4 #> 4
 def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, err_x, err_y):
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])#for body to earth
-    # Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
+
+    Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
-    A = np.array([[0,Mu*0.5,0,Mu,0,0.5*Mu,0,-0.5*Mu,0,-Mu,0,-0.5*Mu],[0,-t1*Mu,0,0,0,Mu*t1,0,t1*Mu,0,0,0,-t1*Mu],[Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0]]) #3x12 matrix
-    
-    # A = np.array([[Mu*0.5,0,Mu,0,-Mu*0.5,0,-Mu*0.5,0,Mu,0,Mu*0.5,0],[-t1*Mu,0,0,0,-Mu*t1,0,-Mu*t1,0,0,0,-Mu*t1,0],[0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu],[kap*0.5,-Mu*len*0.5,-kap,-Mu*len,kap*0.5,-len*Mu*0.5,kap*0.5,-Mu*len*0.5,-kap,Mu*len*0.5,kap*0.5,-len*Mu*0.5],[-2*t1*kap,t1*len*Mu,0,0,t1*kap,t1*Mu*len,t1*kap,t1*Mu*len,0,0,-2*t1*kap,t1*Mu*len],[Mu*len,kap,Mu*len,-kap,len*Mu,kap,Mu*len,-kap,Mu*len,kap,Mu*len,kap]])
-    #<___possibility 2___>#
-    # A = np.array([[0,Mu,0,-Mu,0,-0.5*Mu,0,-0.5*Mu,0,0.5*Mu,0,0.5*Mu],[0,0,0,0,0,Mu*t1,0,-t1*Mu,0,t1*Mu,0,-t1*Mu],[kap+Mu,0,-kap-Mu,0,kap+Mu,0,-kap-Mu,0,-kap-Mu,0,kap+Mu,0],[-1,0,-1,0,t1,0,t1,0,t1,0,t1,0],[0,0,0,0,0.5,0,0.5,0,0.5,0,0.5,0],[0,1,0,1,0,1,0,1,0,1,0,1]]) #here, I equated w(i) = w(i+3) and α(i) = -α(i+3)
-    #<___possibility 3___>#
-    # A = np.array([[0,-Mu*0.5,0,Mu*1.5,0,0,0,0,0,0,0,0],[0,-Mu*t1,0,Mu*t1,0,Mu*t1*2,0,0,0,0,0,0],[-2*Mu,0,-2*Mu,0,-2*Mu,0,0,0,0,0,0,0],[-Mu*len*1.5,-kap*1.5,Mu*len*0.5,-kap*1.5,Mu*len,0,0,0,0,0,0,0],[-Mu*t1*0.5,0,Mu*t1*0.5,0,0,-kap,0,0,0,0,0,0],[1.5*Mu*len,-kap*1.5,Mu*len*1.5,kap*0.5,len*Mu,0,0,0,0,0,0,0]])
+    A = np.array([[0,Mu*0.5,0,Mu,0,Mu*0.5,0,-Mu*0.5,0,-Mu,0,-Mu*0.5],[0,-t1*Mu,0,0,0,Mu*t1,0,Mu*t1,0,0,0,-Mu*t1],[Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0],[Mu*len*0.5,kap*0.5,Mu*len,kap,len*Mu*0.5,kap*0.5,-Mu*len*0.5,-0.5*kap,-Mu*len,-kap,-len*Mu*0.5,-kap*0.5],[-t1*len*Mu,-t1*kap,0,0,t1*Mu*len,t1*kap,t1*Mu*len,t1*kap,0,0,-t1*Mu*len,-t1*kap],[kap,-Mu*len,kap,-Mu*len,kap,-len*Mu,kap,-Mu*len,kap,-Mu*len,kap,-Mu*len]]) #confirmed
+
     #Transpose of A
     A_trans = np.transpose(A)
 
