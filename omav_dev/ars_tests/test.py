@@ -1,9 +1,11 @@
 import numpy as np
 import math
 
-required_position_returned = np.zeros((3, 1))
+a1 = np.array([[2], [4], [6]])
 
-required_position_returned[0, 0] = 5
+a1+=a1
 
-print(required_position_returned)
-print(type(required_position_returned))
+a2 = a1
+
+print(a2)
+print(type(a2))

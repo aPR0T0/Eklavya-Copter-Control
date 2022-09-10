@@ -15,6 +15,7 @@ from rosgraph_msgs.msg import Clock # Msg for Clock - msg file has variables def
 #Call functions in other files
 from utilities import *
 from moment_desired import * 
+from force_desired import *
 
 
 
@@ -24,6 +25,8 @@ from moment_desired import *
 flag = 0
 # Current Time - which is a floating point number, its in seconds+nano-seconds format
 current_time = 0
+# Minimum Sample Size for Time
+sample_time = 0.005
 """
 Defining 3*3 Inertial Matrix - Defined in xacro file of model, omav.xacro
 Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible, due to which other values equated to 0)
@@ -99,7 +102,7 @@ Mu = 0
 kappa = 0
 
 #
-#F_desired = 
+F_desired = np.zeros((3, 1))
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
 
@@ -165,8 +168,8 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     Master Function which makes calls to all functions, to get, process and publish data
     """
     # To prevent Garbage Values being used or variables being initialized/reset as zero
-    global flag, current_time, position_current, quaternion_current, euler_current, position_current_error, w_current
-    global position_desired, quaternion_desired
+    global flag, current_time, sample_time, position_current, quaternion_current, euler_current, position_current_error, w_current
+    global position_desired, quaternion_desired, F_desired
     global M_desired, Inertial_Matrix, gravity, mass, arm_length, r_offset
     global kp, kd, ki, kq, kr, Mu, kappa
 
@@ -195,7 +198,7 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
 
 
     # Force Desired Calculations Function Call
-
+    F_desired = force_desired(position_desired, position_current, euler_current, current_time, sample_time, kp, kd, ki, mass, gravity, flag)
 
     # Moment Desired Calculations Function Call
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
