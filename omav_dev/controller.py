@@ -86,7 +86,7 @@ quaternion_current = np.zeros(4)
 # Current Angular Velocity Matrix of Drone, which is a 3*1 Matrix
 w_current = np.zeros((3, 1))
 # Proportional Gain of PID Controller of F_desired Calculation
-kp = 0
+kp = 10
 # Derivative Gain of PID Controller of F_desired Calculation
 kd = 0
 # Integral Gain of PID Controller of F_desired Calculation
@@ -96,7 +96,7 @@ kq = 0
 # Rate Controller Gain of M_desired Calculation
 kr = 0
 # Lift Force Coefficient
-Mu = 0
+Mu = 0.001
 # Drag Torque Coefficient
 kappa = 0
 
