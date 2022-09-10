@@ -46,7 +46,7 @@ kap = 0.0003 #> constant for the matrix
 Mu = 0.0003  #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
-xz = 1
+xz = 0.5
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
@@ -318,7 +318,7 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
         x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
         x2 = pow(sqrt(relation_matrix[2*i]).real,2)
         # print(x1) Uses this to get the real value from the matrix
-        tilt_ang[i] = atan2(x1,x2) # atan2(sin/cos)
+        tilt_ang[i] = atan2(x2,x1) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = tuple(xz*ang_vel)
