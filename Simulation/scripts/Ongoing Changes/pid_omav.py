@@ -43,7 +43,7 @@ ki_vel_y = 0.0
 kd_vel_y = 0.0071
 g = 9.81 # gravitational acceleration
 kap = 0.0003 #> constant for the matrix
-Mu = 0.0003  #> constant for the matrix
+Mu = 0.000064  #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
 xz = 0.5
@@ -294,7 +294,7 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
     
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I)
 
-    Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0]],[M_des[1][0]],[M_des[2][0]]]) #6x1 matrix from Fdes and Mdes
+    Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[0],[0],[0]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
 
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
@@ -318,7 +318,7 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
         x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
         x2 = pow(sqrt(relation_matrix[2*i]).real,2)
         # print(x1) Uses this to get the real value from the matrix
-        tilt_ang[i] = atan2(x2,x1) # atan2(sin/cos)
+        tilt_ang[i] = atan2(x1,x2) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = tuple(xz*ang_vel)
