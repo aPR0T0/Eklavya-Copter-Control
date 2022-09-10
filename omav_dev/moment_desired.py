@@ -1,4 +1,5 @@
 import numpy as np
+from std_msgs.msg import Float64MultiArray,Float64
 
 
 def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired):
@@ -41,7 +42,7 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
     global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1, q_intermediate_3_2, M_desired
 
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
-    if(flag==0):
+    if(flag == 0):
         # Quaternion Desired
         q_w_desired = 0
         q_x_desired = 0
