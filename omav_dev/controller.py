@@ -62,12 +62,9 @@ position_desired = np.zeros((3, 1))
 # Position (Co-ordinates) Current Matrix, which is a 3*1 Matrix
 position_current = np.zeros((3, 1))
 """
-Offset of Sensor from Origin at launch, this is due to sensor placed at the COM(Centre-of-Mass) which is slightly higher than the ground, 
-since the drone rests on its legs and the main-frame is slightly higher than the ground, for clearance from ground for rotors, so they don't touch ground.
+Offset of Sensor from Origin at launch, this is due to sensor placed at the COM(Centre-of-Mass) which is slightly higher than the ground, since the drone rests on its legs and the main-frame is slightly higher than the ground, for clearance from ground for rotors, so they don't touch ground.
 This offset is for the sensor being at COM - is mostly in the z-axis(in height/altitude format) as it subtracted from readings.
-This subtraction is done, so when the drone lands it's desired altitude will be 0, but due to this error, 
-it will not land softly on the ground, but crash or have a rough landing, hence it is required to subtract this error.
-
+This subtraction is done, so when the drone lands it's desired altitude will be 0, but due to this error, it will not land softly on the ground, but crash or have a rough landing, hence it is required to subtract this error.
 Many Times sensors might not be placed at COM of Drone, for which the error, will cause the drone to reach wrong co-ordinate, 
 and land at wrong co-ordinate, hence we require to subtract this array
 
