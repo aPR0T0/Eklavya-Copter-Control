@@ -16,6 +16,8 @@ from rosgraph_msgs.msg import Clock # Msg for Clock - msg file has variables def
 from utilities import *
 from moment_desired import * 
 from force_desired import *
+from force_dec import *
+from speed_publisher import *
 
 
 
@@ -102,6 +104,15 @@ kappa = 0
 F_desired = np.zeros((3, 1))
 # 3*1 Matrix of Moment_Desired
 M_desired = np.zeros((3, 1))
+#
+F_dec = np.zeros((12, 1))
+
+
+
+
+# Creating Publisher to publish rotor_speeds and tilt-rotor angles
+speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=1000)
+
 
 
 # GAINS FUNCTIONS
@@ -166,7 +177,7 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     """
     # To prevent Garbage Values being used or variables being initialized/reset as zero
     global flag, current_time, sample_time, position_current, quaternion_current, euler_current, position_current_error, w_current
-    global position_desired, quaternion_desired, F_desired
+    global position_desired, quaternion_desired, F_desired, F_dec
     global M_desired, Inertial_Matrix, gravity, mass, arm_length, r_offset
     global kp, kd, ki, kq, kr, Mu, kappa
 
@@ -201,11 +212,15 @@ def master(imu_subscriber, odometry_subscriber, clock_subscriber):
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
 
     # F_dec Calculations Function Call
-
+    F_dec = force_dec(F_desired, M_desired, Mu, kappa, arm_length, flag)
 
     # speed_publisher Calculations Function Call
+    speed_publisher = Actuators()
+    speed_publisher = get_speed_publisher(F_dec, Mu, flag)
 
     flag+=1
+
+    speed_pub.publish(speed_publisher)
 
 
 
