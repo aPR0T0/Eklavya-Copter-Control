@@ -59,10 +59,10 @@ roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired ori
 # map() : Basically provides the value recieved in it to the variables on the left with the given data type()
 
 def setPID_alt(msg):
-    global kp,ki,kd
-    kp = msg.data[0]
-    ki =  msg.data[1]
-    kd = msg.data[2]
+    global kp_thrust,ki_thrust,kd_thrust
+    kp_thrust = msg.data[0]
+    ki_thrust =  msg.data[1]
+    kd_thrust = msg.data[2]
 
 
 # Gets roll PID published to node
@@ -135,7 +135,14 @@ def alt_control(imu,odo):
 
     calVel(odo)
     #Making tuples for the velcities and target
+    k_alt = (kp_thrust,ki_thrust,kd_thrust)
+    k_roll = (kp_roll,ki_roll,kd_roll)
+    k_pitch = (kp_pitch,ki_pitch,kd_pitch)
+    k_yaw = (kp_yaw,ki_yaw,kd_yaw)
+    k_x = (kp_x,ki_x,kd_x)
+    k_y = (kp_y,ki_y,kd_y)
     velocity = (vel_x, vel_y, vel_z)
+    k_vel = (kp_vel_x,ki_vel_x,kd_vel_x,kp_vel_y,ki_vel_y,kd_vel_y)
     target = (target_x,target_y,req_alt)
 
     rospy.Subscriber("alt_pid", Float64MultiArray, setPID_alt) 
@@ -156,7 +163,7 @@ def alt_control(imu,odo):
 
     speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired, k_alt, k_roll,k_pitch,k_yaw,k_x,k_y,k_vel)
     flag += 1
     speed_pub.publish(speed)
 

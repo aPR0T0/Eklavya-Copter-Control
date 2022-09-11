@@ -15,8 +15,8 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
-    A = np.array([[0,Mu*0.5,0,Mu,0,Mu*0.5,0,-Mu*0.5,0,-Mu,0,-Mu*0.5],[0,-t1*Mu,0,0,0,Mu*t1,0,Mu*t1,0,0,0,-Mu*t1],[Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0],[Mu*len*0.5,kap*0.5,Mu*len,kap,len*Mu*0.5,kap*0.5,-Mu*len*0.5,-0.5*kap,-Mu*len,-kap,-len*Mu*0.5,-kap*0.5],[-t1*len*Mu,-t1*kap,0,0,t1*Mu*len,t1*kap,t1*Mu*len,t1*kap,0,0,-t1*Mu*len,-t1*kap],[kap,-Mu*len,kap,-Mu*len,kap,-len*Mu,kap,-Mu*len,kap,-Mu*len,kap,-Mu*len]]) #confirmed
-
+    # A = np.array([[0,Mu*0.5,0,Mu,0,Mu*0.5,0,-Mu*0.5,0,-Mu,0,-Mu*0.5],[0,-t1*Mu,0,0,0,Mu*t1,0,Mu*t1,0,0,0,-Mu*t1],[Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0],[Mu*len*0.5,kap*0.5,Mu*len,kap,len*Mu*0.5,kap*0.5,-Mu*len*0.5,-0.5*kap,-Mu*len,-kap,-len*Mu*0.5,-kap*0.5],[-t1*len*Mu,-t1*kap,0,0,t1*Mu*len,t1*kap,t1*Mu*len,t1*kap,0,0,-t1*Mu*len,-t1*kap],[kap,-Mu*len,kap,-Mu*len,kap,-len*Mu,kap,-Mu*len,kap,-Mu*len,kap,-Mu*len]]) #confirmed
+    A = np.array([[0,Mu,0,2*Mu,0,Mu],[0,-2*t1*Mu,0,0,0,2*t1*Mu],[2*Mu,0,2*Mu,0,2*Mu,0]])
     #Transpose of A
     A_trans = np.transpose(A)
 
@@ -34,6 +34,7 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddiff_pose_mat) #this is from earths frame so we need it in the body frame
     # F_desired calculation
     F_des = np.matmul( Rot_Matrix , res_matrix)
+    print(F_des)
     # print(A_pseudo_inv)
     return F_des, A_pseudo_inv
     # So, now we have 3x1 force vector
