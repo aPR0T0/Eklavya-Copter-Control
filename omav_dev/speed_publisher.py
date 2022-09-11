@@ -33,6 +33,11 @@ def get_speed_publisher(F_dec, Mu, flag):
     N_Intermediate[4] = (math.sqrt((1/Mu) * (math.sqrt(F_dec_square[8, 0] + F_dec_square[9, 0]))))
     N_Intermediate[5] = (math.sqrt((1/Mu) * (math.sqrt(F_dec_square[10, 0] + F_dec_square[11, 0]))))
 
+    #print("N_intermediate")
+    #print(N_Intermediate)
+
+    N_Intermediate = (67*N_Intermediate)
+
     if(N_Intermediate[0] > 3000): N_Intermediate[0] = 3000
     if(N_Intermediate[0] < 20): N_Intermediate[0] = 20
     if(N_Intermediate[1] > 3000): N_Intermediate[1] = 3000

@@ -131,7 +131,7 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
 
         # Desired Angular Velocity :
         w_desired = (kq * sign_q_w_error * q_v_error)
-        print(w_desired)
+        #print(w_desired)
 
         """
 

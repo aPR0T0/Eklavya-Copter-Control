@@ -95,7 +95,7 @@ kq = 0.05
 # Rate Controller Gain of M_desired Calculation
 kr = 0.05
 # Lift Force Coefficient
-Mu = 0.0003
+Mu = 0.000003
 # Drag Torque Coefficient
 kappa = 0.0003
 
