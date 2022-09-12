@@ -38,7 +38,15 @@ current_orientation_returned = np.zeros(4)
 current_angular_velocity_returned = np.zeros((3, 1))
 
 #
-position_current_error = np.array([0, 0, 0.1749999999801301])
+position_current_error = np.zeros(3)
+def set_position_current_error(set_position_current_error):
+    """
+    Sets's position_current_error to be used by get_position_current
+    """
+    #
+    global position_current_error
+    position_current_error = set_position_current_error
+
 
 # INPUT FROM USER - Functions
 def call_position_desired():
@@ -49,10 +57,13 @@ def call_position_desired():
     """
     # To prevent Garbage Values being used or variables being initialized/reset as zero
     global desired_position_returned
-    
+
     # Taking Input from User
     desired_position_returned[0, 0], desired_position_returned[1, 0], desired_position_returned[2, 0] = map(float, input("Enter Desired X Y (Position) and Altitude Co-ordinates : ").split())
-    
+
+    #print("Position_Desired printed from utilities.py :", desired_position_returned)
+    #print(type(desired_position_returned))
+
     return(desired_position_returned)
 
 
@@ -67,6 +78,8 @@ def call_orientation_desired():
     # Taking Input from User
     desired_orientation_returned[0], desired_orientation_returned[1], desired_orientation_returned[2] = map(float, input("Enter Desired Orientation Roll, Pitch and Yaw - Euler Angles in Degrees : ").split())
 
+    #print("Orientation_Desired in Euler_Angles(degrees) printed from utilities.py :", desired_orientation_returned)
+    #print(type(desired_orientation_returned))
     return(desired_orientation_returned)
 
 
@@ -84,8 +97,14 @@ def euler_to_quaternion(euler_supplied):
     roll_conversion = euler_supplied[0] * (math.pi/180)
     pitch_conversion = euler_supplied[1] * (math.pi/180)
     yaw_conversion = euler_supplied[2] * (math.pi/180)
+    
+    #print("Orientation in Euler_Angles(radians) printed from utilities.py :", roll_conversion, pitch_conversion, yaw_conversion)
+    #print(type(roll_conversion), type(pitch_conversion), type(yaw_conversion))
 
     quaternion_returned = quaternion_from_euler(roll_conversion, pitch_conversion, yaw_conversion)
+
+    #print("Orientation in Quaternion printed from utilities.py :", quaternion_returned)
+    #print(type(quaternion_returned))
 
     return(quaternion_returned)
 

@@ -33,11 +33,6 @@ def get_speed_publisher(F_dec, Mu, flag):
     N_Intermediate[4] = (math.sqrt((1/Mu) * (math.sqrt(F_dec_square[8, 0] + F_dec_square[9, 0]))))
     N_Intermediate[5] = (math.sqrt((1/Mu) * (math.sqrt(F_dec_square[10, 0] + F_dec_square[11, 0]))))
 
-    #print("N_intermediate")
-    #print(N_Intermediate)
-
-    N_Intermediate = (67*N_Intermediate)
-
     if(N_Intermediate[0] > 3000): N_Intermediate[0] = 3000
     if(N_Intermediate[0] < 20): N_Intermediate[0] = 20
     if(N_Intermediate[1] > 3000): N_Intermediate[1] = 3000
@@ -64,7 +59,7 @@ def get_speed_publisher(F_dec, Mu, flag):
     N_Combined[10] = ((N_Intermediate[5])/2)
     N_Combined[11] = ((N_Intermediate[5])/2)
 
-
+    
     # Angles of Tilt_Rotors
     N_Combined[12] = (math.atan2(F_dec[1, 0], F_dec[0, 0]))
     N_Combined[13] = (math.atan2(F_dec[3, 0], F_dec[2, 0]))

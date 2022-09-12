@@ -91,11 +91,11 @@ kd = 0
 # Integral Gain of PID Controller of F_desired Calculation
 ki = 0
 # Tuning Parameter of M_desired Calculation
-kq = 0.05
+kq = 0
 # Rate Controller Gain of M_desired Calculation
-kr = 0.05
+kr = 0
 # Lift Force Coefficient
-Mu = 0.000003
+Mu = 0.0003
 # Drag Torque Coefficient
 kappa = 0.0003
 
@@ -110,7 +110,7 @@ F_dec = np.zeros((12, 1))
 
 
 # Creating Publisher to publish rotor_speeds and tilt-rotor angles
-speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=1000)
+speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=10)
 
 
 
@@ -144,7 +144,7 @@ def set_drag_torque_coefficient(msg):
     kappa = msg.data
 
 
-
+# Get_User_Input Functions, called only once by main
 def get_position_desired():
     """
     Calls Function, call_position_desired() from utilities.py which takes Desired Position - in Co-ordinates Format
@@ -153,7 +153,10 @@ def get_position_desired():
     global position_desired
 
     position_desired = call_position_desired()
-    #print(position_desired)
+    
+    #print("Position_Desired printed from controller.py :\n", position_desired)
+    #print(type(position_desired))
+
 
 def get_orientation_desired():
     """
@@ -165,10 +168,13 @@ def get_orientation_desired():
     global euler_desired, quaternion_desired
 
     euler_desired = call_orientation_desired()
-    #print(euler_desired)
+    #print("Orientation_Desired in Euler_Angles(degrees) printed from controller.py :", euler_desired)
+    #print(type(euler_desired))
+
     # Since we require orientation in Quaternion format, hence converting euler-to-quaternion
     quaternion_desired = euler_to_quaternion(euler_desired)
-    #print(quaternion_desired)
+    #print("Orientation_Desired in Quaternion printed from controller.py :", quaternion_desired)
+    #print(type(quaternion_desired))
 
 
 
@@ -189,8 +195,9 @@ def master(imu_subscriber, odometry_subscriber):
     current_time = get_time(odometry_subscriber)
     #print(current_time)
 
+    set_position_current_error(position_current_error)
     position_current = get_position_current(odometry_subscriber)
-    #print(position_current)
+    print(position_current)
 
     quaternion_current = get_orientation_current(imu_subscriber)
     #print(quaternion_current)
@@ -232,6 +239,8 @@ def master(imu_subscriber, odometry_subscriber):
     
 
     flag+=1
+    #print("Flag printed from controller.py :", flag)
+    #print(type(flag))
 
     speed_pub.publish(speed_publisher)
 
@@ -252,7 +261,7 @@ def control():
     odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Time, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
     
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
-    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
+    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 2)
 
     # register multiple callbacks with this method, which will get called in the order they are registered
     ts.registerCallback(master)
