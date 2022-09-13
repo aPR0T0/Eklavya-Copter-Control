@@ -19,8 +19,8 @@ def force_dec(F_desired, M_desired, Mu, kap, len, flag):
         A_pseudo_inverse = np.zeros((12, 6))
         desired = np.zeros((6, 1))
 
-    # Astatic - Chinese Paper - omitting arm_length in (1*5)term
-    A_static = np.array([[0,0.5,0,1,0,0.5,0,-0.5,0,-1,0,-0.5],[0,t1,0,0,0,-t1,0,-t1,0,0,0,t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[len*0.5,kap*0.5*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len,-kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu)],[t1*len,t1*kap*(1/Mu),0,0,-t1*len,-t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),0,0,t1*len,-t1*kap*(1/Mu)],[len*0.5,-0.5*kap*(1/Mu),len,kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu)]])
+    # Astatic 
+    A_static = np.array([[0,0.5*Mu,0,1*Mu,0,0.5*Mu,0,-0.5*Mu,0,-1*Mu,0,-0.5*Mu],[0,t1*Mu,0,0,0,-t1*Mu,0,-t1*Mu,0,0,0,t1*Mu],[-Mu,0,-Mu,0,-Mu,0,-Mu,0,-Mu,0,-Mu,0],[len*0.5*Mu,kap*0.5,len*Mu,-kap,len*0.5*Mu,kap*0.5,-len*0.5*Mu,0.5*kap,-len*Mu,-kap,-len*0.5*Mu,kap*0.5],[t1*len*Mu,t1*kap,0,0,-t1*len*Mu,-t1*kap,-t1*len*Mu,t1*kap,0,0,t1*len*Mu,-t1*kap],[len*0.5*Mu,-0.5*kap,len*Mu,kap,0.5*len*Mu,-0.5*kap,0.5*len*Mu,0.5*kap,len*Mu,-kap,0.5*len*Mu,0.5*kap]])
     if (flag != 0):
         # To Get Pseudo-Inverse of Astaic
         A_transpose = np.transpose(A_static)

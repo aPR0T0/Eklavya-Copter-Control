@@ -5,34 +5,34 @@ from std_msgs.msg import Float64MultiArray,Float64
 def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired):
     """
     Quaternion Error Equations : 
-        qerr = qdes,IB ⊗ q̂IB = | qw,err |
-                               | qv,err | , which is a 4*1 Matrix
-        where, ⊗ = Kronecker product
-               qerr = Quaternion Error, which is a 4*1 Matrix
-               qdes,IB = Desired Quaternion Orientation of the Body Frame to Intertial Frame, which is a 4*1 Matrix
-               q̂IB = Current Quaternion Orientation of the Body Frame to Intertial Frame, which is a 4*1 Matrix
-               qw,err = real part of Quaternion Error
-               qv,err = vector part of Quaternion Error, which is a 3*1 Matrix
+        qerr =  qdes,IB ⊗ q̂IB = | qw,err |
+                                | qv,err | , which is a 4*1 Matrix
+        where,  ⊗ = Kronecker product
+                qerr = Quaternion Error, which is a 4*1 Matrix
+                qdes,IB = Desired Quaternion Orientation of the Body Frame to Intertial Frame, which is a 4*1 Matrix
+                q̂IB = Current Quaternion Orientation of the Body Frame to Intertial Frame, which is a 4*1 Matrix
+                qw,err = real part of Quaternion Error
+                qv,err = vector part of Quaternion Error, which is a 3*1 Matrix
 
     The desired body rate ωdes (desired angular velocity) is generated from the vector part of the quaternion error qv,err as :
         ωdes = kq.sign(qw,err).qv,err
-        where, . = means scalar multiplication of a vector
-               ωdes = desired body rate (desired angular velocity), which is a 3*1 Matrix
-               kq = tuning parameter, which is a scalar
-               sign(qw,err) = the sign of the real part of the quaternion error is used to avoid the unwinding phenomena, which is a scalar
-               qv,err = vector part of Quaternion Error, which is a 3*1 Matrix
+        where,  . = means scalar multiplication of a vector
+                ωdes = desired body rate (desired angular velocity), which is a 3*1 Matrix
+                kq = tuning parameter, which is a scalar
+                sign(qw,err) = the sign of the real part of the quaternion error is used to avoid the unwinding phenomena, which is a scalar
+                qv,err = vector part of Quaternion Error, which is a 3*1 Matrix
 
     The desired moments Mdes are computed as follows :
         Mdes = kr.(ωdes - ω̂ ) - (roff × BFdes) + (ω̂  × (J.ω̂ ))
-        where, . = means scalar multiplication of a vector or dot product of 2 matrices
-               × = means cross product of 2 matrices
-               Mdes is Desired Moments, which is a 3*1 Matrix
-               kr = rate controller gain, which is a scalar
-               ωdes = desired body rate (desired angular velocity), which is a 3*1 Matrix
-               ω̂  = current angular velocity, which is a 3*1 Matrix
-               roff = center of mass offset
-               BFdes= Force Desired in x, y and z directions respectively, which is a 3*1 Matrix
-               J = Inertial Matrix, which is a 3*3 Matrix
+        where,  . = means scalar multiplication of a vector or dot product of 2 matrices
+                × = means cross product of 2 matrices
+                Mdes is Desired Moments, which is a 3*1 Matrix
+                kr = rate controller gain, which is a scalar
+                ωdes = desired body rate (desired angular velocity), which is a 3*1 Matrix
+                ω̂  = current angular velocity, which is a 3*1 Matrix
+                roff = center of mass offset
+                BFdes= Force Desired in x, y and z directions respectively, which is a 3*1 Matrix
+                J = Inertial Matrix, which is a 3*3 Matrix
     """
     #For Initial Start to prevent Garbage Values being used or Local Variable referenced before assignment error
 

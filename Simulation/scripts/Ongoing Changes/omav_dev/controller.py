@@ -31,17 +31,17 @@ sample_time = 0.005
 """
 Defining 3*3 Inertial Matrix - Defined in xacro file of model, omav.xacro
 Current we are only considering Ixx, Iyy & Izz as symmetric model(assumption and other values are negligible, due to which other values equated to 0)
-Inertial_Matrix = | Ixx  Ixy  Ixz |
-                  | Iyx  Iyy  Iyz |
-                  | Izx  Izy  Izz |
+Inertial_Matrix  =  | Ixx  Ixy  Ixz |
+                    | Iyx  Iyy  Iyz |
+                    | Izx  Izy  Izz |
 """
 Inertial_Matrix = np.array([[0.0075, 0, 0], [0, 0.010939, 0], [0, 0, 0.01369]])
 """
 Gravity Matrix, which is a 3*1 Matrix - Defined in xacro file of model, omav.xacro
 Since, on Earth Gravity only in z-direction, hence rest values are 0
-gravity = | g_x |
-          | g_y |
-          | g_z |
+gravity  =  | g_x |
+            | g_y |
+            | g_z |
 """
 gravity = np.array([[0], [0], [-9.81]])
 """
@@ -106,7 +106,7 @@ M_desired = np.zeros((3, 1))
 #
 F_dec = np.zeros((12, 1))
 
-
+flag = 0
 
 
 # Creating Publisher to publish rotor_speeds and tilt-rotor angles
@@ -182,7 +182,7 @@ def master(imu_subscriber, odometry_subscriber):
     global position_desired, quaternion_desired, F_desired, F_dec
     global M_desired, Inertial_Matrix, gravity, mass, arm_length, r_offset
     global kp, kd, ki, kq, kr, Mu, kappa
-
+    flag = 0
 
 
     # SENSOR READINGS FUNCTION CALLS
@@ -252,7 +252,7 @@ def control():
     odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Time, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
     
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
-    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
+    ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 2)
 
     # register multiple callbacks with this method, which will get called in the order they are registered
     ts.registerCallback(master)
