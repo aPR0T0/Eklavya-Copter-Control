@@ -5,6 +5,9 @@ import math
 import message_filters
 from std_msgs.msg import Float64MultiArray,Float64
 from mav_msgs.msg import Actuators
+# Debugging to check whether .append is updating new values or not
+#r1 = 0
+#r2 = 0
 
 def get_speed_publisher(F_dec, Mu, flag):
     """
@@ -14,17 +17,25 @@ def get_speed_publisher(F_dec, Mu, flag):
     speed = Actuators()
 
     # 
-    global F_dec_square, N_Intermediate, N_Combined
+    global F_dec_square, N_Intermediate, N_Combined 
+    #global r1, r2
 
     #
     if(flag == 0):
         F_dec_square = np.zeros((12, 1))
         N_Intermediate = np.zeros(6)
         N_Combined = np.zeros(18)
+        
+
+    
+    #r1 = r2*0.01
+
+    #N_Combined = np.array([100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 100*r1, 0, 0, 0, 0, 0, 0])
 
     #
+    
     F_dec_square = np.square(F_dec)
-
+    
     # Combined Angular Velocity at a Rotor_Point
     N_Intermediate[0] = (math.sqrt((1/Mu) * (math.sqrt(F_dec_square[0, 0] + F_dec_square[1, 0]))))
     N_Intermediate[1] = (math.sqrt((1/Mu) * (math.sqrt(F_dec_square[2, 0] + F_dec_square[3, 0]))))
@@ -67,7 +78,7 @@ def get_speed_publisher(F_dec, Mu, flag):
     N_Combined[15] = (math.atan2(F_dec[7, 0], F_dec[6, 0]))
     N_Combined[16] = (math.atan2(F_dec[9, 0], F_dec[8, 0]))
     N_Combined[17] = (math.atan2(F_dec[11, 0], F_dec[10, 0]))
-
+    
 
     # Giving Angular Velocity and Tilt Angle to Respective Rotor
     speed.angular_velocities.append(N_Combined[4])
@@ -88,6 +99,7 @@ def get_speed_publisher(F_dec, Mu, flag):
     speed.angular_velocities.append(N_Combined[13])
     speed.angular_velocities.append(N_Combined[15])
     speed.angular_velocities.append(N_Combined[12])
-
-
+    
+    #r2+=1
+    print(speed)
     return(speed)

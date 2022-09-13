@@ -39,6 +39,9 @@ current_angular_velocity_returned = np.zeros((3, 1))
 
 #
 position_current_error = np.zeros(3)
+
+
+
 def set_position_current_error(set_position_current_error):
     """
     Sets's position_current_error to be used by get_position_current
@@ -46,6 +49,8 @@ def set_position_current_error(set_position_current_error):
     #
     global position_current_error
     position_current_error = set_position_current_error
+    #print("Position Current Error printed from utilities.py :", position_current_error)
+    #print(type(position_current_error))
 
 
 # INPUT FROM USER - Functions
@@ -80,6 +85,7 @@ def call_orientation_desired():
 
     #print("Orientation_Desired in Euler_Angles(degrees) printed from utilities.py :", desired_orientation_returned)
     #print(type(desired_orientation_returned))
+
     return(desired_orientation_returned)
 
 
@@ -121,6 +127,10 @@ def quaternion_to_euler(quaternion_supplied):
 
     euler_returned = np.array(euler_returned)
     # Since for calculations we require angles in radians, hence we retain them in radians, rather than converting them to degrees
+    
+    #print("Orientation in Euler Angles(radians) printed from utilities.py :", euler_returned)
+    #print(type(euler_from_quaternion))
+
     return(euler_returned)
 
 
@@ -140,6 +150,11 @@ def get_time(msg):
     nsecs = (msg.header.stamp.nsecs)
     time_returned = secs + (nsecs/1000000000)
 
+    #print("Time in secs & nsecs printed in utilities.py :", secs, nsecs)
+    #print(type(secs), type(nsecs))
+    #print("Current Time printed from utilites.py :", time_returned)
+    #print(type(time_returned))
+
     return(time_returned)
 
 
@@ -158,6 +173,9 @@ def get_position_current(msg):
     current_position_returned[1, 0] = (msg.pose.pose.position.y - position_current_error[1])
     current_position_returned[2, 0] = (msg.pose.pose.position.z - position_current_error[2])
 
+    #print("Current Position printed from utilities.py : \n", current_position_returned)
+    #print(type(current_position_returned))
+
     return(current_position_returned)
 
 
@@ -174,6 +192,9 @@ def get_orientation_current(msg):
     current_orientation_returned[2] = msg.orientation.z
     current_orientation_returned[3] = msg.orientation.w
 
+    #print("Current Quaternion Orientation printed from utilities.py :", current_orientation_returned)
+    #print(type(current_orientation_returned))
+
     return(current_orientation_returned)
 
 
@@ -189,5 +210,8 @@ def get_current_angular_velocity(msg):
     current_angular_velocity_returned[0, 0] = msg.angular_velocity.x
     current_angular_velocity_returned[1, 0] = msg.angular_velocity.y
     current_angular_velocity_returned[2, 0] = msg.angular_velocity.z
+
+    #print("Current Angular Velocity printed from utilities.py : \n", current_angular_velocity_returned)
+    #print(type(current_angular_velocity_returned))
 
     return(current_angular_velocity_returned)
