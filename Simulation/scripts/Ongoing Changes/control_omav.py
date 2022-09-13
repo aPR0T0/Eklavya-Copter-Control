@@ -26,24 +26,24 @@ z  = 0
 
 # Flag for checking for the first time the script is run
 flag = 0
-kp_thrust = 20
-ki_thrust = 0.001
-kd_thrust = 35
-kp_roll = 2
-ki_roll = 0.001
-kd_roll = 0.5
-kp_pitch = 2
-ki_pitch = 0.001
-kd_pitch = 0.5
-kp_yaw = 2
-ki_yaw = 0.001
-kd_yaw = 0.5
-kp_x = 0.13
-ki_x = 0.01
-kd_x =  0.003 #0.00015
-kp_y = 0.13
-ki_y = 0
-kd_y = 0.00015
+# kp_thrust = 20
+# ki_thrust = 0.001
+# kd_thrust = 35
+# kp_roll = 2
+# ki_roll = 0.001
+# kd_roll = 0.5
+# kp_pitch = 2
+# ki_pitch = 0.001
+# kd_pitch = 0.5
+# kp_yaw = 2
+# ki_yaw = 0.001
+# kd_yaw = 0.5
+# kp_x = 0.13
+# ki_x = 0.01
+# kd_x =  0.003 #0.00015
+# kp_y = 0.13
+# ki_y = 0
+# kd_y = 0.00015
 kap = 0.0005 #> constant for the matrix
 Mu = 0.0005  #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
@@ -58,49 +58,12 @@ roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired ori
 # split() : Return a list of the words in the string, using sep as the delimiter string
 # map() : Basically provides the value recieved in it to the variables on the left with the given data type()
 
-def setPID_alt(msg):
-    global kp_thrust,ki_thrust,kd_thrust
-    kp_thrust = msg.data[0]
-    ki_thrust =  msg.data[1]
-    kd_thrust = msg.data[2]
-
-
-# Gets roll PID published to node
-def setPID_roll(msg):
-    global kp_roll,ki_roll,kd_roll
-    kp_roll = msg.data[0]
-    ki_roll =  msg.data[1]
-    kd_roll = msg.data[2]
-
-
-# Gets pitch PID published to node
-def setPID_pitch(msg):
-    global kp_pitch,ki_pitch,kd_pitch
-    kp_pitch = msg.data[0]
-    ki_pitch =  msg.data[1]
-    kd_pitch = msg.data[2]
-
-
 # Gets yaw PID published to node
-def setPID_yaw(msg):
-    global kp_yaw,ki_yaw,kd_yaw
-    kp_yaw = msg.data[0]
-    ki_yaw =  msg.data[1]
-    kd_yaw = msg.data[2]
-
-# Gets x PID published to node
-def setPID_x(msg):
-    global kp_x,ki_x,kd_x
-    kp_x = msg.data[0]
-    ki_x = msg.data[1]
-    kd_x = msg.data[2]
-
-# Gets y PID published to node   
-def setPID_y(msg):
-    global kp_y,ki_y,kd_y
-    kp_y = msg.data[0]
-    ki_y = msg.data[1]
-    kd_y = msg.data[2]
+def setPID_pose(msg):
+    global kp,ki,kd
+    kp = msg.data[0]
+    ki =  msg.data[1]
+    kd = msg.data[2]
 
 def calPos(msg):
     global x,y,altitude
@@ -135,22 +98,10 @@ def alt_control(imu,odo):
 
     calVel(odo)
     #Making tuples for the velcities and target
-    k_alt = (kp_thrust,ki_thrust,kd_thrust)
-    k_roll = (kp_roll,ki_roll,kd_roll)
-    k_pitch = (kp_pitch,ki_pitch,kd_pitch)
-    k_yaw = (kp_yaw,ki_yaw,kd_yaw)
-    k_x = (kp_x,ki_x,kd_x)
-    k_y = (kp_y,ki_y,kd_y)
-    velocity = (vel_x, vel_y, vel_z)
-    k_vel = (kp_vel_x,ki_vel_x,kd_vel_x,kp_vel_y,ki_vel_y,kd_vel_y)
+    k_pose = (kp,ki,kd)
     target = (target_x,target_y,req_alt)
 
-    rospy.Subscriber("alt_pid", Float64MultiArray, setPID_alt) 
-    rospy.Subscriber("roll_pid", Float64MultiArray, setPID_roll) 
-    rospy.Subscriber("pitch_pid", Float64MultiArray, setPID_pitch) 
-    rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw) 
-    rospy.Subscriber("x_pid", Float64MultiArray, setPID_x) 
-    rospy.Subscriber("y_pid", Float64MultiArray, setPID_y) 
+    rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
@@ -163,7 +114,7 @@ def alt_control(imu,odo):
 
     speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired, k_alt, k_roll,k_pitch,k_yaw,k_x,k_y,k_vel)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose)
     flag += 1
     speed_pub.publish(speed)
 

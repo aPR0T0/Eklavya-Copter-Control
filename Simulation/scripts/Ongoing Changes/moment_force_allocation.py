@@ -7,7 +7,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 g  = 9.81
 kq = 4 #> 4
 kr = 4 #> 4
-def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, err_x, err_y):
+def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, kp,ki,kd):
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])#for body to earth
@@ -15,8 +15,8 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
-    # A = np.array([[0,Mu*0.5,0,Mu,0,Mu*0.5,0,-Mu*0.5,0,-Mu,0,-Mu*0.5],[0,-t1*Mu,0,0,0,Mu*t1,0,Mu*t1,0,0,0,-Mu*t1],[Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0],[Mu*len*0.5,kap*0.5,Mu*len,kap,len*Mu*0.5,kap*0.5,-Mu*len*0.5,-0.5*kap,-Mu*len,-kap,-len*Mu*0.5,-kap*0.5],[-t1*len*Mu,-t1*kap,0,0,t1*Mu*len,t1*kap,t1*Mu*len,t1*kap,0,0,-t1*Mu*len,-t1*kap],[kap,-Mu*len,kap,-Mu*len,kap,-len*Mu,kap,-Mu*len,kap,-Mu*len,kap,-Mu*len]]) #confirmed
-    A = np.array([[0,Mu,0,2*Mu,0,Mu],[0,-2*t1*Mu,0,0,0,2*t1*Mu],[2*Mu,0,2*Mu,0,2*Mu,0]])
+    A = np.array([[0,0.5,0,1,0,0.5,0,-0.5,0,-1,0,-0.5],[0,t1,0,0,0,-t1,0,-t1,0,0,0,t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[len*0.5,kap*0.5*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len,-kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu)],[t1*len,t1*kap*(1/Mu),0,0,-t1*len,-t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),0,0,t1*len,-t1*kap*(1/Mu)],[len*0.5,-0.5*kap*(1/Mu),len,kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu)]]) #confirmed
+    # A = np.array([[0,Mu,0,2*Mu,0,Mu],[0,-2*t1*Mu,0,0,0,2*t1*Mu],[2*Mu,0,2*Mu,0,2*Mu,0]])
     #Transpose of A
     A_trans = np.transpose(A)
 
@@ -97,21 +97,6 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     M_des = q_intermediate_1 + q_intermediate_2_1
 
     return M_des
-    # ---------------------------------Alternate Solution-----------------------------------#
-    # angular accelerations
-    # if( dTime >= sample_time):
-    #     ang_acc_roll = (omega[0] - prevOmega[0] )/ dTime
-    #     ang_acc_pitch = (omega[1] - prevOmega[1]) / dTime
-    #     ang_acc_yaw = (omega[2] - prevOmega[2]) / dTime
-    # #updating previous terms
-    # prevOmega = omega
-    # omega_3x3 = np.matrix([[[0],[-w_z_current],[w_y_current]],[[w_z_current],[0],[-w_x_current]],[[-w_y_current],[w_x_current],[0]]])
-    # alpha = np.matrix([[ang_acc_roll],[ang_acc_pitch],[ang_acc_yaw]])
-    # Iw = np.asmatrix(np.matmul(I,omega))
 
-    # # made for desired moment == I*α + ωxIω
-    # M_des = np.matmul(I,alpha)+np.cross(omega_3x3,Iw)
-
-    # return M_des
 
 

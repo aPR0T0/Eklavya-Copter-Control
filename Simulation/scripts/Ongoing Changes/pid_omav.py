@@ -17,37 +17,16 @@ import numpy as np
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
-kp_thrust = 20
-ki_thrust = 0.001
-kd_thrust = 35
-kp_roll = 2
-ki_roll = 0.001
-kd_roll = 0.5
-kp_pitch = 2
-ki_pitch = 0.001
-kd_pitch = 0.5
-kp_yaw = 2
-ki_yaw = 0.001
-kd_yaw = 0.5
-kp_x = 0.5
-ki_x = 0.5
-kd_x =  0.00015 #0.00015
-kp_y = 0.13
-ki_y = 0
-kd_y = 0.00015
-kp_vel_x = 0.1
-ki_vel_x = 0
-kd_vel_x = 0.071
-kp_vel_y = 0.01
-ki_vel_y = 0.0
-kd_vel_y = 0.0071
+kp = 20
+ki = 0.001
+kd = 35
 g = 9.81 # gravitational acceleration
 kap = 0.0004#0.00099 #> constant for the matrix
 Mu = 0.0000412 #0.00004311  #> constant for the matrix
 t1 = 0.86603 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
 xz = 0.5  
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desired, pitch_desired, yaw_desired, k_alt, k_roll,k_pitch,k_yaw,k_x,k_y,k_vel):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
@@ -59,24 +38,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
     setpoint_pitch = 0  #this should change according to the desired r,p,y
     
     #setting targets
-    kp_thrust = k_alt[0]
-    ki_thrust = k_alt[1]
-    kd_thrust = k_alt[2]
-    kp_roll = k_roll[0]
-    ki_roll = k_roll[1]
-    kd_roll = k_roll[2]
-    kp_pitch = k_pitch[0]
-    ki_pitch = k_pitch[1]
-    kd_pitch = k_pitch[2]
-    kp_yaw = k_yaw[0]
-    ki_yaw = k_yaw[1]
-    kd_yaw = k_yaw[2]
-    kp_x = k_x[0]
-    ki_x = k_x[1]
-    kd_x = k_x[2]
-    kp_y = k_y[0]
-    ki_y = k_y[1]
-    kd_y = k_y[2]
+    kp = k_pose[0]
+    ki = k_pose[1]
+    kd = k_pose[2]
     target_x = target[0]
     target_y = target[1]
     req_alt = target[2]
@@ -85,7 +49,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
     current_time = time.time()
 
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
-    position_controller(target_x, target_y, x, y, velocity, k_vel, flag)
+    position_controller(target_x, target_y, x, y, flag)
 
     err_pitch = pitch - pitch_desired #Changed this from setpoint roll to roll desired
 
@@ -154,11 +118,11 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
 
         # Proportional Terms
         
-        pMem_alt = kp_thrust*curr_alt_err
+        pMem_alt = curr_alt_err
         
         # Integral Terms
 
-        iMem_alt += ki_thrust*curr_alt_err*dTime
+        iMem_alt += curr_alt_err*dTime
 
 
         # Derivative Terms
@@ -274,7 +238,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, velocity, flag, roll_desir
 
 def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired):
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
-    global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw, ang_acc_pitch, ang_acc_roll, ang_acc_yaw
+    global dRoll, dPitch, dYaw, ang_vel_pitch, ang_vel_roll, ang_vel_yaw
     global current_time,prevTime,dTime, Kp_pose, Ki_pose, Kd_pose, Final_mat, speed, prevOmega
     theta = pitch * (math.pi / 180) #current pitch
     phi = roll * (math.pi / 180) #current Roll
@@ -303,7 +267,7 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
         ang_vel_yaw = dYaw / dTime
     
 #===============================Defining Matrices==================================>#
-    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, err_x, err_y)
+    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, kp,ki,kd)
     
 
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
@@ -331,7 +295,7 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
     ang_vel= np.array([0.0,0.0,0.0])
     i = 0
     for i in range(3):
-        ang_vel[i]= abs(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
+        ang_vel[i]= abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real)) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
@@ -368,16 +332,14 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
 """
 
 #Controller which applies PID to errors in x and y(target values of vel being 0) and gives setpoint pitch and roll as output to correct the errors
-def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
+def position_controller(target_x, target_y, x, y, flag):
     #global variables are declared to avoid their values resetting to 0
     global current_time,prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y
-    global kp_x,ki_x,kd_x,err_x,err_y,dErr_x,dErr_y
-    global kp_y,ki_y,kd_y, prevdMem_x, prevdMem_y, ddMem_x, ddMem_y
+    global err_x,err_y,dErr_x,dErr_y
+    global prevdMem_x, prevdMem_y, ddMem_x, ddMem_y
     global setpoint_pitch, setpoint_roll
     
-    vel_x = velocity[0]
-    vel_y = velocity[1]
     if (flag == 0):
         prevTime = 0
         prevErr_x = 0
@@ -408,20 +370,20 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     if(dTime >= sample_time):
         
         # Proportional terms
-        pMem_x = kp_x*err_x
-        pMem_y = kp_y*err_y
+        pMem_x = err_x
+        pMem_y = err_y
 
         # Integral terms
-        iMem_x += ki_x*err_x*dTime
-        iMem_y += ki_y*err_y*dTime
+        iMem_x += err_x*dTime
+        iMem_y += err_y*dTime
 
         if(iMem_x>10): iMem_x = 10
         if(iMem_x<-10): iMem_x=-10
 
         #Derivative terms
 
-        dMem_x = kd_x*(dErr_x / dTime)
-        dMem_y = kd_y*(dErr_y / dTime)
+        dMem_x = (dErr_x / dTime)
+        dMem_y = (dErr_y / dTime)
 
 
         ddMem_x = (dMem_x - prevdMem_x) / dTime
@@ -436,27 +398,3 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     
     output_x = pMem_x + iMem_x + dMem_x
     output_y = pMem_y + iMem_y + dMem_y
-
-    # Now we are setting the setpoint roll and pitches
-    k = 2.0 #> 2.0
-    if ( abs(err_x) > 4):
-        setpoint_pitch = -(output_x)
-
-    elif ( abs(err_x) < 4 and abs(vel_x) > 0.35 ): #> 0.35
-        damp_vel = ( 1 / vel_x )*0.1 #> 0.1
-        print( "damp_vel : ", damp_vel )
-        setpoint_pitch = -(vel_x*k - damp_vel) #as specified earlier, setpoint should be opposite direction of the velocities
-    
-    setpoint_pitch = 10 if setpoint_pitch > 10 else setpoint_pitch
-    setpoint_pitch = -10 if setpoint_pitch <-10 else setpoint_pitch
-
-    if ( abs(err_y) > 4):
-        setpoint_roll = -(output_y)
-
-    elif ( abs(err_y) < 4 and abs(vel_y) > 0.35 ): #> 0.35
-        damp_vel = ( 1 / vel_y )*0.1 #> 0.1
-        print( "damp_vel : ", damp_vel )
-        setpoint_roll = -(vel_y*k - damp_vel) #as specified earlier, setpoint should be opposite direction of the velocities
-    
-    setpoint_roll = 10 if setpoint_roll > 10 else setpoint_roll
-    setpoint_roll = -10 if setpoint_roll <-10 else setpoint_roll
