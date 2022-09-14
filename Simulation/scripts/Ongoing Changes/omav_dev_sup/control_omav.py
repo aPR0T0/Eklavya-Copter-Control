@@ -59,6 +59,22 @@ roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired ori
 # map() : Basically provides the value recieved in it to the variables on the left with the given data type()
 
 # Gets yaw PID published to node
+def set_tuning_parameter(msg):
+    global kq
+    kq = msg.data
+
+def set_rate_controller_gain(msg):
+    global kr
+    kr = msg.data
+
+def set_lift_force_coefficient(msg):
+    global Mu
+    Mu = msg.data
+
+def set_drag_torque_coefficient(msg):
+    global kap
+    kap = msg.data
+
 def setPID_pose(msg):
     global kp,ki,kd
     kp = msg.data[0]
@@ -71,11 +87,11 @@ def calPos(msg):
     y = round(msg.pose.pose.position.y,3)
     altitude = round(msg.pose.pose.position.z,3)
 # We need current velocity of the model so that we know when to stop and when to go
-def calVel(msg):
+def calAng(msg):
     global vel_x,vel_y,vel_z
-    vel_x = msg.twist.twist.linear.x
-    vel_y = msg.twist.twist.linear.y
-    vel_z = msg.twist.twist.linear.z
+    vel_x = msg.twist.twist.angular.x
+    vel_y = msg.twist.twist.angular.y
+    vel_z = msg.twist.twist.angular.z
 # We also need its current orientation for RPY respectively
 def calOrientation(msg):
     global roll, pitch, yaw
@@ -96,13 +112,17 @@ def alt_control(imu,odo):
 
     calPos(odo)
 
-    calVel(odo)
+    calAng(odo)
+
+    rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
+    rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)
+    rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
+    rospy.Subscriber("Lift_Force_Coefficient", Float64, set_lift_force_coefficient)
+    rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
     #Making tuples for the velcities and target
     k_pose = (kp,ki,kd)
     target = (target_x,target_y,req_alt)
-
-    rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
-
+    velocity = (vel_x,vel_y,vel_z)
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
     print("Required alt = ",req_alt)
@@ -114,7 +134,7 @@ def alt_control(imu,odo):
 
     speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr)
     flag += 1
     speed_pub.publish(speed)
 

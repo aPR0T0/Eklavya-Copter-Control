@@ -7,7 +7,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 g  = 9.81
 kq = 4 #> 4
 kr = 4 #> 4
-def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, ddiff_pose_mat, kp,ki,kd):
+def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, kp, ki, kd):
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])#for body to earth
@@ -29,17 +29,17 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     A_pseudo_inv = np.matmul(A_trans,X_inv)# Now, we have the pseudo inverse ready for the given matrix
 
     # Gravitational matrix
-    grav_matrix = np.array([[0],[0],[g]])
+    grav_matrix = np.array([[0],[0],[-g]])
     # The below given matrix is the result of total F-des without its rotation 
-    res_matrix = ( mass_total*grav_matrix +  prop_pos_mat + diff_pose_mat + i_pose_mat + ddiff_pose_mat) #this is from earths frame so we need it in the body frame
+    res_matrix = ( mass_total*grav_matrix +  kp*prop_pos_mat + kd*diff_pose_mat + ki*i_pose_mat ) #this is from earths frame so we need it in the body frame
     # F_desired calculation
-    F_des = np.matmul( Rot_Matrix , res_matrix)
+    F_des = np.matmul( Rot_Matrix , res_matrix )
     print(F_des)
     # print(A_pseudo_inv)
     return F_des, A_pseudo_inv
     # So, now we have 3x1 force vector
 
-def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , w_x_current, w_y_current, w_z_current, I):
+def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , w_x_current, w_y_current, w_z_current, I, kq,kr):
     
     # Since angles will be given in degrees we need to convert to radians which is standard convention
     roll_desired = roll_desired * (math.pi/180)

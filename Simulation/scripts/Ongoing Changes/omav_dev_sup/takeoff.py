@@ -48,22 +48,22 @@ def takeoff():
         if i == 1:
             speed.angular_velocities[0] = 0
             speed.angular_velocities[1] = 0
-            speed.angular_velocities[2] = 100*s
+            speed.angular_velocities[2] = 0
             speed.angular_velocities[3] = 0
             speed.angular_velocities[4] = 0
-            speed.angular_velocities[5] = 0
+            speed.angular_velocities[5] = 100
             speed.angular_velocities[6] = 0
             speed.angular_velocities[7] = 0
-            speed.angular_velocities[8] = 100*s
+            speed.angular_velocities[8] = 0
             speed.angular_velocities[9] = 0
             speed.angular_velocities[10] = 0
-            speed.angular_velocities[11] = 0
+            speed.angular_velocities[11] = 100  
             speed.angular_velocities[12] = 0
             speed.angular_velocities[13] = 0
-            speed.angular_velocities[14] = 1.2
+            speed.angular_velocities[14] = 0
             speed.angular_velocities[15] = 0
             speed.angular_velocities[16] = 0
-            speed.angular_velocities[17] = 1.54
+            speed.angular_velocities[17] = 0
         rospy.Subscriber("/omav/ground_truth/odometry", Odometry, calPos)
 
         alt_pub.publish(altitude)

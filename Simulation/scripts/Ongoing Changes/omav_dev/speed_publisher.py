@@ -5,6 +5,7 @@ import math
 import message_filters
 from std_msgs.msg import Float64MultiArray,Float64
 from mav_msgs.msg import Actuators
+t1 = 0
 def get_speed_publisher(F_dec, Mu, flag):
     """
     
@@ -50,45 +51,28 @@ def get_speed_publisher(F_dec, Mu, flag):
     for i in range(6):
         Tilt[i] = math.atan2((F_dec[i+1, 0]).real, (F_dec[i, 0]).real)
     # Giving Angular Velocity and Tilt Angle to Respective Rotor
-    t1 = 0
-    if (t1 == 0):
-        speed.angular_velocities.append(N_Combined[4])
-        speed.angular_velocities.append(N_Combined[1])
-        speed.angular_velocities.append(N_Combined[0])
-        speed.angular_velocities.append(N_Combined[3])
-        speed.angular_velocities.append(N_Combined[5])
-        speed.angular_velocities.append(N_Combined[2])
-        speed.angular_velocities.append(N_Combined[4])
-        speed.angular_velocities.append(N_Combined[1])
-        speed.angular_velocities.append(N_Combined[0])
-        speed.angular_velocities.append(N_Combined[3])
-        speed.angular_velocities.append(N_Combined[5])
-        speed.angular_velocities.append(N_Combined[2])
-        speed.angular_velocities.append(Tilt[4])
-        speed.angular_velocities.append(Tilt[1])
-        speed.angular_velocities.append(Tilt[0])
-        speed.angular_velocities.append(Tilt[3])
-        speed.angular_velocities.append(Tilt[5])
-        speed.angular_velocities.append(Tilt[2])
-        t1 += 1
-        print("Once")
-    speed.angular_velocities[0] = (N_Combined[4])
-    speed.angular_velocities[1] = (N_Combined[1])
-    speed.angular_velocities[2] = (N_Combined[0])
-    speed.angular_velocities[3] = (N_Combined[3])
-    speed.angular_velocities[4] = (N_Combined[5])
-    speed.angular_velocities[5] = (N_Combined[2])
-    speed.angular_velocities[6] = (N_Combined[4])
-    speed.angular_velocities[7] = (N_Combined[1])
-    speed.angular_velocities[8] = (N_Combined[0])
-    speed.angular_velocities[9] = (N_Combined[3])
-    speed.angular_velocities[10] = (N_Combined[5])
-    speed.angular_velocities[11] = (N_Combined[2])
-    speed.angular_velocities[12] = (Tilt[4])
-    speed.angular_velocities[13] = (Tilt[1])
-    speed.angular_velocities[14] = (Tilt[0])
-    speed.angular_velocities[15] = (Tilt[3])
-    speed.angular_velocities[16] = (Tilt[5])
-    speed.angular_velocities[17] = (Tilt[2])
+    speed_util(speed, N_Combined, Tilt)
     print(speed.angular_velocities)
     return(speed)   
+
+def speed_util(speed, N_Combined, Tilt): 
+
+    speed.angular_velocities.append(N_Combined[4])
+    speed.angular_velocities.append(N_Combined[1])
+    speed.angular_velocities.append(N_Combined[0])
+    speed.angular_velocities.append(N_Combined[3])
+    speed.angular_velocities.append(N_Combined[5])
+    speed.angular_velocities.append(N_Combined[2])
+    speed.angular_velocities.append(N_Combined[4])
+    speed.angular_velocities.append(N_Combined[1])
+    speed.angular_velocities.append(N_Combined[0])
+    speed.angular_velocities.append(N_Combined[3])
+    speed.angular_velocities.append(N_Combined[5])
+    speed.angular_velocities.append(N_Combined[2])
+    speed.angular_velocities.append(Tilt[4])
+    speed.angular_velocities.append(Tilt[1])
+    speed.angular_velocities.append(Tilt[0])
+    speed.angular_velocities.append(Tilt[3])
+    speed.angular_velocities.append(Tilt[5])
+    speed.angular_velocities.append(Tilt[2])
+    return speed
