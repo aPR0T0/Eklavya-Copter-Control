@@ -113,6 +113,9 @@ def alt_control(imu,odo):
     calPos(odo)
 
     calAng(odo)
+    
+    kap = 8.06428e-05 #0.00099 #> constant for the matrix
+    Mu = 7.2e-06 #0.00004311  #> constant for the matrix
 
     rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
     rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)

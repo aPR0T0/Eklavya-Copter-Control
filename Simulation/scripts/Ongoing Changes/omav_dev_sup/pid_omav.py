@@ -21,9 +21,9 @@ kp = 20
 ki = 0.001
 kd = 35
 g = 9.81 # gravitational acceleration
-kap = 0.0008#0.00099 #> constant for the matrix
-Mu = 0.0000007 #0.00004311  #> constant for the matrix
-t1 = 0.86603 #> sqrt(3)/2
+kap = 8.06428e-05 #0.00099 #> constant for the matrix
+Mu = 7.2e-06 #0.00004311  #> constant for the matrix
+t1 = 0.866025403784 #> sqrt(3)/2
 len = 0.3 #> assuming that length is 0.3m 
 xz = 0.5  
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr):
@@ -275,15 +275,15 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
     for i in range(6):
-        ang_vel[i]= abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real)) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
+        ang_vel[i]= abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i][0],2) + pow(relation_matrix[2*i+1][0],2))).real)) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
     tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
     for i in range(6):
-        x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
-        x2 = pow(sqrt(relation_matrix[2*i]).real,2)
+        x1 = pow(sqrt(relation_matrix[2*i+1][0]).real,2)
+        x2 = pow(sqrt(relation_matrix[2*i][0]).real,2)
         # print(x1) Uses this to get the real value from the matrix
         tilt_ang[i] = atan2(x1,x2) # atan2(sin/cos)
 
