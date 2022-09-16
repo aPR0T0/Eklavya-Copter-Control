@@ -103,9 +103,9 @@ def calOrientation(msg):
     orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
-    roll = round(roll,3)
-    pitch = round(pitch,3)
-    yaw = round(yaw,3)
+    roll = round(roll,1)
+    pitch = round(pitch,1)
+    yaw = round(yaw,1)
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values

@@ -119,7 +119,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
     #defining time for the differential terms
     dTime = current_time - prevTime
-
+    # print(current_time,prevTime) Only uncomment for debugging
     #defining all the differential terms
 
     dErr_alt = curr_alt_err - prev_alt_err
@@ -144,14 +144,15 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         dMem_alt = dErr_alt / dTime
 
         #limit integrand values
-        if(iMem_alt > 40): iMem_alt = 40
-        if(iMem_alt <-40): iMem_alt = -40
+        # print(iMem_alt)
+        if(iMem_alt > 100): iMem_alt = 100
+        if(iMem_alt <-100): iMem_alt = -100
 
     #Updating previous error terms
 
     prev_alt_err = curr_alt_err
     prevdMem_alt = dMem_alt
-
+    prevTime = current_time
     # Final output correction terms after combining PID
     # output_alt = pMem_alt + iMem_alt + kd_thrust*dMem_alt
 
