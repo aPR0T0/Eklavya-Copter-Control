@@ -7,13 +7,14 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 g  = 9.81
 kq = 4 #> 4
 kr = 4 #> 4
+t1 = 0.866025404
 def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, kp, ki, kd):
     #problem may occur so better use arrays
     #rotational matrix ->> We need this to transform  
     Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])#for body to earth
 
     Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
-
+    t1 = 0.866025404
 
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
@@ -39,8 +40,12 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
 
     F_des =  np.matmul( Rot_Matrix , res_matrix )
     F_des = np.round_(F_des.real , decimals = 3)
-    print(F_des)
     
+    # if (F_des[0][0] < 0.0000001) : F_des[0][0] = 0 
+    # if (F_des[1][0] < 0.0000001) : F_des[1][0] = 0 
+    # if (F_des[2][0] < 0.0000001) : F_des[2][0] = 0 
+    # print(F_des[2][0])
+
     return F_des, A_pseudo_inv
     # So, now we have 3x1 force vector
 

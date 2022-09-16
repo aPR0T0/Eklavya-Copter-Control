@@ -8,6 +8,7 @@ from std_msgs.msg import Float64MultiArray,Float64
 from sensor_msgs.msg import Imu #It contains overall type of readings getting from the Imu sensor
 from nav_msgs.msg import Odometry #It contains overall type of readings getting from the Odometry sensor
 from mav_msgs.msg import Actuators
+from sensor_msgs.msg import NavSatFix
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 #from now on we will be call (roll pitch yaw) as 'RPY' in this module
 
@@ -50,7 +51,7 @@ kap = 0.0005 #> constant for the matrix
 
 Mu = 0.0005  #> constant for the matrix
 
-t1 = 0.86603 #> sqrt(3)/2
+t1 = 0.866025404 #> sqrt(3)/2
 
 len = 0.3 #> assuming that length is 0.3m 
 
@@ -80,11 +81,15 @@ def setPID_pose(msg):
     ki =  msg.data[1]
     kd = msg.data[2]
 
+# def calAlt(msg):
+#     global altitude
+#     altitude = msg.altitude
+
 def calPos(msg):
     global x,y,altitude
-    x = round(msg.pose.pose.position.x,3)
-    y = round(msg.pose.pose.position.y,3)
-    altitude = round(msg.pose.pose.position.z,3)
+    x = round(msg.pose.pose.position.x,1)
+    y = round(msg.pose.pose.position.y,1)
+    altitude = round(msg.pose.pose.position.z,1)
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
@@ -112,6 +117,7 @@ def alt_control(imu,odo):
 
     calAng(odo)
 
+    # calAlt(gps)
     kap = 8.06428e-05 #0.00099 #> constant for the matrix
     Mu = 7.2e-06 #0.00004311  #> constant for the matrix
 
@@ -133,7 +139,7 @@ def alt_control(imu,odo):
 
     speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1)
     flag += 1
     speed_pub.publish(speed)
 
