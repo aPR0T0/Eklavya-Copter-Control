@@ -193,21 +193,26 @@ def master(imu_subscriber, odometry_subscriber):
 
     # SENSOR READINGS FUNCTION CALLS
     current_time = get_time(odometry_subscriber)
-    #print(current_time)
+    #print("Current Time printed from controller.py :", current_time)
+    #print(type(current_time))
 
     set_position_current_error(position_current_error)
     position_current = get_position_current(odometry_subscriber)
-    print(position_current)
+    #print("Current Position printed from controller.py : \n", position_current)
+    #print(type(position_current))
 
     quaternion_current = get_orientation_current(imu_subscriber)
-    #print(quaternion_current)
+    #print("Current Quaternion Orientation printed from controller.py :",quaternion_current)
+    #print(type(quaternion_current))
 
     # Since for a few calculations we need Current Orientation in Euler Angles format
     euler_current = quaternion_to_euler(quaternion_current)
-    #print(euler_current)
+    #print("Orientation in Euler Angles(radians) printed from controller.py :", euler_current)
+    #print(type(euler_current))
 
     w_current = get_current_angular_velocity(imu_subscriber)
-    #print(w_current)
+    #print("Current Angular Velocity printed from controller.py : \n", w_current)
+    #print(type(w_current))
 
 
     # GAINS Subscribers
@@ -236,7 +241,7 @@ def master(imu_subscriber, odometry_subscriber):
     speed_publisher = Actuators()
     speed_publisher = get_speed_publisher(F_dec, Mu, flag)
     #print(speed_publisher)
-    
+
 
     flag+=1
     #print("Flag printed from controller.py :", flag)
