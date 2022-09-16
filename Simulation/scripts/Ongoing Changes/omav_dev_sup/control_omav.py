@@ -87,9 +87,9 @@ def setPID_pose(msg):
 
 def calPos(msg):
     global x,y,altitude
-    x = round(msg.pose.pose.position.x,1)
-    y = round(msg.pose.pose.position.y,1)
-    altitude = round(msg.pose.pose.position.z,1)
+    x = round(msg.pose.pose.position.x,2)
+    y = round(msg.pose.pose.position.y,2)
+    altitude = round(msg.pose.pose.position.z,2)
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
@@ -103,9 +103,9 @@ def calOrientation(msg):
     orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
-    roll = round(roll,1)
-    pitch = round(pitch,1)
-    yaw = round(yaw,1)
+    roll = round(roll,2)
+    pitch = round(pitch,2)
+    yaw = round(yaw,2)
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values

@@ -14,20 +14,19 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])#for body to earth
 
     Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
-    t1 = 0.866025404
+    t1 = round(0.866025404,3)
 
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
     A = np.array([[0,0.5,0,1,0,0.5,0,-0.5,0,-1,0,-0.5],[0,t1,0,0,0,-t1,0,-t1,0,0,0,t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[len*0.5,kap*0.5*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len,-kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu)],[t1*len,t1*kap*(1/Mu),0,0,-t1*len,-t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),0,0,t1*len,-t1*kap*(1/Mu)],[len*0.5,-0.5*kap*(1/Mu),len,kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu)]]) #confirmed
-
+    A = np.round_(A,decimals=2)
     #Transpose of A
-    A_trans = np.transpose(A)
-
+    A_trans = np.round_(np.transpose(A),decimals=2)
 # <--------------------------------pseudo inverse------------------------------>
-    X = np.array(np.matmul(A,A_trans))
+    X = np.round_(np.array(np.matmul(A,A_trans)),decimals=2)
     # m <= n for A therefore, A(pseudo) =  A^T * ( A * A^T ) ^ -1
 # Now, for the pseudo inverse we need X^-1s
-    X_inv = np.linalg.inv(X)
+    X_inv = np.round_(np.linalg.inv(X),decimals=2)
 
     A_pseudo_inv = np.matmul(A_trans,X_inv)# Now, we have the pseudo inverse ready for the given matrix
 
@@ -35,11 +34,12 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     grav_matrix = np.array([[0],[0],[-g]])
     # The below given matrix is the result of total F-des without its rotation 
     res_matrix = ( mass_total*grav_matrix -  kp*prop_pos_mat - kd*diff_pose_mat - ki*i_pose_mat ) #this is from earths frame so we need it in the body frame
+    res_matrix  = np.round_(res_matrix,decimals=2)
     # F_desired calculation
     # print(res_matrix)
 
     F_des =  np.matmul( Rot_Matrix , res_matrix )
-    F_des = np.round_(F_des.real , decimals = 3)
+    F_des = np.round_(F_des.real , decimals = 2)
     
     # if (F_des[0][0] < 0.0000001) : F_des[0][0] = 0 
     # if (F_des[1][0] < 0.0000001) : F_des[1][0] = 0 
@@ -92,20 +92,20 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     elif(q_w_error > 0):
         sign_q_error = 1
 
-    q_v_error = np.array([[q_x_error], [q_y_error], [q_z_error]])
+    q_v_error = np.round_(np.array([[q_x_error], [q_y_error], [q_z_error]]),decimals=2)
 
     w_desired = kq * sign_q_error *  q_v_error
 
-    w_current = np.array([[w_x_current], [w_y_current],[w_z_current]])
+    w_current = np.round_(np.array([[w_x_current], [w_y_current],[w_z_current]]),decimals=2)
 
     w_error = w_desired - w_current
     q_intermediate_1 = (kr * w_error)
-    q_intermediate_2_1 = np.array(np.matmul(I, w_current))
-    q_intermediate_2_1 = np.cross(w_current, q_intermediate_2_1, axis=0)
+    q_intermediate_2_1 = np.round_(np.array(np.matmul(I, w_current)),decimals=2)
+    q_intermediate_2_1 = np.round_(np.cross(w_current, q_intermediate_2_1, axis=0),decimals=2)
     
-    M_des =  np.zeros([3,1])
-    M_des = np.round_((-q_intermediate_1 + q_intermediate_2_1), decimals= 3)
-    M_des = np.zeros((3,1))
+    # M_des =  np.zeros([3,1])
+    M_des = np.round_((-q_intermediate_1 + q_intermediate_2_1), decimals= 2)
+    # M_des = np.zeros((3,1))
     # print(M_des)
     return M_des
 
