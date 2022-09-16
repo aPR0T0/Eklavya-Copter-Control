@@ -17,15 +17,27 @@ import numpy as np
 import rospy
 from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
+
+
 kp = 20
-ki = 0.001
-kd = 35
+
+ki = 0
+
+kd = 10
+
 g = 9.81 # gravitational acceleration
+
 kap = 8.06428e-05 #0.00099 #> constant for the matrix
-Mu = 7.2e-06 #0.00004311  #> constant for the matrix
+
+Mu = 7.2e-06 #3.4e-6 #> constant for the matrix
+
 t1 = 0.866025403784 #> sqrt(3)/2
+
 len = 0.3 #> assuming that length is 0.3m 
+
 xz = 0.5  
+
+
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
@@ -134,8 +146,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         if(iMem_alt > 400): iMem_alt = 400
         if(iMem_alt <-400): iMem_alt = -400
 
-
-        ddMem_alt = (dMem_alt - prevdMem_alt) / dTime
     #Updating previous error terms
 
     prev_alt_err = curr_alt_err
@@ -149,12 +159,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # output_alt = 1 if output_alt > 1 else output_alt
 
 
-    prop_pos_mat = np.matrix([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
-    
-    diff_pose_mat = np.matrix([[dMem_x],[dMem_y],[dMem_alt]])
-
-    i_pose_mat = np.matrix([[iMem_x],[iMem_y],[iMem_alt]])
-
+    prop_pos_mat = np.array([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
+    # print(prop_pos_mat)
+    diff_pose_mat = np.array([[dMem_x],[dMem_y],[dMem_alt]])
+    # print(diff_pose_mat)
+    i_pose_mat = np.array([[iMem_x],[iMem_y],[iMem_alt]])
+    # print(i_pose_mat)
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
 
     t = 0
@@ -172,10 +182,10 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         speed.angular_velocities.append(ang_vel_rot[5])
         speed.angular_velocities.append(ang_vel_rot[2])
         speed.angular_velocities.append(tilt_ang[4])
-        speed.angular_velocities.append(tilt_ang[1])
+        speed.angular_velocities.append(tilt_ang[1]-math.pi/2)
         speed.angular_velocities.append(tilt_ang[0])
-        speed.angular_velocities.append(tilt_ang[3])
-        speed.angular_velocities.append(tilt_ang[5])
+        speed.angular_velocities.append(tilt_ang[3]-math.pi/2)
+        speed.angular_velocities.append(tilt_ang[5]-math.pi/2)
         speed.angular_velocities.append(tilt_ang[2])
         # print("Once")
         t += 1
@@ -193,25 +203,25 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     speed.angular_velocities[10] = ang_vel_rot[5]
     speed.angular_velocities[11] = ang_vel_rot[2]
     speed.angular_velocities[12] = tilt_ang[4]
-    speed.angular_velocities[13] = tilt_ang[1]
+    speed.angular_velocities[13] = (tilt_ang[1])
     speed.angular_velocities[14] = tilt_ang[0]
-    speed.angular_velocities[15] = tilt_ang[3]
-    speed.angular_velocities[16] = tilt_ang[5]
+    speed.angular_velocities[15] = (tilt_ang[3])
+    speed.angular_velocities[16] = (tilt_ang[5])
     speed.angular_velocities[17] = tilt_ang[2]
 
     # Limiting the speeds to the permissible limits
-    if (speed.angular_velocities[0] > 1500): speed.angular_velocities[0] = 1500
-    if (speed.angular_velocities[1] > 1500): speed.angular_velocities[1] = 1500
-    if (speed.angular_velocities[2] > 1500): speed.angular_velocities[2] = 1500
-    if (speed.angular_velocities[3] > 1500): speed.angular_velocities[3] = 1500
-    if (speed.angular_velocities[4] > 1500): speed.angular_velocities[4] = 1500
-    if (speed.angular_velocities[5] > 1500): speed.angular_velocities[5] = 1500
-    if (speed.angular_velocities[6] > 1500): speed.angular_velocities[6] = 1500
-    if (speed.angular_velocities[7] > 1500): speed.angular_velocities[7] = 1500
-    if (speed.angular_velocities[8] > 1500): speed.angular_velocities[8] = 1500
-    if (speed.angular_velocities[9] > 1500): speed.angular_velocities[9] = 1500
-    if (speed.angular_velocities[10] > 1500): speed.angular_velocities[10] = 1500
-    if (speed.angular_velocities[11] > 1500): speed.angular_velocities[11] = 1500
+    if (speed.angular_velocities[0] > 1700): speed.angular_velocities[0] = 1700
+    if (speed.angular_velocities[1] > 1700): speed.angular_velocities[1] = 1700
+    if (speed.angular_velocities[2] > 1700): speed.angular_velocities[2] = 1700
+    if (speed.angular_velocities[3] > 1700): speed.angular_velocities[3] = 1700
+    if (speed.angular_velocities[4] > 1700): speed.angular_velocities[4] = 1700
+    if (speed.angular_velocities[5] > 1700): speed.angular_velocities[5] = 1700
+    if (speed.angular_velocities[6] > 1700): speed.angular_velocities[6] = 1700
+    if (speed.angular_velocities[7] > 1700): speed.angular_velocities[7] = 1700
+    if (speed.angular_velocities[8] > 1700): speed.angular_velocities[8] = 1700
+    if (speed.angular_velocities[9] > 1700): speed.angular_velocities[9] = 1700
+    if (speed.angular_velocities[10] > 1700): speed.angular_velocities[10] = 1700
+    if (speed.angular_velocities[11] > 1700): speed.angular_velocities[11] = 1700
 
     print(speed.angular_velocities)
     return(speed)
@@ -263,11 +273,12 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
 
     # Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0]],[M_des[1][0]],[M_des[2][0]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
-    Final_mat = np.array([F_des[0][0][0].real,F_des[1][0][0].real,F_des[2][0][0].real,M_des[0][0].real,M_des[1][0].real,M_des[2][0].real]) #3x1 matrix when restrictions are applied
+    Final_mat = np.array([F_des[0][0].real,F_des[1][0].real,F_des[2][0].real,M_des[0][0].real,M_des[1][0].real,M_des[2][0].real]) #3x1 matrix when restrictions are applied
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     
-    relation_matrix = np.matmul( A_pseudo_inv , Final_mat )
-    print(relation_matrix)
+    relation_matrix = np.round_(np.matmul( A_pseudo_inv , Final_mat ).real,decimals = 3)
+    # print(relation_matrix)
+
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
 
@@ -275,17 +286,17 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
     for i in range(6):
-        ang_vel[i]= abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i][0],2) + pow(relation_matrix[2*i+1][0],2))).real)) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
+        ang_vel[i]= round(abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real)), 3) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
 
     # Tilt Angles deduction
     tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
     i = 0
     for i in range(6):
-        x1 = pow(sqrt(relation_matrix[2*i+1][0]).real,2)
-        x2 = pow(sqrt(relation_matrix[2*i][0]).real,2)
+        x1 = pow(sqrt(relation_matrix[2*i+1]).real,2)
+        x2 = pow(sqrt(relation_matrix[2*i]).real,2)
         # print(x1) Uses this to get the real value from the matrix
-        tilt_ang[i] = atan2(x1,x2) # atan2(sin/cos)
+        tilt_ang[i] = round(atan2(x1,x2),3) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = tuple(xz*ang_vel)
@@ -314,10 +325,10 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
 #Controller which applies PID to errors in x and y(target values of vel being 0) and gives setpoint pitch and roll as output to correct the errors
 def position_controller(target_x, target_y, x, y, flag):
     #global variables are declared to avoid their values resetting to 0
-    global current_time,prevTime,dTime
+    global prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y
     global err_x,err_y,dErr_x,dErr_y
-    global prevdMem_x, prevdMem_y, ddMem_x, ddMem_y
+    global prevdMem_x, prevdMem_y
     global setpoint_pitch, setpoint_roll
     
     if (flag == 0):
@@ -332,11 +343,9 @@ def position_controller(target_x, target_y, x, y, flag):
         iMem_y = 0
         dMem_x = 0
         dMem_y = 0
-        ddMem_x = 0
-        ddMem_y = 0
 
     #setting dTime for derivative and integral terms
-    dTime = current_time - prevTime
+    dTime = current_time - float(prevTime)
 
     err_x = x - target_x
     err_y = y - target_y
@@ -365,12 +374,6 @@ def position_controller(target_x, target_y, x, y, flag):
         dMem_x = (dErr_x / dTime)
         dMem_y = (dErr_y / dTime)
 
-
-        ddMem_x = (dMem_x - prevdMem_x) / dTime
-        ddMem_y = (dMem_y - prevdMem_y) / dTime
     #updating previous terms
     prevErr_x = err_x
     prevErr_y = err_y
-    #the below given terms will help us find the rate of change of (rate of change of) position vector
-    prevdMem_x = dMem_x
-    prevdMem_y = dMem_y

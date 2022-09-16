@@ -13,10 +13,12 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     Rot_Matrix = np.array([[cos(theta)*cos(gamma),sin(gamma)*cos(theta),-sin(phi)],[sin(phi)*sin(theta)*cos(gamma)-cos(phi)*sin(gamma),sin(phi)*sin(theta)*sin(gamma)+cos(phi)*cos(gamma),sin(phi)*cos(theta)],[cos(phi)*sin(theta)*cos(gamma)+sin(phi)*sin(gamma),cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma),cos(phi)*cos(theta)]])#for body to earth
 
     Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
+
+
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
     A = np.array([[0,0.5,0,1,0,0.5,0,-0.5,0,-1,0,-0.5],[0,t1,0,0,0,-t1,0,-t1,0,0,0,t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[len*0.5,kap*0.5*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len,-kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu)],[t1*len,t1*kap*(1/Mu),0,0,-t1*len,-t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),0,0,t1*len,-t1*kap*(1/Mu)],[len*0.5,-0.5*kap*(1/Mu),len,kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu)]]) #confirmed
-    # A = np.array([[0,Mu,0,2*Mu,0,Mu],[0,-2*t1*Mu,0,0,0,2*t1*Mu],[2*Mu,0,2*Mu,0,2*Mu,0]])
+
     #Transpose of A
     A_trans = np.transpose(A)
 
@@ -31,11 +33,14 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     # Gravitational matrix
     grav_matrix = np.array([[0],[0],[-g]])
     # The below given matrix is the result of total F-des without its rotation 
-    res_matrix = ( mass_total*grav_matrix +  kp*prop_pos_mat + kd*diff_pose_mat + ki*i_pose_mat ) #this is from earths frame so we need it in the body frame
+    res_matrix = ( mass_total*grav_matrix -  kp*prop_pos_mat - kd*diff_pose_mat - ki*i_pose_mat ) #this is from earths frame so we need it in the body frame
     # F_desired calculation
-    F_des = np.matmul( Rot_Matrix , res_matrix )
+    # print(res_matrix)
+
+    F_des =  np.matmul( Rot_Matrix , res_matrix )
+    F_des = np.round_(F_des.real , decimals = 3)
     print(F_des)
-    # print(A_pseudo_inv)
+    
     return F_des, A_pseudo_inv
     # So, now we have 3x1 force vector
 
@@ -45,9 +50,9 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     roll_desired = roll_desired * (math.pi/180)
     pitch_desired = pitch_desired * (math.pi/180)
     yaw_desired = yaw_desired * (math.pi/180)
-    roll = roll * (math.pi/180)
-    pitch = pitch * (math.pi/180)
-    yaw = yaw * (math.pi/180)
+    roll = roll
+    pitch = pitch
+    yaw = yaw 
 
     quaternion_desired = quaternion_from_euler(roll_desired,pitch_desired,yaw_desired)
     quaternion_current = quaternion_from_euler(roll, pitch, yaw)
@@ -94,8 +99,9 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     q_intermediate_2_1 = np.cross(w_current, q_intermediate_2_1, axis=0)
     
     M_des =  np.zeros([3,1])
-    M_des = q_intermediate_1 + q_intermediate_2_1
-
+    M_des = np.round_((-q_intermediate_1 + q_intermediate_2_1), decimals= 3)
+    M_des = np.zeros((3,1))
+    # print(M_des)
     return M_des
 
 

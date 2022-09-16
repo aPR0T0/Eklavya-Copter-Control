@@ -26,6 +26,7 @@ z  = 0
 
 # Flag for checking for the first time the script is run
 flag = 0
+
 # kp_thrust = 20
 # ki_thrust = 0.001
 # kd_thrust = 35
@@ -44,10 +45,16 @@ flag = 0
 # kp_y = 0.13
 # ki_y = 0
 # kd_y = 0.00015
+
 kap = 0.0005 #> constant for the matrix
+
 Mu = 0.0005  #> constant for the matrix
+
 t1 = 0.86603 #> sqrt(3)/2
+
 len = 0.3 #> assuming that length is 0.3m 
+
+
 #creating publisher for the speeds of the rotors
 speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=100) #here we will use angles section to give angles to the tilt rotors
 
@@ -66,14 +73,6 @@ def set_tuning_parameter(msg):
 def set_rate_controller_gain(msg):
     global kr
     kr = msg.data
-
-def set_lift_force_coefficient(msg):
-    global Mu
-    Mu = msg.data
-
-def set_drag_torque_coefficient(msg):
-    global kap
-    kap = msg.data
 
 def setPID_pose(msg):
     global kp,ki,kd
@@ -99,10 +98,9 @@ def calOrientation(msg):
     orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
-    #we need RPY in degrees
-    roll = (roll*180)/pi
-    pitch = (pitch*180)/pi
-    yaw = (yaw*180)/pi
+    roll = round(roll,3)
+    pitch = round(pitch,3)
+    yaw = round(yaw,3)
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values
@@ -113,15 +111,13 @@ def alt_control(imu,odo):
     calPos(odo)
 
     calAng(odo)
-    
+
     kap = 8.06428e-05 #0.00099 #> constant for the matrix
     Mu = 7.2e-06 #0.00004311  #> constant for the matrix
 
     rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
     rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)
     rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
-    rospy.Subscriber("Lift_Force_Coefficient", Float64, set_lift_force_coefficient)
-    rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
     #Making tuples for the velcities and target
     k_pose = (kp,ki,kd)
     target = (target_x,target_y,req_alt)
