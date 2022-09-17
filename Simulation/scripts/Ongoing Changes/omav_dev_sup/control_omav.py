@@ -75,12 +75,21 @@ def set_rate_controller_gain(msg):
     global kr
     kr = msg.data
 
-def setPID_pose(msg):
-    global kp,ki,kd
-    kp = msg.data[0]
-    ki =  msg.data[1]
-    kd = msg.data[2]
-
+def setPID_x(msg):
+    global kp_x,ki_x,kd_x
+    kp_x = msg.data[0]
+    ki_x =  msg.data[1]
+    kd_x = msg.data[2]
+def setPID_y(msg):
+    global kp_y,ki_y,kd_y
+    kp_y = msg.data[0]
+    ki_y =  msg.data[1]
+    kd_y = msg.data[2]
+def setPID_z(msg):
+    global kp_z,ki_z,kd_z
+    kp_z = msg.data[0]
+    ki_z =  msg.data[1]
+    kd_z = msg.data[2]
 # def calAlt(msg):
 #     global altitude
 #     altitude = msg.altitude
@@ -121,11 +130,13 @@ def alt_control(imu,odo):
     kap = 8.06428e-05 #0.00099 #> constant for the matrix
     Mu = 7.2e-06 #0.00004311  #> constant for the matrix
 
-    rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
+    rospy.Subscriber("pid_x", Float64MultiArray, setPID_x)
+    rospy.Subscriber("pid_y", Float64MultiArray, setPID_y)
+    rospy.Subscriber("pid_z", Float64MultiArray, setPID_z) 
     rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)
     rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
     #Making tuples for the velcities and target
-    k_pose = (kp,ki,kd)
+    k_pose = (kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,kp_z,ki_z,kd_z)
     target = (target_x,target_y,req_alt)
     velocity = (vel_x,vel_y,vel_z)
     # Logging for debugging purposes

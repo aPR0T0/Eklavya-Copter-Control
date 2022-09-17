@@ -19,11 +19,23 @@ from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
 
 
-kp = 20
+kp_x = 20
 
-ki = 0
+ki_x = 0
 
-kd = 10
+kd_x = 10
+
+kp_y = 20
+
+ki_y = 0
+
+kd_y = 10
+
+kp_z = 20
+
+ki_z = 0
+
+kd_z = 10
 
 g = 9.81 # gravitational acceleration
 
@@ -50,20 +62,31 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     setpoint_pitch = 0  #this should change according to the desired r,p,y
     
     #setting targets
-    kp = k_pose[0]
-    ki = k_pose[1]
-    kd = k_pose[2]
+    kp_x = k_pose[0]
+    ki_x = k_pose[1]
+    kd_x = k_pose[2]
+
+    kp_y = k_pose[3]
+    ki_y = k_pose[4]
+    kd_y = k_pose[5]
+
+    kp_z = k_pose[6]
+    ki_z = k_pose[7]
+    kd_z = k_pose[8]
+
+
     omega = np.array([[velocity[0]],[velocity[1]],[velocity[2]]])
     target_x = round(target[0],2)
     target_y = round(target[1],2)
     req_alt = target[2]
+
     print(x,y)
     # setting time for the differential terms and for later applications too
     sample_time = 0.005
     current_time = time.time()
-
+    altitude = altitude - 0.175
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
-    position_controller(target_x, target_y, x, y, flag)
+    position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y)
 
     err_pitch = pitch - pitch_desired #Changed this from setpoint roll to roll desired
 
@@ -86,7 +109,8 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     pitch_err_pub.publish(err_pitch)
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
-
+    alt_pub = rospy.Publisher("tera_alt",Float64,queue_size=10)
+    alt_pub.publish(altitude)
 
 
     mass_total = 4.04 #Kg this I got from the urdf file
@@ -132,16 +156,16 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
         # Proportional Terms
         
-        pMem_alt = curr_alt_err
+        pMem_alt = kp_z*curr_alt_err
         
         # Integral Terms
 
-        iMem_alt += curr_alt_err*dTime
+        iMem_alt += ki_z*curr_alt_err*dTime
 
 
         # Derivative Terms
         
-        dMem_alt = dErr_alt / dTime
+        dMem_alt = kd_z*(dErr_alt / dTime)
 
         #limit integrand values
         # print(iMem_alt)
@@ -261,7 +285,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     sample_time = 0.005
 
 #===============================Defining Matrices==================================>#
-    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, kp, ki, kd)
+    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat)
     # print(F_des)
     A_pseudo_inv = np.round_(A_pseudo_inv , decimals = 2)
     # print(A_pseudo_inv)
@@ -329,7 +353,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
 """
 
 #Controller which applies PID to errors in x and y(target values of vel being 0) and gives setpoint pitch and roll as output to correct the errors
-def position_controller(target_x, target_y, x, y, flag):
+def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y):
     #global variables are declared to avoid their values resetting to 0
     global prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y
@@ -365,12 +389,12 @@ def position_controller(target_x, target_y, x, y, flag):
     if(dTime >= sample_time):
         
         # Proportional terms
-        pMem_x = err_x
-        pMem_y = err_y
+        pMem_x = kp_x*err_x
+        pMem_y = kp_y*err_y
 
         # Integral terms
-        iMem_x += err_x*dTime
-        iMem_y += err_y*dTime
+        iMem_x += ki_x*err_x*dTime
+        iMem_y += ki_y*err_y*dTime
 
         if(iMem_x>10): iMem_x = 10
         if(iMem_x<-10): iMem_x=-10
@@ -379,8 +403,8 @@ def position_controller(target_x, target_y, x, y, flag):
 
         #Derivative terms
 
-        dMem_x = (dErr_x / dTime)
-        dMem_y = (dErr_y / dTime)
+        dMem_x = kd_x*(dErr_x / dTime)
+        dMem_y = kd_y*(dErr_y / dTime)
 
     #updating previous terms
     prevErr_x = err_x
