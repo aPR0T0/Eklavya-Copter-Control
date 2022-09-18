@@ -48,7 +48,7 @@ t1 = 0.866025404 #> sqrt(3)/2
 
 len = 0.3 #> assuming that length is 0.3m 
 
-xz = 0.56  
+xz = 0.7
 
 
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1):
@@ -110,6 +110,10 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     pitch_err_pub.publish(err_pitch)
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
+    x_err_pub = rospy.Publisher("/x_err", Float64, queue_size=10)
+    x_err_pub.publish(-err_x)
+    y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
+    y_err_pub.publish(err_y)
 
 
     mass_total = 4.04 #Kg this I got from the urdf file
@@ -218,8 +222,8 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 """
 
 def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap):
-    global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
-    global current_time,prevTime,dTime, speed, prevOmega, t1
+    # F_des --> Force desired and M_des --> Desired moment
+    global current_time, prevTime, dTime, t1
     theta = pitch 
     phi = roll 
     gamma = yaw
@@ -322,8 +326,8 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     #setting dTime for derivative and integral terms
     dTime = current_time - float(prevTime)
 
-    err_x = target_x -x
-    err_y = target_y -y
+    err_x = x - target_x
+    err_y = target_y - y
 
 
     dErr_x = err_x - prevErr_x

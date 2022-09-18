@@ -23,7 +23,7 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
     # rotation_matrix[2][1] = cos(phi)*sin(theta)*sin(gamma)-sin(phi)*cos(gamma)
     # rotation_matrix[2][2] = cos(phi)*cos(theta)
 
-    rotation_matrix = np.round_(np.transpose(rotation_matrix), decimals=2)#for body to earth
+    rotation_matrix = np.transpose(rotation_matrix) #for body to earth
     
     
     # Gravitational matrix
