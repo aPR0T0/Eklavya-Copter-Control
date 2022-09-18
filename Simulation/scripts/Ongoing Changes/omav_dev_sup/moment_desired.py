@@ -190,4 +190,5 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         #                                                             = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
         M_desired = q_intermediate_1 + q_intermediate_3_2
     #M_desired = np.zeros((3, 1))
+    M_desired = np.round_(M_desired,decimals=2)
     return M_desired

@@ -15,6 +15,7 @@ from math import atan2
 import time
 import numpy as np 
 import rospy
+from speed import *
 from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
 
@@ -199,65 +200,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # print(i_pose_mat)
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
 
-    t = 0
-    if ( t == 0 ):
-        speed.angular_velocities.append(ang_vel_rot[4])
-        speed.angular_velocities.append(ang_vel_rot[1])
-        speed.angular_velocities.append(ang_vel_rot[0])
-        speed.angular_velocities.append(ang_vel_rot[3])
-        speed.angular_velocities.append(ang_vel_rot[5])
-        speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(ang_vel_rot[4])
-        speed.angular_velocities.append(ang_vel_rot[1])
-        speed.angular_velocities.append(ang_vel_rot[0])
-        speed.angular_velocities.append(ang_vel_rot[3])
-        speed.angular_velocities.append(ang_vel_rot[5])
-        speed.angular_velocities.append(ang_vel_rot[2])
-        speed.angular_velocities.append(tilt_ang[4])
-        speed.angular_velocities.append(tilt_ang[1])
-        speed.angular_velocities.append(tilt_ang[0])
-        speed.angular_velocities.append(tilt_ang[3])
-        speed.angular_velocities.append(tilt_ang[5])
-        speed.angular_velocities.append(tilt_ang[2])
-        # print("Once")
-        t += 1
-
-    speed.angular_velocities[0] = ang_vel_rot[4]
-    speed.angular_velocities[1] = ang_vel_rot[1]
-    speed.angular_velocities[2] = ang_vel_rot[0]
-    speed.angular_velocities[3] = ang_vel_rot[3]
-    speed.angular_velocities[4] = ang_vel_rot[5]
-    speed.angular_velocities[5] = ang_vel_rot[2]
-    speed.angular_velocities[6] = ang_vel_rot[4]
-    speed.angular_velocities[7] = ang_vel_rot[1]
-    speed.angular_velocities[8] = ang_vel_rot[0]
-    speed.angular_velocities[9] = ang_vel_rot[3]
-    speed.angular_velocities[10] = ang_vel_rot[5]
-    speed.angular_velocities[11] = ang_vel_rot[2]
-    speed.angular_velocities[12] = tilt_ang[4]  
-    speed.angular_velocities[13] = (tilt_ang[1])
-    speed.angular_velocities[14] = tilt_ang[0]
-    speed.angular_velocities[15] = (tilt_ang[3])
-    speed.angular_velocities[16] = (tilt_ang[5])
-    speed.angular_velocities[17] = tilt_ang[2]
-
-    # Limiting the speeds to the permissible limits
-    if (speed.angular_velocities[0] > 1700): speed.angular_velocities[0] = 1700
-    if (speed.angular_velocities[1] > 1700): speed.angular_velocities[1] = 1700
-    if (speed.angular_velocities[2] > 1700): speed.angular_velocities[2] = 1700
-    if (speed.angular_velocities[3] > 1700): speed.angular_velocities[3] = 1700
-    if (speed.angular_velocities[4] > 1700): speed.angular_velocities[4] = 1700
-    if (speed.angular_velocities[5] > 1700): speed.angular_velocities[5] = 1700
-    if (speed.angular_velocities[6] > 1700): speed.angular_velocities[6] = 1700
-    if (speed.angular_velocities[7] > 1700): speed.angular_velocities[7] = 1700
-    if (speed.angular_velocities[8] > 1700): speed.angular_velocities[8] = 1700
-    if (speed.angular_velocities[9] > 1700): speed.angular_velocities[9] = 1700
-    if (speed.angular_velocities[10] > 1700): speed.angular_velocities[10] = 1700
-    if (speed.angular_velocities[11] > 1700): speed.angular_velocities[11] = 1700
-
-    print(speed.angular_velocities)
-    return(speed)
-
+    speed = speed_assign( tilt_ang, ang_vel_rot)
+    
+    return speed
 # ======================= Control Allocation Starts here ========================== #
 
 """
@@ -276,7 +221,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
 def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap):
     global F_des, M_des, prevoutRoll, prevoutPitch, prevoutYaw # F_des --> Force desired and M_des --> Desired moment
-    global current_time,prevTime,dTime, Final_mat, speed, prevOmega, t1
+    global current_time,prevTime,dTime, speed, prevOmega, t1
     theta = pitch 
     phi = roll 
     gamma = yaw
@@ -289,29 +234,25 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
 
     dTime = current_time - prevTime
     sample_time = 0.005
-
-#===============================Defining Matrices==================================>#
-    F_des, A_pseudo_inv = force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat)
-    # print(F_des)
-    A_pseudo_inv = np.round_(A_pseudo_inv , decimals = 2)
-    # print(A_pseudo_inv)
-
 #<--------------Intertia matrix for the Moment desired calc-------------------------->
     # angular velocities
     # 3x1
     
     I = np.array([[0.0075,0,0],[0,0.010939,0],[0,0,0.01369]]) 
     # The above matrix is already defined in the urdf
-    
-    M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
+
+#===============================Defining Matrices==================================>#
+    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
+    # print(F_des)
+    # print(A_pseudo_inv)
+
 
     # Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0]],[M_des[1][0]],[M_des[2][0]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
-    Final_mat = np.array([F_des[0][0],F_des[1][0],F_des[2][0],M_des[0][0].real,M_des[1][0].real,M_des[2][0].real]) #3x1 matrix when restrictions are applied
     # print(Final_mat)
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     
-    relation_matrix = np.round_(np.matmul( A_pseudo_inv , Final_mat ).real,decimals = 2)
+    relation_matrix = np.round_(relation_matrix,decimals = 2)
     relation_matrix = relation_matrix.reshape((12,1))
     print(relation_matrix)
 
