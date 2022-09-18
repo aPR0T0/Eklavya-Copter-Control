@@ -85,7 +85,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # setting time for the differential terms and for later applications too
     sample_time = 0.005
     current_time = time.time()
-    altitude = altitude - 0.175
+    altitude = altitude - 0.17
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y)
 
@@ -110,8 +110,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     pitch_err_pub.publish(err_pitch)
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
-    alt_pub = rospy.Publisher("tera_alt",Float64,queue_size=10)
-    alt_pub.publish(altitude)
 
 
     mass_total = 4.04 #Kg this I got from the urdf file
@@ -152,7 +150,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # print(dTime)
 # ================== Starting calculations for the error terms =================== #
 
-    helperr = np.empty(20)
+    helperr = np.zeros(20)
     i = 0
     for i in range(20):
         if i<19:

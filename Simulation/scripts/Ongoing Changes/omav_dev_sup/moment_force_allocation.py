@@ -22,14 +22,13 @@ def force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, di
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , w_x_current, w_y_current, w_z_current, I , kq, kr, flag)
     
     A = np.array([[0,0.5,0,1,0,0.5,0,-0.5,0,-1,0,-0.5],[0,t1,0,0,0,-t1,0,-t1,0,0,0,t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[len*0.5,kap*0.5*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len,-kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu)],[t1*len,t1*kap*(1/Mu),0,0,-t1*len,-t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),0,0,t1*len,-t1*kap*(1/Mu)],[len*0.5,-0.5*kap*(1/Mu),len,kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu)]]) #confirmed
-    A = np.round_(A,decimals=2)
     #Transpose of A
-    A_trans = np.round_(np.transpose(A),decimals=2)
+    A_trans = np.transpose(A)
 # <--------------------------------pseudo inverse------------------------------>
-    X = np.round_(np.array(np.matmul(A,A_trans)),decimals=2)
+    X = np.array(np.matmul(A,A_trans))
     # m <= n for A therefore, A(pseudo) =  A^T * ( A * A^T ) ^ -1
 # Now, for the pseudo inverse we need X^-1s
-    X_inv = np.round_(np.linalg.inv(X),decimals=2)  
+    X_inv = np.linalg.inv(X)
 
     A_pseudo_inv = np.matmul(A_trans,X_inv)# Now, we have the pseudo inverse ready for the given matrix
 
@@ -37,7 +36,7 @@ def force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, di
     # print(res_matrix)
     A_pseudo_inv = np.round_(A_pseudo_inv , decimals = 2)
 
-    desired = np.array([F_des[0][0],F_des[1][0],F_des[2][0],M_des[0][0].real,M_des[1][0].real,M_des[2][0].real]) #3x1 matrix when restrictions are applied
+    desired = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0].real],[M_des[1][0].real],[M_des[2][0].real]]) #3x1 matrix when restrictions are applied
 
 
     F_dec =  np.matmul( A_pseudo_inv , desired )
