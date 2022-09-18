@@ -60,9 +60,9 @@ def getOdo(msg):
 #here I have eliminated the gps sensor because it is not installed on the firefly
 
 
-r = 0.1
+r = 6.8
 r1 = 5
-a1 = 0.1
+a1 = 0
 a2 = 1
 
 def takeoff():
