@@ -8,7 +8,7 @@
         dd(X) =  Double Derivative
         _mat  =  Matrix
 """
-from turtle import tilt
+from moment_desired import *
 from moment_force_allocation import *
 from cmath import cos, sin, sqrt
 from math import atan2
@@ -47,7 +47,7 @@ t1 = 0.866025404 #> sqrt(3)/2
 
 len = 0.3 #> assuming that length is 0.3m 
 
-xz = 0.5  
+xz = 0.56  
 
 
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1):
@@ -55,7 +55,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
     global target_x,target_y,req_alt
-    global prop_pos_mat, diff_pose_mat, i_pose_mat, kp, ki, kd, omega
+    global prop_pos_mat, diff_pose_mat, i_pose_mat, omega, helperr
 
     #Assigning target, altitude
     setpoint_roll = 0  #this should change according to the desired r,p,y
@@ -151,7 +151,13 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # print(dTime)
 # ================== Starting calculations for the error terms =================== #
 
-
+    helperr = np.empty(20)
+    i = 0
+    for i in range(20):
+        if i<19:
+            helperr[i] = helperr[i+1]
+        else:
+            helperr[i] = curr_alt_err 
     if ( dTime >= sample_time ):
 
         # Proportional Terms
@@ -160,7 +166,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         
         # Integral Terms
 
-        iMem_alt += ki_z*curr_alt_err*dTime
+        iMem_alt = ki_z*np.sum(helperr)*dTime
 
 
         # Derivative Terms
@@ -170,7 +176,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         #limit integrand values
         # print(iMem_alt)
         if(iMem_alt > 100): iMem_alt = 100
-        if(iMem_alt <-100): iMem_alt = -100
+        if(iMem_alt < -100): iMem_alt = -100
 
     #Updating previous error terms
 
@@ -208,10 +214,10 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         speed.angular_velocities.append(ang_vel_rot[5])
         speed.angular_velocities.append(ang_vel_rot[2])
         speed.angular_velocities.append(tilt_ang[4])
-        speed.angular_velocities.append(tilt_ang[1]-math.pi/2)
+        speed.angular_velocities.append(tilt_ang[1])
         speed.angular_velocities.append(tilt_ang[0])
-        speed.angular_velocities.append(tilt_ang[3]-math.pi/2)
-        speed.angular_velocities.append(tilt_ang[5]-math.pi/2)
+        speed.angular_velocities.append(tilt_ang[3])
+        speed.angular_velocities.append(tilt_ang[5])
         speed.angular_velocities.append(tilt_ang[2])
         # print("Once")
         t += 1
