@@ -134,14 +134,14 @@ def quaternion_to_euler(quaternion_supplied):
     return(euler_returned)
 
 
-
+"""
 # GET DATA FROM SENSORS
 def get_time(msg):
-    """
-    Get Current Time Readings from Clock
-    Clock publishes readings in Seconds and Nano-seconds format, which we convert to single term per our requirement
-    Time is used in the Derivative Term of the PID Controller which calculates the F_desired term to be used in Control Allocation Equation
-    """
+    
+    #Get Current Time Readings from Clock
+    #Clock publishes readings in Seconds and Nano-seconds format, which we convert to single term per our requirement
+    #Time is used in the Derivative Term of the PID Controller which calculates the F_desired term to be used in Control Allocation Equation
+    
     # To prevent Garbage Values being used or variables being initialized/reset as zero
     global secs, nsecs, time_returned
 
@@ -156,6 +156,7 @@ def get_time(msg):
     #print(type(time_returned))
 
     return(time_returned)
+"""
 
 
 def get_position_current(msg):

@@ -41,6 +41,8 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
     global p0, p1, p2, p3, q0, q1, q2, q3, q_w_error, q_x_error, q_y_error, q_z_error, sign_q_w_error
     global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1, q_intermediate_3_2, M_desired
 
+    #print(w_current)
+
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
     if(flag == 0):
         # Quaternion Desired
@@ -138,10 +140,10 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
             sign_q_w_error = 1
 
         # Initializing the 3*1 Matrix of the vector part of Quaternion Error for Further Calculations
-        q_v_error[0, 0] = q_x_error
-        q_v_error[1, 0] = q_y_error
-        q_v_error[2, 0] = q_z_error
-
+        q_v_error[0][0] = q_x_error
+        q_v_error[1][0] = q_y_error
+        q_v_error[2][0] = q_z_error
+        
         # Desired Angular Velocity :
         w_desired = (kq * sign_q_w_error * q_v_error)
         #print(w_desired)
@@ -154,19 +156,20 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
         # To Calculate : ωerror = (ωdes - ω̂ ) 
         #                ωerror = (w_current - w_current)
         w_error = w_desired - w_current
-
+        #print(w_error)
         # To Calculate 1st Term in Moment_Desired Equation : q_intermediate_1 = kr.(ωdes - ω̂ )
         #                                                                     = kr.ωerror
         q_intermediate_1 = (kr * w_error)
-
+        #print(q_intermediate_1)
         # To Calculate 2nd Term in Moment_Desired Equation : q_intermediate_2 = roff × BFdes
         # Cross Product
         q_intermediate_2 = np.cross(r_offset, F_desired, axis=0)
-
+        #print(q_intermediate_2)
         # To Calculate intermediate for 3rd term in Moment_Desired Equation : q_intermediate_3_1 = J.ω̂ 
         # Dot Product
         q_intermediate_3_1 = np.matmul(Inertial_Matrix, w_current)
-
+        
+        #print(q_intermediate_3_1)
         # To Calculate 3rd Term in Moment_Desired Equation : q_intermediate_3_2 = ω̂  × (J.ω̂ )
         #                                                                       = ω̂  × q_intermediate_3_1
         # Cross Product
@@ -175,5 +178,5 @@ def moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_M
         # To Calculate Moment_Desired using 1st, 2nd and 3rd Term Mdes = kr.(ωdes - ω̂ ) - (roff × BFdes) + (ω̂  × (J.ω̂ ))
         #                                                             = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
         M_desired = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
-    
+    #M_desired = np.zeros((3, 1))
     return M_desired
