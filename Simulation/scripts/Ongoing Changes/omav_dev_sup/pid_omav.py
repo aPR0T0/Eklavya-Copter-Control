@@ -385,7 +385,7 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
         damper = 3*(1/abs(err_y))/4
         print("\ndamping in y:",damper)
         err_y = err_y - damper
-    elif(0.1 < err_y <= 0.25):
+    elif(-0.25 < err_y < -0.1):
         damper = (1/abs(err_y))*0.1
         print("\ndamping in y:",damper)
         err_y = err_y + damper
