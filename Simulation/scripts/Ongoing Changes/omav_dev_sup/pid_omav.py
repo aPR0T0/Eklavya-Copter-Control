@@ -81,7 +81,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     target_y = round(target[1],2)
     req_alt = target[2]
 
-    print(x,y)
     # setting time for the differential terms and for later applications too
     sample_time = 0.005
     current_time = time.time()
@@ -240,7 +239,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # angular velocities
     # 3x1
     
-    I = np.array([[0.0075,0,0],[0,0.010939,0],[0,0,0.01369]]) 
+    I = np.array([[0.0075,-3.4208e-05,2.4695e-05],[0,0.010939,-3.8826e-06],[0,0,0.01369]]) 
     # The above matrix is already defined in the urdf
 
 #===============================Defining Matrices==================================>#
@@ -256,7 +255,6 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     
     relation_matrix = np.round_(relation_matrix,decimals = 2)
     relation_matrix = relation_matrix.reshape((12,1))
-    print(relation_matrix)
 
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
@@ -275,7 +273,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
         x1 = relation_matrix[2*i+1]
         x2 = relation_matrix[2*i]
         # print(x1) Uses this to get the real value from the matrix
-        tilt_ang[i] = round(atan2(x1,x2),1) # atan2(sin/cos)
+        tilt_ang[i] = round(atan2(x1,x2),2) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
     ang_vel_rot = tuple(xz*ang_vel)
@@ -329,7 +327,6 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     err_x = x - target_x
     err_y = target_y - y
 
-
     dErr_x = err_x - prevErr_x
     dErr_y = err_y - prevErr_y
 
@@ -358,3 +355,26 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     #updating previous terms
     prevErr_x = err_x
     prevErr_y = err_y
+
+    # damping 
+
+    if (0.25 < abs(err_x) < 2):
+        damper = 3*abs(err_x)/4
+        print("\ndamping in x:",damper)
+        err_x = err_x + damper #because the direction of x is same as that of earth's frame
+    elif(0.1 < abs(err_x) <= 0.25):
+        damper = (1/abs(err_x))*0.1
+        print("\ndamping in x:",damper)
+        err_x = err_x + damper
+    print("\nerr_x = ",err_x)
+
+
+    if (0.25 < abs(err_y) < 2):
+        damper = (1/abs(err_y))*0.1
+        print("\ndamping in y:",damper)
+        err_y = err_y - damper
+    elif(0.1 < abs(err_y) <= 0.25):
+        damper = (1/abs(err_y))*0.1
+        print("\ndamping in y:",damper)
+        err_y = err_y - damper
+    print("\nerr_y = ",err_y)
