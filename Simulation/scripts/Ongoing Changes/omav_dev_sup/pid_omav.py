@@ -358,23 +358,39 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
 
     # damping 
 
-    if (0.25 < abs(err_x) < 2):
+    if (0.25 < err_x < 2):
         damper = 3*abs(err_x)/4
         print("\ndamping in x:",damper)
         err_x = err_x + damper #because the direction of x is same as that of earth's frame
-    elif(0.1 < abs(err_x) <= 0.25):
+    elif (-0.2 < err_x < -0.25):
+        damper = 3*abs(err_x)/4
+        print("\ndamping in x:",damper)
+        err_x = err_x - damper
+    elif(0.1 < err_x <= 0.25):
         damper = (1/abs(err_x))*0.1
         print("\ndamping in x:",damper)
         err_x = err_x + damper
+    elif(-0.25 <= err_x < -0.1):
+        damper = (1/abs(err_x))*0.1
+        print("\ndamping in x:",damper)
+        err_x = err_x - damper
     print("\nerr_x = ",err_x)
 
 
-    if (0.25 < abs(err_y) < 2):
-        damper = (1/abs(err_y))*0.1
+    if (0.25 < err_y < 2):
+        damper = 3*(1/abs(err_y))/4
         print("\ndamping in y:",damper)
         err_y = err_y - damper
-    elif(0.1 < abs(err_y) <= 0.25):
-        damper = (1/abs(err_y))*0.1
+    elif (0.25 < err_y < 2):
+        damper = 3*(1/abs(err_y))/4
         print("\ndamping in y:",damper)
         err_y = err_y - damper
+    elif(0.1 < err_y <= 0.25):
+        damper = (1/abs(err_y))*0.1
+        print("\ndamping in y:",damper)
+        err_y = err_y + damper
+    elif(-0.25 < err_y <= -0.1):
+        damper = (1/abs(err_y))*0.1
+        print("\ndamping in y:",damper)
+        err_y = err_y + damper
     print("\nerr_y = ",err_y)
