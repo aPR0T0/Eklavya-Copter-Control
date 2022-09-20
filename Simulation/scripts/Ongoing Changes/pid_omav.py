@@ -294,7 +294,7 @@ def control_allocation( roll, pitch, yaw,hover_speed, mass_total, weight, flag, 
     
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I)
 
-    Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0]],[M_des[1][0]],[M_des[2][0]]]) #6x1 matrix from Fdes and Mdes
+    Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]]]) #6x1 matrix from Fdes and Mdes
     speed = Actuators()
 
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 

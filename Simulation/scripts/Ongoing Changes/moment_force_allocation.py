@@ -14,9 +14,9 @@ def force_desired(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat,
     # Rot_Matrix = np.transpose(Rot_Matrix) #for body to earth
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
-    A = np.array([[Mu*0.5,0,Mu,0,-Mu*0.5,0,-Mu*0.5,0,Mu,0,Mu*0.5,0],[-t1*Mu,0,0,0,-Mu*t1,0,-Mu*t1,0,0,0,-Mu*t1,0],[0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu],[kap*0.5,-Mu*len*0.5,-kap,-Mu*len,kap*0.5,-len*Mu*0.5,kap*0.5,-Mu*len*0.5,-kap,Mu*len*0.5,kap*0.5,-len*Mu*0.5],[-2*t1*kap,t1*len*Mu,0,0,t1*kap,t1*Mu*len,t1*kap,t1*Mu*len,0,0,-2*t1*kap,t1*Mu*len],[Mu*len,kap,Mu*len,-kap,len*Mu,kap,Mu*len,-kap,Mu*len,kap,Mu*len,kap]]) #6x12 matrix
+    A = np.array([[0,Mu*0.5,0,Mu,0,0.5*Mu,0,-0.5*Mu,0,-Mu,0,-0.5*Mu],[0,-t1*Mu,0,0,0,Mu*t1,0,t1*Mu,0,0,0,-t1*Mu],[Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0]]) #3x12 matrix
     
-
+    # A = np.array([[Mu*0.5,0,Mu,0,-Mu*0.5,0,-Mu*0.5,0,Mu,0,Mu*0.5,0],[-t1*Mu,0,0,0,-Mu*t1,0,-Mu*t1,0,0,0,-Mu*t1,0],[0,Mu,0,Mu,0,Mu,0,Mu,0,Mu,0,Mu],[kap*0.5,-Mu*len*0.5,-kap,-Mu*len,kap*0.5,-len*Mu*0.5,kap*0.5,-Mu*len*0.5,-kap,Mu*len*0.5,kap*0.5,-len*Mu*0.5],[-2*t1*kap,t1*len*Mu,0,0,t1*kap,t1*Mu*len,t1*kap,t1*Mu*len,0,0,-2*t1*kap,t1*Mu*len],[Mu*len,kap,Mu*len,-kap,len*Mu,kap,Mu*len,-kap,Mu*len,kap,Mu*len,kap]])
     #<___possibility 2___>#
     # A = np.array([[0,Mu,0,-Mu,0,-0.5*Mu,0,-0.5*Mu,0,0.5*Mu,0,0.5*Mu],[0,0,0,0,0,Mu*t1,0,-t1*Mu,0,t1*Mu,0,-t1*Mu],[kap+Mu,0,-kap-Mu,0,kap+Mu,0,-kap-Mu,0,-kap-Mu,0,kap+Mu,0],[-1,0,-1,0,t1,0,t1,0,t1,0,t1,0],[0,0,0,0,0.5,0,0.5,0,0.5,0,0.5,0],[0,1,0,1,0,1,0,1,0,1,0,1]]) #here, I equated w(i) = w(i+3) and α(i) = -α(i+3)
     #<___possibility 3___>#
