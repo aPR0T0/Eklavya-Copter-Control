@@ -1,9 +1,9 @@
 #! /usr/bin/env python3     #For a ROS Node makes sure the script is executed as a Python script
-from turtle import position
+
 import rospy #for ROS operations
 import numpy as np
 import math
-import statistics
+#import statistics
 import time
 from tf.transformations import euler_from_quaternion, quaternion_from_euler #For Inter-conversions between Euler and Quaternion
 import message_filters
