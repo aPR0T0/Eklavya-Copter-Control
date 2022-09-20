@@ -21,7 +21,7 @@ def force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, di
 
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , w_x_current, w_y_current, w_z_current, I , kq, kr, flag)
     
-    A = np.array([[0,0.5,0,1,0,0.5,0,-0.5,0,-1,0,-0.5],[0,t1,0,0,0,-t1,0,-t1,0,0,0,t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[len*0.5,kap*0.5*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len,-kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu)],[t1*len,t1*kap*(1/Mu),0,0,-t1*len,-t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),0,0,t1*len,-t1*kap*(1/Mu)],[len*0.5,-0.5*kap*(1/Mu),len,kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu)]]) #confirmed
+    A = np.array([[0,-1,0,1,0,0.5,0,-0.5,0,-0.5,0,0.5],[0,0,0,0,0,t1,0,-t1,0,t1,0,-t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[-len,-kap*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu),len,kap*(1/Mu)],[0,0,0,0,t1*len,t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),t1*len,-t1*kap*(1/Mu),-t1*len,-kap*t1*(1/Mu)],[len,-kap*(1/Mu),len*0.5,0.5*kap*(1/Mu),len,-kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),0.5*len,0.5*kap*(1/Mu),0.5*len,-0.5*kap*(1/Mu)]]) #confirmed
     #Transpose of A
     A_trans = np.transpose(A)
 # <--------------------------------pseudo inverse------------------------------>

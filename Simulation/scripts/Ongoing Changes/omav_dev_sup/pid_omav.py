@@ -48,10 +48,10 @@ t1 = 0.866025404 #> sqrt(3)/2
 
 len = 0.3 #> assuming that length is 0.3m 
 
-xz = 0.7
+xz = 0.707
 
 
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
@@ -95,6 +95,10 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     err_yaw = 0 - yaw #for our application we don't want the hexacopter to yaw like at all
 
     curr_alt_err = req_alt - altitude
+    # if(0.6 <= curr_alt_err < 2):
+    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.4
+    # elif( -2 < curr_alt_err <= -0.6):
+    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.4
     #this is limiting case where we have reached the desired location in x and y
     # if(-2.5 <=setpoint_pitch <=2.5 and -2.5<= setpoint_roll <= 2.5): 
     #     err_roll = setpoint_roll
@@ -193,15 +197,15 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # output_alt = 1 if output_alt > 1 else output_alt
 
 
-    prop_pos_mat = np.array([[pMem_x],[pMem_y],[pMem_alt]]) #position error matrix
-    # print(prop_pos_mat)
-    diff_pose_mat = np.array([[dMem_x],[dMem_y],[dMem_alt]])
-    # print(diff_pose_mat)
-    i_pose_mat = np.array([[iMem_x],[iMem_y],[iMem_alt]])
+    prop_pos_mat = np.round_(np.array([[pMem_x],[pMem_y],[pMem_alt]]),decimals=2) #position error matrix
+    print(prop_pos_mat)
+    diff_pose_mat = np.round_(np.array([[dMem_x],[dMem_y],[dMem_alt]]),decimals=2)
+    print(diff_pose_mat)
+    i_pose_mat = np.round_(np.array([[iMem_x],[iMem_y],[iMem_alt]]),decimals=2)
     # print(i_pose_mat)
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
 
-    speed = speed_assign( tilt_ang, ang_vel_rot)
+    speed = speed_assign( tilt_ang, ang_vel_rot,speed,flag)
     
     return speed
 # ======================= Control Allocation Starts here ========================== #
@@ -247,9 +251,6 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # print(F_des)
     # print(A_pseudo_inv)
 
-
-    # Final_mat = np.array([[F_des[0][0]],[F_des[1][0]],[F_des[2][0]],[M_des[0][0]],[M_des[1][0]],[M_des[2][0]]]) #6x1 matrix from Fdes and Mdes
-    speed = Actuators()
     # print(Final_mat)
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     
@@ -351,46 +352,30 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
 
         dMem_x = kd_x*(dErr_x / dTime)
         dMem_y = kd_y*(dErr_y / dTime)
-
+        print(dErr_y)
     #updating previous terms
     prevErr_x = err_x
     prevErr_y = err_y
 
     # damping 
 
-    if (0.25 < err_x < 2):
-        damper = 3*abs(err_x)/4
-        print("\ndamping in x:",damper)
-        err_x = err_x + damper #because the direction of x is same as that of earth's frame
-    elif (-0.2 < err_x < -0.25):
-        damper = 3*abs(err_x)/4
-        print("\ndamping in x:",damper)
-        err_x = err_x - damper
-    elif(0.1 < err_x <= 0.25):
-        damper = (1/abs(err_x))*0.1
-        print("\ndamping in x:",damper)
-        err_x = err_x + damper
-    elif(-0.25 <= err_x < -0.1):
-        damper = (1/abs(err_x))*0.1
-        print("\ndamping in x:",damper)
-        err_x = err_x - damper
-    print("\nerr_x = ",err_x)
+    # if (0 < err_x < 2):
+    #     damper = 3*abs(err_x)/4
+    #     print("\ndamping in x:",damper)
+    #     err_x = err_x + damper #because the direction of x is same as that of earth's frame
+    # elif (-2 < err_x < 0):
+    #     damper = 3*abs(err_x)/4
+    #     print("\ndamping in x:",damper)
+    #     err_x = err_x - damper
+    # print("\nerr_x = ",err_x)
 
 
-    if (0.25 < err_y < 2):
-        damper = 3*(1/abs(err_y))/4
-        print("\ndamping in y:",damper)
-        err_y = err_y - damper
-    elif (0.25 < err_y < 2):
-        damper = 3*(1/abs(err_y))/4
-        print("\ndamping in y:",damper)
-        err_y = err_y - damper
-    elif(-0.25 < err_y < -0.1):
-        damper = (1/abs(err_y))*0.1
-        print("\ndamping in y:",damper)
-        err_y = err_y + damper
-    elif(-0.25 < err_y <= -0.1):
-        damper = (1/abs(err_y))*0.1
-        print("\ndamping in y:",damper)
-        err_y = err_y + damper
-    print("\nerr_y = ",err_y)
+    # if (0 < err_y < 2):
+    #     damper = 3*(1/abs(err_y))/4
+    #     print("\ndamping in y:",damper)
+    #     err_y = err_y - damper
+    # elif (-2 < err_y < 0):
+    #     damper = 3*(1/abs(err_y))/4
+    #     print("\ndamping in y:",damper)
+    #     err_y = err_y + damper
+    # print("\nerr_y = ",err_y)
