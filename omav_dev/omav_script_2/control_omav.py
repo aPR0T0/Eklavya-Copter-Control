@@ -8,6 +8,7 @@ from std_msgs.msg import Float64MultiArray,Float64
 from sensor_msgs.msg import Imu #It contains overall type of readings getting from the Imu sensor
 from nav_msgs.msg import Odometry #It contains overall type of readings getting from the Odometry sensor
 from mav_msgs.msg import Actuators
+from sensor_msgs.msg import NavSatFix
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 #from now on we will be call (roll pitch yaw) as 'RPY' in this module
 
@@ -26,6 +27,7 @@ z  = 0
 
 # Flag for checking for the first time the script is run
 flag = 0
+
 # kp_thrust = 20
 # ki_thrust = 0.001
 # kd_thrust = 35
@@ -44,10 +46,16 @@ flag = 0
 # kp_y = 0.13
 # ki_y = 0
 # kd_y = 0.00015
+
 kap = 0.0005 #> constant for the matrix
+
 Mu = 0.0005  #> constant for the matrix
-t1 = 0.86603 #> sqrt(3)/2
+
+t1 = 0.866025404 #> sqrt(3)/2
+
 len = 0.3 #> assuming that length is 0.3m 
+
+
 #creating publisher for the speeds of the rotors
 speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=100) #here we will use angles section to give angles to the tilt rotors
 
@@ -67,25 +75,30 @@ def set_rate_controller_gain(msg):
     global kr
     kr = msg.data
 
-def set_lift_force_coefficient(msg):
-    global Mu
-    Mu = msg.data
-
-def set_drag_torque_coefficient(msg):
-    global kap
-    kap = msg.data
-
-def setPID_pose(msg):
-    global kp,ki,kd
-    kp = msg.data[0]
-    ki =  msg.data[1]
-    kd = msg.data[2]
+def setPID_x(msg):
+    global kp_x,ki_x,kd_x
+    kp_x = msg.data[0]
+    ki_x =  msg.data[1]
+    kd_x = msg.data[2]
+def setPID_y(msg):
+    global kp_y,ki_y,kd_y
+    kp_y = msg.data[0]
+    ki_y =  msg.data[1]
+    kd_y = msg.data[2]
+def setPID_z(msg):
+    global kp_z,ki_z,kd_z
+    kp_z = msg.data[0]
+    ki_z =  msg.data[1]
+    kd_z = msg.data[2]
+# def calAlt(msg):
+#     global altitude
+#     altitude = msg.altitude
 
 def calPos(msg):
     global x,y,altitude
-    x = round(msg.pose.pose.position.x,3)
-    y = round(msg.pose.pose.position.y,3)
-    altitude = round(msg.pose.pose.position.z,3)
+    x = round(msg.pose.pose.position.x,2)
+    y = round(msg.pose.pose.position.y,2)
+    altitude = round(msg.pose.pose.position.z,2)
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
@@ -99,10 +112,9 @@ def calOrientation(msg):
     orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
-    #we need RPY in degrees
-    roll = (roll*180)/pi
-    pitch = (pitch*180)/pi
-    yaw = (yaw*180)/pi
+    roll = round(roll,2)
+    pitch = round(pitch,2)
+    yaw = round(yaw,2)
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values
@@ -113,31 +125,32 @@ def alt_control(imu,odo):
     calPos(odo)
 
     calAng(odo)
-    
+
+    # calAlt(gps)
     kap = 8.06428e-05 #0.00099 #> constant for the matrix
     Mu = 7.2e-06 #0.00004311  #> constant for the matrix
 
-    rospy.Subscriber("pose_pid", Float64MultiArray, setPID_pose) 
+    rospy.Subscriber("pid_x", Float64MultiArray, setPID_x)
+    rospy.Subscriber("pid_y", Float64MultiArray, setPID_y)
+    rospy.Subscriber("pid_z", Float64MultiArray, setPID_z) 
     rospy.Subscriber("Tuning_Parameter", Float64, set_tuning_parameter)
     rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
-    rospy.Subscriber("Lift_Force_Coefficient", Float64, set_lift_force_coefficient)
-    rospy.Subscriber("Drag_Torque_Coefficient", Float64, set_drag_torque_coefficient)
     #Making tuples for the velcities and target
-    k_pose = (kp,ki,kd)
+    k_pose = (kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,kp_z,ki_z,kd_z)
     target = (target_x,target_y,req_alt)
     velocity = (vel_x,vel_y,vel_z)
     # Logging for debugging purposes
-    #print("\nAltitude = " + str(altitude))
-    #print("Required alt = ",req_alt)
-    #print("Roll =", roll)
-    #print("Pitch =", pitch)
-    #print("Yaw =", yaw)
-    #print("X = ",x)
-    #print("Y = ",y)
-
+    print("\nAltitude = " + str(altitude))
+    print("Required alt = ",req_alt)
+    print("Roll =", roll)
+    print("Pitch =", pitch)
+    print("Yaw =", yaw)
+    print("X = ",x)
+    print("Y = ",y)
+    
     speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed)
     flag += 1
     speed_pub.publish(speed)
 
