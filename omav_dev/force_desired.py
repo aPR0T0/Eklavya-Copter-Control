@@ -59,7 +59,7 @@ def force_desired(position_desired, position_current, euler_current, current_tim
         #
         current_position_error = position_desired - position_current
         d_position_error = current_position_error - previous_position_error
-        i_position_error = (d_time * current_position_error)
+        i_position_error += (d_time * current_position_error)
         if(i_position_error[0][0] > 10): i_position_error[0][0] = 10
         if(i_position_error[0][0] < -10): i_position_error[0][0] = -10
         if(i_position_error[1][0] > 10): i_position_error[1][0] = 10
@@ -71,14 +71,14 @@ def force_desired(position_desired, position_current, euler_current, current_tim
         p_term = (kp * current_position_error)
 
         # I term
-        i_intermediate += i_position_error
-        if(i_intermediate[0][0] > 800): i_intermediate[0][0] = 800
-        if(i_intermediate[0][0] < -800): i_intermediate[0][0] = -800
-        if(i_intermediate[1][0] > 800): i_intermediate[1][0] = 800
-        if(i_intermediate[1][0] < -800): i_intermediate[1][0] = -800
-        if(i_intermediate[2][0] > 800): i_intermediate[2][0] = 800
-        if(i_intermediate[2][0] < -800): i_intermediate[2][0] = -800
-        i_term = (ki * i_intermediate)
+        #i_intermediate += i_position_error
+        if(i_position_error[0][0] > 800):  i_position_error[0][0] = 800
+        if(i_position_error[0][0] < -800): i_position_error[0][0] = -800
+        if(i_position_error[1][0] > 800):  i_position_error[1][0] = 800
+        if(i_position_error[1][0] < -800): i_position_error[1][0] = -800
+        if(i_position_error[2][0] > 800):  i_position_error[2][0] = 800
+        if(i_position_error[2][0] < -800): i_position_error[2][0] = -800
+        i_term = (ki * i_position_error)
 
         #D Term
         d_intermediate = ((1/d_time) * d_position_error)
@@ -92,10 +92,10 @@ def force_desired(position_desired, position_current, euler_current, current_tim
 
 
         # Equation
-        before_transformation = p_term + i_term + d_term + gravity_term
-        #rotation_matrix1 = np.transpose(rotation_matrix)
+        before_transformation = -p_term - i_term - d_term + gravity_term
+        rotation_matrix1 = np.transpose(rotation_matrix)
         # F_desired
-        F_desired = np.matmul(rotation_matrix, before_transformation)
+        F_desired = np.matmul(rotation_matrix1, before_transformation)
         #print(F_desired)
 
         prev_time = current_time
