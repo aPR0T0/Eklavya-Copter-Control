@@ -15,8 +15,8 @@ def get_speed_publisher(F_dec, Mu, flag, splitting_constant):
 
 
     if(flag == 0):
-        F_dec_square = np.zeros((24, 1))
-        N_Intermediate = np.zeros(12)
+        F_dec_square = np.zeros((12, 1))
+        N_Intermediate = np.zeros(6)
         
         N_previous = np.zeros(6)
 
@@ -28,31 +28,30 @@ def get_speed_publisher(F_dec, Mu, flag, splitting_constant):
         F_dec_square = np.square(F_dec)
 
         for i in range(0, 6):
-            N_Intermediate[i] = (math.pow((F_dec_square[i*2][0] + F_dec_square[(i*2) + 1][0]), 0.25))
-        
+            N_Intermediate[i] = np.round_((math.sqrt(1/Mu))*(math.pow((F_dec_square[i*2][0] + F_dec_square[(i*2) + 1][0]), 0.25)), decimals=2)
+
         N_Intermediate = (splitting_constant * N_Intermediate)
 
 
-        for j in range(0, 6):
-            if(N_Intermediate[j] - N_previous[j] > 10):
-                N_Intermediate[j] = N_previous[j] + 10
-            elif(N_Intermediate[j] - N_previous[j] < -10):
-                N_Intermediate[j] = N_previous[j] - 10
+        # for j in range(0, 6):
+        #     if(N_Intermediate[j] - N_previous[j] > 10):
+        #         N_Intermediate[j] = N_previous[j] + 10
+        #     elif(N_Intermediate[j] - N_previous[j] < -10):
+        #         N_Intermediate[j] = N_previous[j] - 10
 
 
-        for k in range(0, 6):
-            if(N_Intermediate[k] > 750):
-                N_Intermediate[k] = 750
-            elif(N_Intermediate[k] < 640):
-                N_Intermediate[k] = 640
+        # for k in range(0, 6):
+        #     if(N_Intermediate[k] > 750):
+        #         N_Intermediate[k] = 750
+        #     elif(N_Intermediate[k] < 640):
+        #         N_Intermediate[k] = 640
 
 
         # Tilt-Angles Calculations
         for l in range(0, 6):
-            N_angles[l] = (math.atan2((F_dec[l][0]), (F_dec[l+1][0])))
+            N_angles[l] = np.round_((math.atan2((F_dec[l+1][0]), (F_dec[l][0]))), decimals=2)
 
 
-        N_angles = np.round_(N_angles, decimals = 2)
         N_Intermediate = np.round_(N_Intermediate, decimals = 2)
 
         # Giving Angular Velocity and Tilt Angle to Respective Rotor
@@ -66,4 +65,4 @@ def get_speed_publisher(F_dec, Mu, flag, splitting_constant):
         for p in range(0, 6):
             N_previous[p] = N_Intermediate[p]
 
-        return(speed)
+    return(speed)

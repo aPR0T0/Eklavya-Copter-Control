@@ -16,7 +16,7 @@ def force_dec(F_desired, M_desired, Mu, kappa, arm_length, flag):
         A_pseudo_inverse = np.zeros((12, 6))
         desired = np.zeros((6, 1))
 
-    cos_30 = math.cos((30*math.pi)/180)
+    cos_30 = round(math.cos((30*math.pi)/180),2)
 
     """
     6*24 Allocation Matrix
@@ -38,25 +38,17 @@ def force_dec(F_desired, M_desired, Mu, kappa, arm_length, flag):
                          [0,0,0,0,cos_30*arm_length,cos_30*kappa*(1/Mu),-cos_30*arm_length,cos_30*kappa*(1/Mu),cos_30*arm_length,-cos_30*kappa*(1/Mu),-cos_30*arm_length,-kappa*cos_30*(1/Mu)], \
                          [-kappa*(1/Mu),arm_length,kappa*(1/Mu),arm_length,-kappa*(1/Mu),arm_length,kappa*(1/Mu),arm_length,kappa*(1/Mu),arm_length,-kappa*(1/Mu),arm_length]])
 
-    A_static = Mu*A_static
+    # To Get Pseudo-Inverse of Astaic
+    A_transpose = np.transpose(A_static)
+    
+    A_inverse_intermediate = np.matmul(A_static, A_transpose)
+    A_inverse = np.linalg.inv(A_inverse_intermediate)
+    A_pseudo_inverse = np.matmul(A_transpose, A_inverse)
+    A_pseudo_inverse = np.round_(A_pseudo_inverse, decimals=2)
+    # Desired Matrix
+    desired = np.array([[F_desired[0][0]], [F_desired[1][0]], [F_desired[2][0]], [M_desired[0][0]], [M_desired[1][0]], [M_desired[2][0]]])
 
-    if (flag != 0):
-        # To Get Pseudo-Inverse of Astaic
-        A_transpose = np.transpose(A_static)
-        
-        A_inverse_intermediate = np.matmul(A_static, A_transpose)
-        A_inverse = np.linalg.inv(A_inverse_intermediate)
-        A_pseudo_inverse = np.matmul(A_transpose, A_inverse)
+    F_dec = np.matmul(A_pseudo_inverse, desired)
 
-        # Desired Matrix
-        desired[0][0] = F_desired[0][0]
-        desired[1][0] = F_desired[1][0]
-        desired[2][0] = F_desired[2][0]
-        desired[3][0] = M_desired[0][0]
-        desired[4][0] = M_desired[1][0]
-        desired[5][0] = M_desired[2][0]
-
-        F_dec = np.matmul(A_pseudo_inverse, desired)
-
-    return(F_dec)
+    return(np.round_(F_dec, decimals=2))
 

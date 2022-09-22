@@ -61,11 +61,13 @@ startup_position_error = | Error_x  Error_y  Error_z |
 Calculated/Found by echoing rostopic of sensor which supplies Position(Co-ordinates) with drone at Launch Position(stationary)
 """
 Inertial_Matrix = np.array([[0.0075, 0, 0], [0, 0.010939, 0], [0, 0, 0.01369]])
-gravity = np.array([[0], [0], [-9.80]])
+gravity = np.array([[0], [0], [-9.81]])
 mass = 4.04
 arm_length = 0.300
 r_offset = np.array([[0], [0], [0]])
 startup_position_error = np.array([0, 0, 0.1749999999801301])
+
+speed_publisher = Actuators()
 
 
 
@@ -113,56 +115,54 @@ quaternion_current = np.zeros(4)
 current_orientation_returned = np.zeros(4)
 w_current = np.zeros((3, 1))
 current_angular_velocity_returned = np.zeros((3, 1))
-kp = np.zeros((1, 3))
-kd = np.zeros((1, 3))
-ki = np.zeros((1, 3))
-kq = 0.00005
-kr = 0.0000005
+kp = np.array([0, 0, 5])
+kd = np.zeros(3)
+ki = np.zeros(3)
+kq = 100
+kr = 4
 Mu = 7.2e-06
 kappa = 8.06428e-05
 F_desired = np.zeros((3, 1))
 M_desired = np.zeros((3, 1))
 F_dec = np.zeros((12, 1))
 current_position_error = np.zeros((3, 1))
-splitting_constant = math.sqrt(2)
+splitting_constant = round(math.sqrt(2), 2)
 # F_dec = np.zeros((24, 1))
 
 
 
 # Creating Publisher to publish rotor_speeds and tilt-rotor angles
-speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=1000)
+speed_pub = rospy.Publisher("/omav/command/motor_speed", Actuators ,queue_size=100)
 
 
 
 # Get_User_Input Functions, called only once by main
-def get_position_desired():
-    """
-    Taking Position Desired Input from User
-    Taken in X, Y and Altitude(Z) Format of Co-ordinates
-    Returned as a 3*1 Matrix since we require that format for Calculations
-    """
-    global position_desired
-
-    position_desired[0][0], position_desired[1][0], position_desired[2][0] = map(float, input("Enter Desired X Y (Position) and Altitude Co-ordinates : ").split())
+"""
+Taking Position Desired Input from User
+Taken in X, Y and Altitude(Z) Format of Co-ordinates
+Returned as a 3*1 Matrix since we require that format for Calculations
+"""
 
 
-def get_orientation_desired():
-    """
-    Taking Orientation Desired Input from User
-    Taken in Roll, Pitch and Yaw Format of Euler Angles - Angles in Degrees
-    But for Calculations we required Desired Orientation - in Quaternion Format
-    Hence converted Euler Angles to Quaternion Orientation
-    """
-    global euler_desired, quaternion_desired
+position_desired[0][0], position_desired[1][0], position_desired[2][0] = map(float, input("Enter Desired X Y (Position) and Altitude Co-ordinates : ").split())
 
-    euler_desired[0], euler_desired[1], euler_desired[2] = map(float, input("Enter Desired Orientation Roll, Pitch and Yaw - Euler Angles in Degrees : ").split())
 
-    # Since we require orientation in Quaternion format, hence converting euler-to-quaternion
-    # Since we are supplying angles in degrees, but for actual calculations we need angles in radians
-    for i in range (0, 3):
-        euler_desired[i] = euler_desired[i] * (math.pi/180)
 
-    quaternion_desired = quaternion_from_euler(euler_desired[0], euler_desired[1], euler_desired[2])
+"""
+Taking Orientation Desired Input from User
+Taken in Roll, Pitch and Yaw Format of Euler Angles - Angles in Degrees
+But for Calculations we required Desired Orientation - in Quaternion Format
+Hence converted Euler Angles to Quaternion Orientation
+"""
+
+euler_desired[0], euler_desired[1], euler_desired[2] = map(float, input("Enter Desired Orientation Roll, Pitch and Yaw - Euler Angles in Degrees : ").split())
+
+# Since we require orientation in Quaternion format, hence converting euler-to-quaternion
+# Since we are supplying angles in degrees, but for actual calculations we need angles in radians
+for i in range (0, 3):
+    euler_desired[i] = euler_desired[i] * (math.pi/180)
+
+quaternion_desired = quaternion_from_euler(euler_desired[0], euler_desired[1], euler_desired[2])
 
 
 
@@ -181,7 +181,7 @@ def get_position_current(msg):
     current_position_returned[1][0] = (msg.pose.pose.position.y - startup_position_error[1])
     current_position_returned[2][0] = (msg.pose.pose.position.z - startup_position_error[2])
 
-    return(current_position_returned)
+    return(np.round_(current_position_returned, decimals=2))
 
 
 def get_orientation_current(msg):
@@ -199,7 +199,7 @@ def get_orientation_current(msg):
     euler_returned = euler_from_quaternion(current_orientation_returned)
     euler_returned = np.array(euler_returned)
 
-    return(current_orientation_returned, euler_returned)
+    return(np.round_(current_orientation_returned, decimals=2), np.round_(euler_returned, decimals=2))
 
 
 def get_current_angular_velocity(msg):
@@ -210,26 +210,26 @@ def get_current_angular_velocity(msg):
     """
     global current_angular_velocity_returned
 
-    current_angular_velocity_returned[0][0] = msg.angular_velocity.x
-    current_angular_velocity_returned[1][0] = msg.angular_velocity.y
-    current_angular_velocity_returned[2][0] = msg.angular_velocity.z
+    current_angular_velocity_returned[0][0] = msg.twist.twist.angular.x
+    current_angular_velocity_returned[1][0] = msg.twist.twist.angular.y
+    current_angular_velocity_returned[2][0] = msg.twist.twist.angular.z
 
-    return(current_angular_velocity_returned)
+    return(np.round_(current_angular_velocity_returned, decimals=2))
 
 
 
 # GAINS FUNCTIONS
 def set_proportional_gain(msg):
     global kp
-    kp = np.array([[msg.data[0], msg.data[1], msg.data[2]]])
+    kp = np.array([msg.data[0], msg.data[1], msg.data[2]])
 
 def set_derivative_gain(msg):
     global kd
-    kd = np.array([[msg.data[0], msg.data[1], msg.data[2]]])
+    kd = np.array([msg.data[0], msg.data[1], msg.data[2]])
 
 def set_integral_gain(msg):
     global ki
-    ki = np.array([[msg.data[0], msg.data[1], msg.data[2]]])
+    ki = np.array([msg.data[0], msg.data[1], msg.data[2]])
 
 
 def set_tuning_parameter(msg):
@@ -261,7 +261,8 @@ def master(imu_subscriber, odometry_subscriber):
     quaternion_current, euler_current = get_orientation_current(imu_subscriber)
     # Since for a few calculations we need Current Orientation in Euler Angles format
 
-    w_current = get_current_angular_velocity(imu_subscriber)
+    speed_publisher = Actuators()
+    w_current = get_current_angular_velocity(odometry_subscriber)
 
 
 
@@ -274,9 +275,10 @@ def master(imu_subscriber, odometry_subscriber):
 
 
     # Force Desired Calculations Function Call
-    current_position_error, F_desired = force_desired(position_desired, position_current, euler_current, current_time, sample_time, kp, kd, ki, mass, gravity, flag)
+    F_desired = force_desired(position_desired, position_current, euler_current, current_time, sample_time, kp, kd, ki, mass, gravity, flag)
+    current_position_error = position_error()
 
-
+    print(F_desired)
     # Moment Desired Calculations Function Call
     M_desired = moment_desired(quaternion_desired, quaternion_current, w_current, Inertial_Matrix, kq, kr, flag, r_offset, F_desired)
 
@@ -286,7 +288,6 @@ def master(imu_subscriber, odometry_subscriber):
 
 
     # speed_publisher Calculations Function Call
-    speed_publisher = Actuators()
     speed_publisher = get_speed_publisher(F_dec, Mu, flag, splitting_constant)
 
     flag+=1
@@ -306,8 +307,8 @@ def control():
     rospy.init_node('Omav_Controller_Node', anonymous=False)
 
     # Subscribers to get all relevant sensor readings - Multiple Sensors are used for redundancy
-    imu_subscriber = message_filters.Subscriber("/omav/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
-    odometry_subscriber = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry) # For Position, Time, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
+    imu_subscriber = message_filters.Subscriber("/omav/ground_truth/imu", Imu) # For Quaternion Orientation, Angular Velocity & Linear Acceleration(Not Currently)
+    odometry_subscriber = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry) # For Position, Time, Linear Velocity(Not Currently) & Angular Acceleration(Not Currently)
     
     # To time-sync both the subscribers and only, to use data when both publishers subscribe at the same time, this method is used
     ts = message_filters.TimeSynchronizer([imu_subscriber,odometry_subscriber], 10)
@@ -322,8 +323,6 @@ def control():
 
 if __name__=='__main__':
     try:
-        get_position_desired()
-        get_orientation_desired()
         control()
     except rospy.ROSInterruptException:
         pass
