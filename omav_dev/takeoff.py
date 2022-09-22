@@ -64,37 +64,20 @@ r = 6.8
 r1 = 5
 a1 = 0
 a2 = 1
+t = 0
+speed_publisher = Actuators()
 
 def takeoff():
     pub = rospy.Publisher('/omav/command/motor_speed', Actuators, queue_size=10)
     rospy.init_node('takeoff_node', anonymous=True)
     rate = rospy.Rate(1) # 10hz
     #so by experimenting with some values we finally have a 546.5 as better just takeoff speed of the rotors
-    speed_publisher = Actuators()
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
-    speed_publisher.angular_velocities.append(100*r)
+    global speed_publisher, r, r1, a1, a2
+    for i in range (0, 11):
+        speed_publisher.angular_velocities[i] = (100*r)
 
-
-
-
-
-    speed_publisher.angular_velocities.append(1*a1)
-    speed_publisher.angular_velocities.append(1*a1)
-    speed_publisher.angular_velocities.append(1*a1)
-    speed_publisher.angular_velocities.append(1*a1)
-    speed_publisher.angular_velocities.append(1*a1)
-    speed_publisher.angular_velocities.append(1*a1)
-
+    for i in range (12, 17):
+        speed_publisher.angular_velocities[i] = (1*a1)
 
 
     i = 0

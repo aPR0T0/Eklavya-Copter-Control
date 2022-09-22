@@ -50,7 +50,6 @@ len = 0.3 #> assuming that length is 0.3m
 
 xz = 0.707
 
-helperr = np.zeros(20)
 
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed):
     #global variables are declared to avoid their values resetting to 0
@@ -93,7 +92,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
     err_roll = roll - roll_desired #Changed this from setpoint pitch to pitch desired
 
-    err_yaw = yaw - yaw_desired #for our application we don't want the hexacopter to yaw like at all
+    err_yaw = 0 - yaw #for our application we don't want the hexacopter to yaw like at all
 
     curr_alt_err = req_alt - altitude
     # if(0.6 <= curr_alt_err < 2):
@@ -158,11 +157,13 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # print(dTime)
 # ================== Starting calculations for the error terms =================== #
 
+    helperr = np.zeros(20)
     i = 0
     for i in range(20):
         if i<19:
             helperr[i] = helperr[i+1]
-    helperr[19] = curr_alt_err 
+        else:
+            helperr[i] = curr_alt_err 
     if ( dTime >= sample_time ):
 
         # Proportional Terms
@@ -276,7 +277,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
         tilt_ang[i] = round(atan2(x1,x2),2) # atan2(sin/cos)
 
     #Now, we need to allocate the speed to each rotor
-    ang_vel_rot = tuple(xz*ang_vel)
+    ang_vel_rot = xz*ang_vel
     # Uncomment for debugging only
     # print(ang_vel_rot,tilt_ang)
     tilt_ang = tuple(tilt_ang)
