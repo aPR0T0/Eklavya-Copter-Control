@@ -8,6 +8,7 @@
         dd(X) =  Double Derivative
         _mat  =  Matrix
 """
+from this import d
 from moment_desired import *
 from moment_force_allocation import *
 from cmath import cos, sin, sqrt
@@ -55,13 +56,10 @@ helperr = np.zeros(20)
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
-    global prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
+    global sample_time,current_time
     global target_x,target_y,req_alt
-    global prop_pos_mat, diff_pose_mat, i_pose_mat, omega, helperr
+    global prop_pos_mat, diff_pose_mat, i_pose_mat, omega, helperr, prev_pos_mat, prev_velocity_pose_mat, acceleration_pose_mat
 
-    #Assigning target, altitude
-    setpoint_roll = 0  #this should change according to the desired r,p,y
-    setpoint_pitch = 0  #this should change according to the desired r,p,y
     
     #setting targets
     kp_x = k_pose[0]
@@ -129,24 +127,14 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # Flag for checking for the first time the function is called so that values can initilized
     # because if we don't check so then, we will encounter the error that we had no prevtime only
     if flag == 0:
-        prevTime = 0
-        prevErr_roll = 0
-        prevErr_pitch = 0
-        prevErr_yaw = 0
-        pMem_roll = 0
-        pMem_pitch = 0
-        pMem_yaw = 0
-        iMem_roll = 0
-        iMem_pitch = 0
-        iMem_yaw = 0
-        dMem_roll = 0
-        dMem_pitch = 0
-        dMem_yaw = 0    
+        prevTime = 0   
         prev_alt_err = 0
         iMem_alt = 0
         dMem_alt = 0
         prevdMem_alt = 0
         ddMem_alt = 0
+        prev_pos_mat = np.array([[0],[0],[altitude]])
+        prev_velocity_pose_mat = np.array([[0],[0],[0]])
 
     #defining time for the differential terms
     dTime = current_time - prevTime
@@ -195,6 +183,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     
     # output_alt = 1 if output_alt > 1 else output_alt
 
+    #calculating current acceleration for f_desired calculations
+    current_pose_mat = np.round_(np.array([[-x],[y],[altitude]]),decimals=2)
+    current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
+    acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
+    prev_velocity_pose_mat = current_velocity_pose_mat
+
 
     prop_pos_mat = np.round_(np.array([[pMem_x],[pMem_y],[pMem_alt]]),decimals=2) #position error matrix
     print(prop_pos_mat)
@@ -203,7 +197,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     i_pose_mat = np.round_(np.array([[iMem_x],[iMem_y],[iMem_alt]]),decimals=2)
     # print(i_pose_mat)
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
-
+    prev_pos_mat = current_pose_mat
     speed = speed_assign( tilt_ang, ang_vel_rot,speed,flag)
     
     return speed
@@ -246,7 +240,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # The above matrix is already defined in the urdf
 
 #===============================Defining Matrices==================================>#
-    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
+    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration_pose_mat,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
     # print(F_des)
     # print(A_pseudo_inv)
 

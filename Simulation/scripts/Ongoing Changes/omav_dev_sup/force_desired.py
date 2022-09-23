@@ -1,7 +1,7 @@
 import math
 import numpy as np
 g = 9.81
-def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_position_err, i_position_err):
+def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_position_err, i_position_err, acceleration):
     global rotation_matrix, F_desired
     #
     if(flag == 0):
@@ -30,9 +30,9 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
     grav_matrix = np.array([[0],[0],[-g]])
     
     
-    # The below given matrix is the result of total F-des without its rotation 
+    # The below given matrix is the result of total FN-des without its rotation 
     
-    F_desired = ( mass_total*grav_matrix -  p_position_err - d_position_err - i_position_err ) #this is from earths frame so we need it in the body frame
+    F_desired = ( mass_total*grav_matrix -  p_position_err - d_position_err - i_position_err + 0.00005*mass_total*acceleration ) #this is from earths frame so we need it in the body frame
     F_desired  = np.round_(F_desired,decimals=2)
     F_desired = np.round_((np.matmul(rotation_matrix,F_desired)).real,decimals=2)
     return F_desired
