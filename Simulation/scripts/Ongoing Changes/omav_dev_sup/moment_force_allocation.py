@@ -18,9 +18,9 @@ def force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, di
     #<___possibility 1___># here the sines and cos are interchanged
     
     F_des = force_desired( phi, theta, gamma, flag, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat)
-
+    # print(F_des)
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , w_x_current, w_y_current, w_z_current, I , kq, kr, flag)
-    
+    # print(M_des)
     A = np.array([[0,-1,0,1,0,0.5,0,-0.5,0,-0.5,0,0.5],[0,0,0,0,0,t1,0,-t1,0,t1,0,-t1],[-1,0,-1,0,-1,0,-1,0,-1,0,-1,0],[-len,-kap*(1/Mu),len,-kap*(1/Mu),len*0.5,kap*0.5*(1/Mu),-len*0.5,0.5*kap*(1/Mu),-len*0.5,kap*0.5*(1/Mu),len,kap*(1/Mu)],[0,0,0,0,t1*len,t1*kap*(1/Mu),-t1*len,t1*kap*(1/Mu),t1*len,-t1*kap*(1/Mu),-t1*len,-kap*t1*(1/Mu)],[-kap*(1/Mu),len,kap*(1/Mu),len,-kap*(1/Mu),len,kap*(1/Mu),len,kap*(1/Mu),len,-kap*(1/Mu),len]]) #confirmed
     #Transpose of A
     A_trans = np.transpose(A)
@@ -41,7 +41,7 @@ def force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, di
 
     F_dec =  np.matmul( A_pseudo_inv , desired )
     F_dec = np.round_(F_dec.real , decimals = 2)
-    
+    print(F_dec)
     # if (F_des[0][0] < 0.0000001) : F_des[0][0] = 0 
     # if (F_des[1][0] < 0.0000001) : F_des[1][0] = 0 
     # if (F_des[2][0] < 0.0000001) : F_des[2][0] = 0 
