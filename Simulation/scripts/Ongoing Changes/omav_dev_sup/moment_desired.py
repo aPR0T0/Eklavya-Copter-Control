@@ -153,8 +153,6 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
 
         q_v_error = np.round_(np.array([[q_x_error], [q_y_error], [q_z_error]]),decimals=2)
 
-        w_desired = kq * sign_q_w_error *  q_v_error
-
         w_current = np.round_(np.array([[w_x_current], [w_y_current],[w_z_current]]),decimals=2)
         # Desired Angular Velocity :
         w_desired = (kq * sign_q_w_error * q_v_error)
