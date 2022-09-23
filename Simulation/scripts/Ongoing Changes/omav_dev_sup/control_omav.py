@@ -25,6 +25,27 @@ x = 0
 y = 0
 z  = 0
 
+    
+speed = Actuators()
+
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
+speed.angular_velocities.append(0)
 # Flag for checking for the first time the script is run
 flag = 0
 
@@ -99,6 +120,7 @@ def calPos(msg):
     x = round(msg.pose.pose.position.x,2)
     y = round(msg.pose.pose.position.y,2)
     altitude = round(msg.pose.pose.position.z,2)
+    print(altitude)
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
@@ -118,7 +140,7 @@ def calOrientation(msg):
 
 def alt_control(imu,odo):
     # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired
+    global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired,speed
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
     calOrientation(imu)
 
@@ -147,8 +169,6 @@ def alt_control(imu,odo):
     print("Yaw =", yaw)
     print("X = ",x)
     print("Y = ",y)
-    
-    speed = Actuators()
     # sending the data to the PID_alt function which then calculates the speed using them
     speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed)
     flag += 1
