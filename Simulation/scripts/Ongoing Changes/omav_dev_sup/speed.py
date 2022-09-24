@@ -1,12 +1,8 @@
 import numpy as np
 def speed_assign( tilt_ang, ang_vel_rot,speed,flag):
-    count = 0
-    for i in range(0,6):
-        if (count == 0 and ang_vel_rot[i]>750):
-            count += 1
     t = 0
     for t in range(6):
-        if (count == 0):
+        if (ang_vel_rot[t] <= 750):
             if ((speed.angular_velocities[t] + 5) <= (ang_vel_rot[t])):
                 speed.angular_velocities[t] = speed.angular_velocities[t] + 5
             elif ((speed.angular_velocities[t] - 5) >= (ang_vel_rot[t])):
@@ -17,7 +13,7 @@ def speed_assign( tilt_ang, ang_vel_rot,speed,flag):
             speed.angular_velocities[t] = ang_vel_rot[t]*(680/750) - 20
     t = 0
     for t in range(6):
-        if (count == 0):
+        if (ang_vel_rot[t] <= 750):
             if ((speed.angular_velocities[6+t] + 5) <= (ang_vel_rot[t])):
                 speed.angular_velocities[6+t] = speed.angular_velocities[6+t] + 5
             elif ((speed.angular_velocities[6+t] - 5) >= (ang_vel_rot[t])):
@@ -25,7 +21,7 @@ def speed_assign( tilt_ang, ang_vel_rot,speed,flag):
             else:
                 speed.angular_velocities[6+t] = ang_vel_rot[t]
         else:
-            speed.angular_velocities[6+t] = ang_vel_rot[t]*(680/750)- 70
+            speed.angular_velocities[6+t] = ang_vel_rot[t]*(680/750)- 20
     t = 0
     for t in range(6):
         speed.angular_velocities[12+t] = tilt_ang[t]  
