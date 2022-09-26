@@ -117,6 +117,8 @@ def setPID_z(msg):
 
 def calPos(msg):
     global x,y,altitude
+
+    print("\n Odo frame:",msg.header.frame_id)
     x = round(msg.pose.pose.position.x,2)
     y = round(msg.pose.pose.position.y,2)
     altitude = round(msg.pose.pose.position.z,2)
@@ -169,6 +171,7 @@ def alt_control(imu,odo):
     print("Yaw =", yaw)
     print("X = ",x)
     print("Y = ",y)
+    print("RPY", roll, pitch, yaw)
     # sending the data to the PID_alt function which then calculates the speed using them
     speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed)
     flag += 1
