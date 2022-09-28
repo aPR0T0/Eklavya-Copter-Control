@@ -20,6 +20,9 @@ from moment_desired import *
 from force_dec import *
 from speed_publisher import *
 
+# To calculate frequency of msg
+
+#import statistics
 
 
 """
@@ -254,6 +257,22 @@ def master(imu_subscriber, odometry_subscriber):
 
 
     current_time = time.time()
+
+    """
+    if (flag == 0):
+        print(flag)
+        #prev_time = current_time
+        #print(1)
+
+    if (flag != 0):
+        #error = current_time - prev_time
+        #a1.append(error)
+        #average_time = statistics.mean(a1)
+        #prev_time = current_time
+        #print("Current Time printed from controller.py :", average_time)
+        #print(type(average_time))
+        print(flag)
+    """
 
     # SENSOR READINGS FUNCTION CALLS
     position_current = get_position_current(odometry_subscriber)
