@@ -5,10 +5,8 @@ import rospy #for basically any type of ros operations
 import time #to get definite time for the dTime
 import message_filters
 from std_msgs.msg import Float64MultiArray,Float64
-from sensor_msgs.msg import Imu #It contains overall type of readings getting from the Imu sensor
 from nav_msgs.msg import Odometry #It contains overall type of readings getting from the Odometry sensor
 from mav_msgs.msg import Actuators
-from sensor_msgs.msg import NavSatFix
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 #from now on we will be call (roll pitch yaw) as 'RPY' in this module
 
@@ -117,6 +115,8 @@ def setPID_z(msg):
 
 def calPos(msg):
     global x,y,altitude
+
+    print("\n Odo frame:",msg.header.frame_id)
     x = round(msg.pose.pose.position.x,2)
     y = round(msg.pose.pose.position.y,2)
     altitude = round(msg.pose.pose.position.z,2)
@@ -124,25 +124,25 @@ def calPos(msg):
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
-    vel_x = msg.twist.twist.angular.x
-    vel_y = msg.twist.twist.angular.y
-    vel_z = msg.twist.twist.angular.z
+    vel_x = round(msg.twist.twist.angular.x,2)
+    vel_y = round(msg.twist.twist.angular.y,2)
+    vel_z = round(msg.twist.twist.angular.z,2)
 # We also need its current orientation for RPY respectively
 def calOrientation(msg):
     global roll, pitch, yaw
     #the data recieved from the sensor in in quaternion form
-    orientation = [ msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
+    orientation = [ msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
     roll, pitch, yaw = euler_from_quaternion(orientation)
     roll = round(roll,2)
     pitch = round(pitch,2)
     yaw = round(yaw,2)
 
-def alt_control(imu,odo):
+def alt_control(odo):
     # Set all variables to global so as to keep them updated values
     global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired,speed
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
-    calOrientation(imu)
+    calOrientation(odo)
 
     calPos(odo)
 
@@ -161,6 +161,7 @@ def alt_control(imu,odo):
     k_pose = (kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,kp_z,ki_z,kd_z)
     target = (target_x,target_y,req_alt)
     velocity = (vel_x,vel_y,vel_z)
+    print("velocity:",velocity)
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
     print("Required alt = ",req_alt)
@@ -179,10 +180,8 @@ def alt_control(imu,odo):
 def control():
     #We can get literally everything we need from the odometry sensor alone, but for extreme real life case we are taking atleast two sensors to start with, so that we are less proned to errors
     rospy.init_node('controller_node', anonymous=False)
-    #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
-    imu_sub = message_filters.Subscriber("/omav/ground_truth/imu", Imu)
-    odo_sub = message_filters.Subscriber("/omav/ground_truth/odometry", Odometry)
-    tr = message_filters.TimeSynchronizer([imu_sub,odo_sub],2) #2 specifies the number of messages it should take from each sensor
+    odo_sub = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry)
+    tr = message_filters.TimeSynchronizer([odo_sub],2) #2 specifies the number of messages it should take from each sensor
     tr.registerCallback(alt_control)
     rospy.spin()
 

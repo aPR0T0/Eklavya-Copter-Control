@@ -44,15 +44,24 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     global q_v_error, w_desired, w_error, q_intermediate_1, q_intermediate_2, q_intermediate_3_1, q_intermediate_3_2, M_desired
 
     #print(w_current)
-    roll_desired = roll_desired * (math.pi/180)
-    pitch_desired = pitch_desired * (math.pi/180)
-    yaw_desired = yaw_desired * (math.pi/180)
+    roll_desired  =  round((roll_desired * (math.pi/180)),2)
+    pitch_desired =  round((pitch_desired * (math.pi/180)),2)
+    yaw_desired   =  round((yaw_desired * (math.pi/180)),2)
     roll = roll
     pitch = pitch
     yaw = yaw 
 
     quaternion_desired = quaternion_from_euler(roll_desired,pitch_desired,yaw_desired)
     quaternion_current = quaternion_from_euler(roll, pitch, yaw)
+
+    w_current = np.round_(np.array([[w_x_current],
+                                    [w_y_current],
+                                    [w_z_current]]), decimals= 2)
+    
+    # Rotation Matrix for velocity from ground frame to body frame
+    rotation_matrix = np.array([[ 1 , math.sin(roll)*math.tan(pitch) , math.cos(roll)*math.tan(pitch) ],[ 0 , math.cos(roll) , -math.sin(roll) ],[ 0 , math.sin(roll)*(1/math.cos(pitch)) , math.cos(roll)*(1/math.cos(pitch)) ]])
+    # w_current = np.round_(np.matmul( rotation_matrix , w_current ) , decimals = 2)
+    
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
     if(flag == 0):
         # Quaternion Desired
@@ -129,7 +138,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         q_x_error = (p0*q1 - p1*q0 + p2*q3 - p3*q2)
         q_y_error = (p0*q2 - p2*q0 - p1*q3 + p3*q1)
         q_z_error = (p0*q3 - p3*q0 + p1*q2 - p2*q1)
-
+        # May have been affected
         """
         q0 = q_w_current
         q1 = -q_x_current
@@ -151,15 +160,14 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
 
         # Initializing the 3*1 Matrix of the vector part of Quaternion Error for Further Calculations
 
-        q_v_error = np.round_(np.array([[q_x_error], [q_y_error], [q_z_error]]),decimals=2)
+        q_v_error = np.round_(np.array([[q_x_error], 
+                                        [q_y_error], 
+                                        [q_z_error]]),decimals=2)
 
-        w_current = np.round_(np.array([[w_x_current], [w_y_current],[w_z_current]]),decimals=2)
         # Desired Angular Velocity :
         w_desired = (kq * sign_q_w_error * q_v_error)
         #print(w_desired)
-
-        
-
+        w_desired = np.matmul( rotation_matrix, w_desired)
         # Intermediate Calculation Terms to find Moment_Desired :
 
         # To Find Error in Angular Velocity which is a 3*1 Matrix

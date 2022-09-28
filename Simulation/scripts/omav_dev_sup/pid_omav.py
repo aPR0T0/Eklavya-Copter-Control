@@ -52,6 +52,8 @@ len = 0.3 #> assuming that length is 0.3m
 xz = 0.707
 
 helperr = np.zeros(20)
+helperr_x = np.zeros(20)
+helperr_y = np.zeros(20)
 
 def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed):
     #global variables are declared to avoid their values resetting to 0
@@ -78,20 +80,18 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     omega = np.array([[velocity[0]],[velocity[1]],[velocity[2]]])
     target_x = round(target[0],2)
     target_y = round(target[1],2)
-    req_alt = target[2]
+    req_alt = target[2] - 0.17
 
     # setting time for the differential terms and for later applications too
     sample_time = 0.005
     current_time = time.time()
-    altitude = altitude - 0.17
+    altitude = altitude
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y)
 
-    err_pitch = pitch - pitch_desired #Changed this from setpoint roll to roll desired
-
-    err_roll = roll - roll_desired #Changed this from setpoint pitch to pitch desired
-
-    err_yaw = yaw - yaw_desired #for our application we don't want the hexacopter to yaw like at all
+    err_pitch =  (math.pi/180) * pitch_desired  - (pitch)  #Changed this from setpoint roll to roll desired
+    err_roll  =  (math.pi/180) * roll_desired   - (roll)  #Changed this from setpoint pitch to pitch desired
+    err_yaw   =  (math.pi/180) * yaw_desired    - (yaw)  #for our application we don't want the hexacopter to yaw like at all
 
     curr_alt_err = req_alt - altitude
     # if(0.6 <= curr_alt_err < 2):
@@ -113,10 +113,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
 
-
-    if (curr_alt_err > 0.4 ): curr_alt_err = 0.4*curr_alt_err
-    if (curr_alt_err < -0.4 ): curr_alt_err = 0.4*curr_alt_err
-
     mass_total = 4.04 #Kg this I got from the urdf file
 
     weight = 4.04*g
@@ -132,8 +128,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         dMem_alt = 0
         prevdMem_alt = 0
         ddMem_alt = 0
-        prev_pos_mat = np.array([[0],[0],[altitude]])
-        prev_velocity_pose_mat = np.array([[0],[0],[0]])
+        prev_pos_mat = np.array([   [0],
+                                    [0],
+                                [altitude]])
+        prev_velocity_pose_mat = np.array([ [0],
+                                            [0],
+                                            [0]])
 
     #defining time for the differential terms
     dTime = current_time - prevTime
@@ -183,21 +183,31 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # output_alt = 1 if output_alt > 1 else output_alt
 
     #calculating current acceleration for f_desired calculations
-    current_pose_mat = np.round_(np.array([[x],[y],[altitude]]),decimals=2)
+    current_pose_mat = np.round_(np.array([ [x],
+                                            [-y],
+                                        [-altitude]]),decimals=2)
     current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
     acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
     prev_velocity_pose_mat = current_velocity_pose_mat
 
     # As the y and z axes are flipped of the body frame w.r.t ground frame hence we need to reverse signs of y and z terms
 
-    prop_pos_mat = np.round_(np.array([[pMem_x],[pMem_y],[pMem_alt]]),decimals=2) #position error matrix
+    prop_pos_mat = np.round_(np.array([ [ pMem_x ],
+                                        [ -pMem_y],
+                                        [-pMem_alt]]),decimals=2) #position error matrix
     # print(prop_pos_mat)
-    diff_pose_mat = np.round_(np.array([[dMem_x],[dMem_y],[dMem_alt]]),decimals=2)
+    diff_pose_mat = np.round_(np.array([[dMem_x],
+                                        [-dMem_y],
+                                        [-dMem_alt]]),decimals=2)
     # print(diff_pose_mat)
-    i_pose_mat = np.round_(np.array([[iMem_x],[iMem_y],[iMem_alt]]),decimals=2)
+    i_pose_mat = np.round_(np.array([   [iMem_x],
+                                        [-iMem_y],
+                                        [-iMem_alt]]),decimals=2)
     # print(i_pose_mat)
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
+    
     prev_pos_mat = current_pose_mat
+    
     speed = speed_assign( tilt_ang, ang_vel_rot,speed,flag)
     
     return speed
@@ -220,15 +230,15 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap):
     # F_des --> Force desired and M_des --> Desired moment
     global current_time, prevTime, dTime, t1
+    
+    
     theta = pitch 
-    phi = math.pi + roll 
+    phi = roll 
     gamma = yaw
+    
+    
     if (flag == 0):
         prevTime = 0
-        prevoutRoll = 0
-        prevoutPitch = 0
-        prevoutYaw = 0
-        prevOmega = np.zeros([3,1])
 
     dTime = current_time - prevTime
     sample_time = 0.005
@@ -236,7 +246,9 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # angular velocities
     # 3x1
     
-    I = np.array([[0.0075,-3.4208e-05,2.4695e-05],[0,0.010939,-3.8826e-06],[0,0,0.01369]]) 
+    I = np.array([  [0.0075 ,-3.4208e-05,2.4695e-05],
+                    [   0   ,  0.010939 ,-3.8826e-06],
+                    [   0   ,      0    ,   0.01369]]) 
     # The above matrix is already defined in the urdf
 
 #===============================Defining Matrices==================================>#
@@ -325,6 +337,16 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
 
     sample_time = 0.005
 
+    i = 0
+    for i in range(20):
+        if i<19:
+            helperr_x[i] = helperr_x[i+1]
+    helperr_x[19] = err_x
+    i = 0
+    for i in range(20):
+        if i<19:
+            helperr_y[i] = helperr_y[i+1]
+    helperr_y[19] = err_y 
     if(dTime >= sample_time):
         
         # Proportional terms
@@ -332,8 +354,8 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
         pMem_y = kp_y*err_y
 
         # Integral terms
-        iMem_x += ki_x*err_x*dTime
-        iMem_y += ki_y*err_y*dTime
+        iMem_x = ki_x*np.sum(helperr_x)*dTime
+        iMem_y = ki_y*np.sum(helperr_y)*dTime
 
         if(iMem_x>10): iMem_x = 10
         if(iMem_x<-10): iMem_x=-10
@@ -344,7 +366,7 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
 
         dMem_x = kd_x*(dErr_x / dTime)
         dMem_y = kd_y*(dErr_y / dTime)
-        print(dErr_y)
+        # print(dErr_y)
     #updating previous terms
     prevErr_x = err_x
     prevErr_y = err_y
@@ -353,12 +375,6 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     x_err_pub.publish(err_x)
     y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
     y_err_pub.publish(err_y)
-
-    if (err_x > 0.1): err_x = 0.01*err_x
-    if (err_x < -0.1): err_x = 0.01*err_x
-
-    if (err_y > 0.1): err_y = 0.01*err_y
-    if (err_y < -0.1): err_y = 0.01*err_y
 
 
     # damping 
