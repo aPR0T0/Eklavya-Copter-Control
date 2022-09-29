@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-# license removed for brevity
 import rospy
-import message_filters
 from rospy.topics import Publisher
 from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators  
@@ -52,37 +50,50 @@ def getOdo(msg):
     orinetation_list = [msg.pose.pose.orientation.x,msg.pose.pose.orientation.y,msg.pose.pose.orientation.z,msg.pose.pose.orientation.w]
     global roll, pitch, yaw 
     (roll,pitch,yaw) = euler_from_quaternion(orinetation_list)
-    roll = roll * (180/3.14159265)
-    pitch = pitch * (180/3.14159265)
-    yaw = yaw * (180/3.14159265)
     #rospy.loginfo("\nRoll = {0}\nPitch = {1}\nYaw = {2}\n".format(roll,pitch,yaw))
     # rospy.loginfo("\nX = {0}\nY = {1}\nZ = {2}".format(x,y,z))#for debugging purposes
 #here I have eliminated the gps sensor because it is not installed on the firefly
 
 
-r = 6.8
+r = 6.781
 r1 = 5
 a1 = 0
 a2 = 1
-t = 0
-speed_publisher = Actuators()
 
 def takeoff():
     pub = rospy.Publisher('/omav/command/motor_speed', Actuators, queue_size=10)
     rospy.init_node('takeoff_node', anonymous=True)
     rate = rospy.Rate(1) # 10hz
     #so by experimenting with some values we finally have a 546.5 as better just takeoff speed of the rotors
-    global speed_publisher, r, r1, a1, a2
-    for i in range (0, 11):
-        speed_publisher.angular_velocities[i] = (100*r)
+    speed_publisher = Actuators()
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
+    speed_publisher.angular_velocities.append(100*r)
 
-    for i in range (12, 17):
-        speed_publisher.angular_velocities[i] = (1*a1)
+
+
+
+
+    speed_publisher.angular_velocities.append(1*a1)
+    speed_publisher.angular_velocities.append(1*a1)
+    speed_publisher.angular_velocities.append(1*a1)
+    speed_publisher.angular_velocities.append(1*a1)
+    speed_publisher.angular_velocities.append(1*a1)
+    speed_publisher.angular_velocities.append(1*a1)
+
 
 
     i = 0
     while not rospy.is_shutdown():
-
 
 
         rospy.loginfo(speed_publisher)

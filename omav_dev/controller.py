@@ -279,7 +279,7 @@ def master(imu_subscriber, odometry_subscriber):
 
     quaternion_current, euler_current = get_orientation_current(imu_subscriber)
     # Since for a few calculations we need Current Orientation in Euler Angles format
-
+    print("Euler Current :\n", euler_current)
     speed_publisher = Actuators()
     w_current = get_current_angular_velocity(odometry_subscriber)
 
@@ -311,7 +311,7 @@ def master(imu_subscriber, odometry_subscriber):
 
     flag+=1
 
-    speed_pub.publish(speed_publisher)
+    #speed_pub.publish(speed_publisher)
 
 
 
