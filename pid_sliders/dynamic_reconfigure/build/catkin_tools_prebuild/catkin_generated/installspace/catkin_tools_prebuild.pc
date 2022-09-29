@@ -1,0 +1,8 @@
+prefix=/home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/install
+
+Name: catkin_tools_prebuild
+Description: Description of catkin_tools_prebuild
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

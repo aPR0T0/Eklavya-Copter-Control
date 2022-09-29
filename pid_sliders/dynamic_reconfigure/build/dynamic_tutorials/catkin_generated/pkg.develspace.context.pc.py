@@ -1,0 +1,8 @@
+# generated from catkin/cmake/template/pkg.context.pc.in
+CATKIN_PACKAGE_PREFIX = ""
+PROJECT_PKG_CONFIG_INCLUDE_DIRS = "/home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/devel/.private/dynamic_tutorials/include".split(';') if "/home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/devel/.private/dynamic_tutorials/include" != "" else []
+PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
+PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
+PROJECT_NAME = "dynamic_tutorials"
+PROJECT_SPACE_DIR = "/home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/devel/.private/dynamic_tutorials"
+PROJECT_VERSION = "0.0.0"

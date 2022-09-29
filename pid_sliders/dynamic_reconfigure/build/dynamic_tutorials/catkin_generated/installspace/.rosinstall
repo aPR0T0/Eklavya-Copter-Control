@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/install/setup.sh
