@@ -84,12 +84,12 @@ Our full project report can be found [here]()
 Open two terminal windows and run the following commands
 - Terminal 1
 
-```
+```sh
 source ~/catkin_ws/devel/setup.bash
 roslaunch rotors_gazebo mav.launch mav_name:=omav
 ```
 - Terminal 2
-```
+```sh
 source ~/catkin_ws/devel/setup.bash
 cd ~/Eklavya-Copter-Control/simulation/rotors_gazebo/scripts
 chmod +x .                      
@@ -135,15 +135,14 @@ Drone when target co-ordinates are given in control_omav.py:
 
 <!-- CONTRIBUTORS -->
 ## Contributors
-* [Alqama Shaikh](https://github.com/toshan-luktuke)
-* [Aryan Shah](https://github.com/Jash-Shah)
+* [Alqama Shaikh](https://github.com/aPR0T0)
+* [Aryan Shah](https://github.com/ars-21)
 
 
 <!-- ACKNOWLEDGEMENTS AND REFERENCES -->
 ## Acknowledgements and Resources
 * [SRA VJTI](http://sra.vjti.info/) Eklavya 2022  
-* [E-Yantra IIT-B](https://new.e-yantra.org/) for the plugins as well as the model of the drone. 
-* [Nishanth Rao](https://github.com/NishanthARao/ROS-Quadcopter-Simulation) for the template of the PID controllers
+* [ETH-Zürich](https://new.e-yantra.org/) for the plugins as well as the model of the drone.
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
 * Our mentors [Jash Shah](https://github.com/Jash-Shah), [Sagar Chotalia](https://github.com/kart1802) and [Ayush Kaura](https://github.com/dhruvi29) for their guidance throughout the whole project
 
