@@ -74,7 +74,7 @@ wstool update
 
 
 
-## 3. Cloning ethz-asl/rotors_simulator Repository :
+## 3. Cloning Repository :
 
 **Note the repository is to be cloned in the <workspace_name>/src directory**
 
@@ -82,7 +82,7 @@ wstool update
 
 ```
 cd ~/hexacopter_ws/src
-git clone --recursive git@github.com:ethz-asl/rotors_simulator.git
+git clone https://github.com/aPR0T0/Eklavya-Copter-Control.git
 ```
 
 
@@ -108,7 +108,7 @@ catkin build
 
 If any errors occur you could run `catkin init` and `catkin build` commands again
 
-**Note : There should be total 16 packages (maybe more) installed successfully for installation to be successful**
+**Note : There should be total 11 packages (maybe more) installed successfully for installation to be successful**
 
 
 
@@ -118,3 +118,9 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+
+### REFERENCES :
+> **ETH-Zürich** : ethz-asl/rotors_simulator Repository
+
+- [ethz-asl/rotors_simulator Repository](https://ubuntu.com/download/desktophttps://github.com/ethz-asl/rotors_simulator.git "ethz-asl/rotors_simulator")
