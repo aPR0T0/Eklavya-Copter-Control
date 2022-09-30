@@ -9,6 +9,7 @@ from nav_msgs.msg import Odometry #It contains overall type of readings getting 
 from mav_msgs.msg import Actuators
 from sensor_msgs.msg import Imu 
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from dynamic_tutorials.cfg import TutorialsConfig
 #from now on we will be call (roll pitch yaw) as 'RPY' in this module
 
 # Initilization of all Parameters
