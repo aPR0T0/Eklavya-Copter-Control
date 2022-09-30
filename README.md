@@ -20,7 +20,7 @@ Controlling a hexacopter with coaxial tilt rotors in simulation, understanding t
   - [Contributors](#contributors)
   - [Acknowledgements and Resources](#acknowledgements-and-resources)
   - [License](#license)
-
+  - [Citation](#citation)
 <!--ABOUT THE PROJECT -->
 ## About The Project
 Drone aviation is an emerging industry. With possibilities for its applications in agriculture, healthcare, e-commerce as well as traffic control. We wanted to get first hand experience with how a drone is designed as well as how it flies to get a firm grasp on the principles needed to work with drones in the future.  
@@ -67,9 +67,8 @@ Our full project report can be found [here]()
  ┃ ┃ ┗ 📂urdf
  ┃ ┃   ┗ 📜omav.xacro
  ┃ ┗ 📂rotors_gazebo_plugins
- ┣📂Some Basic Concepts
- ┣📂pid_sliders
- ┗📂drone      
+ ┣📂Some Basic Concepts                     # All the learnings throughout this project are listed here
+ ┗📂drone                                   # Fun to make custom msg file (To get an idea of how a custom message works)
 
  ```
 
@@ -148,10 +147,30 @@ Drone when target co-ordinates are given in control_omav.py:
 <!-- ACKNOWLEDGEMENTS AND REFERENCES -->
 ## Acknowledgements and Resources
 * [SRA VJTI](http://sra.vjti.info/) Eklavya 2022  
-* [ETH-Zürich](https://new.e-yantra.org/) for the plugins as well as the model of the drone.
+* [ETH-Zürich](https://github.com/ethz-asl/rotors_simulator) for the plugins as well as the model of the drone.
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
-* Our mentors [Jash Shah](https://github.com/Jash-Shah), [Sagar Chotalia](https://github.com/kart1802) and [Ayush Kaura](https://github.com/dhruvi29) for their guidance throughout the whole project
+* Our mentors [Jash Shah](https://github.com/Jash-Shah), [Sagar Chotalia](https://github.com/sagarchotalia) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
 
 <!-- -->
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
+
+## Citation
+```sh
+@Inbook{Furrer2016,
+author="Furrer, Fadri
+and Burri, Michael
+and Achtelik, Markus
+and Siegwart, Roland",
+editor="Koubaa, Anis",
+chapter="RotorS---A Modular Gazebo MAV Simulator Framework",
+title="Robot Operating System (ROS): The Complete Reference (Volume 1)",
+year="2016",
+publisher="Springer International Publishing",
+address="Cham",
+pages="595--625",
+isbn="978-3-319-26054-9",
+doi="10.1007/978-3-319-26054-9_23",
+url="http://dx.doi.org/10.1007/978-3-319-26054-9_23"
+}
+```
