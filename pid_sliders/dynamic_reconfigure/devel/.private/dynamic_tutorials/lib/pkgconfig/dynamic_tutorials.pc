@@ -1,8 +1,0 @@
-prefix=/home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/devel/.private/dynamic_tutorials
-
-Name: dynamic_tutorials
-Description: Description of dynamic_tutorials
-Version: 0.0.0
-Cflags: -I/home/proto/Eklavya-Copter Control/Eklavya-Copter-Control/pid_sliders/dynamic_reconfigure/devel/.private/dynamic_tutorials/include
-Libs: -L${prefix}/lib 
-Requires: 
