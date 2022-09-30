@@ -1,7 +1,7 @@
 <package format="2">
-  <name>rotors_gazebo</name>
+  <name>rotors_comm</name>
   <version>2.2.3</version>
-  <description>The rotors_gazebo package</description>
+  <description>RotorS specific messages and services.</description>
 
   <maintainer email="fadri.furrer@mavt.ethz.ch">Fadri Furrer</maintainer>
   <maintainer email="mina.kamel@mavt.ethz.ch">Mina Kamel</maintainer>
@@ -17,16 +17,12 @@
   <url type="website">https://github.com/ethz-asl/rotors_simulator</url>
   <url type="bugtracker">https://github.com/ethz-asl/rotors_simulator/issues</url>
 
+  <!-- Dependencies which this package needs to build itself. -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>gazebo_msgs</depend>
-  <depend>gazebo_plugins</depend>
+  <depend>cmake_modules</depend>
   <depend>geometry_msgs</depend>
-  <depend>mav_msgs</depend>
-  <depend>roscpp</depend>
-  <depend>rospy</depend>
-  <depend>rotors_gazebo_plugins</depend>
-  <depend>sensor_msgs</depend>
-  <depend>xacro</depend>
-
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>octomap_msgs</depend>
 </package>
