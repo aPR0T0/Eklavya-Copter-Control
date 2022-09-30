@@ -9,7 +9,7 @@ from nav_msgs.msg import Odometry #It contains overall type of readings getting 
 from mav_msgs.msg import Actuators
 from sensor_msgs.msg import Imu 
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
-from dynamic_tutorials.cfg import TutorialsConfig
+from dynamic_reconfigure.msg import Config
 #from now on we will be call (roll pitch yaw) as 'RPY' in this module
 
 # Initilization of all Parameters
@@ -89,6 +89,7 @@ roll_desired, pitch_desired, yaw_desired = map( float , input("Enter desired ori
 # split() : Return a list of the words in the string, using sep as the delimiter string
 # map() : Basically provides the value recieved in it to the variables on the left with the given data type()
 
+
 # Gets yaw PID published to node
 def set_tuning_parameter(msg):
     global kq
@@ -113,9 +114,6 @@ def setPID_z(msg):
     kp_z = msg.data[0]
     ki_z =  msg.data[1]
     kd_z = msg.data[2]
-# def calAlt(msg):
-#     global altitude
-#     altitude = msg.altitude
 
 def calPos(msg):
     global x,y,altitude
@@ -148,7 +146,7 @@ def calAcc(msg):
     acc_y = round(msg.linear_acceleration.y,2)
     acc_z = round(msg.linear_acceleration.z,2)
 
-def alt_control(odo, imu):
+def alt_control(odo, imu, pid):
     # Set all variables to global so as to keep them updated values
     global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired,speed
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
@@ -159,6 +157,9 @@ def alt_control(odo, imu):
     calAng(odo)
 
     calAcc(imu)
+
+    # message_filters.Subscriber("/dynamic_tutorials/parameter_updates", Config, setPID)
+
     # calAlt(gps)
     kap = 8.06428e-05 #0.00099 #> constant for the matrix
     Mu = 7.2e-06 #0.00004311  #> constant for the matrix
@@ -170,13 +171,15 @@ def alt_control(odo, imu):
     rospy.Subscriber("Rate_Controller_Gain", Float64, set_rate_controller_gain)
     #Making tuples for the velcities and target
     k_pose = (kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,kp_z,ki_z,kd_z)
+    # print(k_pose)
     target = (target_x,target_y,req_alt)
     velocity = (vel_x,vel_y,vel_z)
     acceleration = np.array([   [acc_x],
                                 [-acc_y],
                                 [-(acc_z-9.8)]   ])
-    print("acceleration:",acceleration)
-    print("velocity:",velocity)
+
+    # print("acceleration:",acceleration)
+    # print("velocity:",velocity)
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
     print("Required alt = ",req_alt)
