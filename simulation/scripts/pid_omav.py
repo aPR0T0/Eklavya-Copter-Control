@@ -52,11 +52,11 @@ len = 0.3 #> assuming that length is 0.3m
 
 xz = 0.707
 
-helperr = np.zeros(20)
-helperr_x = np.zeros(20)
-helperr_y = np.zeros(20)
+helperr = np.zeros(50)
+helperr_x = np.zeros(50)
+helperr_y = np.zeros(50)
 
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global sample_time,current_time
@@ -81,12 +81,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     omega = np.array([[velocity[0]],[velocity[1]],[velocity[2]]])
     target_x = round(target[0],2)
     target_y = round(target[1],2)
-    req_alt = target[2] - 0.17
+    req_alt = target[2] 
 
     # setting time for the differential terms and for later applications too
     sample_time = 0.005
     current_time = time.time()
-    altitude = altitude
+    altitude = altitude - 0.17
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y)
 
@@ -147,10 +147,10 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 # ================== Starting calculations for the error terms =================== #
 
     i = 0
-    for i in range(20):
-        if i<19:
+    for i in range(50):
+        if i<49:
             helperr[i] = helperr[i+1]
-    helperr[19] = curr_alt_err 
+    helperr[49] = curr_alt_err 
     if ( dTime >= sample_time ):
 
         # Proportional Terms
@@ -184,12 +184,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # output_alt = 1 if output_alt > 1 else output_alt
 
     #calculating current acceleration for f_desired calculations
-    current_pose_mat = np.round_(np.array([ [x],
-                                            [-y],
-                                        [-altitude]]),decimals=2)
-    current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
-    acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
-    prev_velocity_pose_mat = current_velocity_pose_mat
+    # current_pose_mat = np.round_(np.array([ [x],
+    #                                         [-y],
+    #                                     [-altitude]]),decimals=2)
+    # current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
+    # acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
+    # prev_velocity_pose_mat = current_velocity_pose_mat
 
     # As the y and z axes are flipped of the body frame w.r.t ground frame hence we need to reverse signs of y and z terms
 
@@ -205,9 +205,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
                                         [-iMem_y],
                                         [-iMem_alt]]),decimals=2)
     # print(i_pose_mat)
-    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
+    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration)
     
-    prev_pos_mat = current_pose_mat
+    # prev_pos_mat = current_pose_mat
     
     speed = speed_assign( tilt_ang, ang_vel_rot,speed,flag)
     
@@ -228,7 +228,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
 """
 
-def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap):
+def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap,acceleration):
     # F_des --> Force desired and M_des --> Desired moment
     global current_time, prevTime, dTime, t1
     
@@ -253,7 +253,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # The above matrix is already defined in the urdf
 
 #===============================Defining Matrices==================================>#
-    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration_pose_mat,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
+    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
     # print(F_des)
     # print(A_pseudo_inv)
 
