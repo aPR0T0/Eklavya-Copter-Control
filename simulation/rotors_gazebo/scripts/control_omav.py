@@ -115,6 +115,18 @@ def setPID_z(msg):
     ki_z =  msg.data[1]
     kd_z = msg.data[2]
 
+# def setPID(msg):
+#     global kp_x,kp_y,kp_z,ki_x,ki_y,ki_z,kd_x,kd_y,kd_z
+#     kp_z = msg.doubles[0].value
+#     ki_z = msg.doubles[1].value
+#     kd_z = msg.doubles[2].value
+#     kp_x = msg.doubles[3].value
+#     ki_x = msg.doubles[4].value
+#     kd_x = msg.doubles[5].value
+#     kp_y = msg.doubles[6].value
+#     ki_y = msg.doubles[7].value
+#     kd_y = msg.doubles[8].value
+
 def calPos(msg):
     global x,y,altitude
 
@@ -158,6 +170,7 @@ def alt_control(odo, imu, pid):
 
     calAcc(imu)
 
+    # setPID(pid)
     # message_filters.Subscriber("/dynamic_tutorials/parameter_updates", Config, setPID)
 
     # calAlt(gps)
@@ -176,12 +189,12 @@ def alt_control(odo, imu, pid):
     velocity = (vel_x,vel_y,vel_z)
     acceleration = np.array([   [acc_x],
                                 [-acc_y],
-                                [-(acc_z-9.8)]   ])
+                                [-(acc_z-9.81)]   ])
 
-    # print("acceleration:",acceleration)
+    print("acceleration:",acceleration)
     # print("velocity:",velocity)
     # Logging for debugging purposes
-    print("\nAltitude = " + str(altitude))
+    # print("\nAltitude = " + str(altitude))
     print("Required alt = ",req_alt)
     print("Roll =", roll)
     print("Pitch =", pitch)
@@ -200,6 +213,7 @@ def control():
     rospy.init_node('controller_node', anonymous=False)
     odo_sub = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry)
     imu_sub = message_filters.Subscriber("omav/ground_truth/imu",Imu)
+    # pid_sub = message_filters.Subscriber("/dynamic_tutorials/parameter_updates", Config)
     tr = message_filters.TimeSynchronizer([odo_sub,imu_sub],2) #2 specifies the number of messages it should take from each sensor
     tr.registerCallback(alt_control)
     rospy.spin()

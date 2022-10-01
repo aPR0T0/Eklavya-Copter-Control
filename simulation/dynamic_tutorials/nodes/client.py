@@ -10,6 +10,7 @@ def callback(config):
 
 if __name__ == "__main__":
     rospy.init_node("dynamic_client")
-
-    client = dynamic_reconfigure.client.Client("dynamic_tutorials", timeout=30, config_callback=callback)
-    rospy.spin()
+    r = rospy.Rate(20)
+    while not rospy.is_shutdown():
+        client = dynamic_reconfigure.client.Client("dynamic_tutorials", timeout=30, config_callback=callback)
+        r.sleep()

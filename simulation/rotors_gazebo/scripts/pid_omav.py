@@ -9,10 +9,9 @@
         _mat  =  Matrix
 """
 
-from this import d
 from moment_desired import *
 from moment_force_allocation import *
-from cmath import cos, sin, sqrt
+from math import sqrt
 from math import atan2
 import time
 import numpy as np 
@@ -95,14 +94,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     err_yaw   =  (math.pi/180) * yaw_desired    - (yaw)  #for our application we don't want the hexacopter to yaw like at all
 
     curr_alt_err = req_alt - altitude
-    # if(0.6 <= curr_alt_err < 2):
-    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.4
-    # elif( -2 < curr_alt_err <= -0.6):
-    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.4
-    #this is limiting case where we have reached the desired location in x and y
-    # if(-2.5 <=setpoint_pitch <=2.5 and -2.5<= setpoint_roll <= 2.5): 
-    #     err_roll = setpoint_roll
-    #     err_pitch = setpoint_pitch
 
     # Publishing error values to be plotted in rqt
     alt_err_pub = rospy.Publisher("/alt_err", Float64, queue_size=10)
@@ -113,6 +104,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     pitch_err_pub.publish(err_pitch)
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
+
+    # if(0.6 <= curr_alt_err < 2):
+    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.3
+    # elif( -2 < curr_alt_err <= -0.6):
+    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.3
+    # this is limiting case where we have reached the desired location in x and y   
 
     mass_total = 4.04 #Kg this I got from the urdf file
 
@@ -247,9 +244,9 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # angular velocities
     # 3x1
     
-    I = np.array([  [0.0075 ,-3.4208e-05,2.4695e-05],
+    I = np.array([  [0.0075 ,-3.4208e-05,2.4695e-05 ],
                     [   0   ,  0.010939 ,-3.8826e-06],
-                    [   0   ,      0    ,   0.01369]]) 
+                    [   0   ,      0    ,  0.01369  ]]) 
     # The above matrix is already defined in the urdf
 
 #===============================Defining Matrices==================================>#

@@ -37,7 +37,8 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
     
     # The below given matrix is the result of total FN-des without its rotation 
     # F_desired = ( mass_total*grav_matrix -  p_position_err - d_position_err - i_position_err + 0.00005*mass_total*acceleration )
-    F_desired = mass_total*( grav_matrix +  p_position_err + d_position_err + i_position_err - acceleration )  #this is from earths frame so we need it in the body frame
+    F_desired = mass_total*( grav_matrix +  p_position_err + d_position_err + i_position_err)  #this is from earths frame so we need it in the body frame
     F_desired  = np.round_(F_desired,decimals=2)
     F_desired = np.round_((np.matmul(rotation_matrix,F_desired)).real,decimals=2)
+    # F_desired = F_desired - mass_total*acceleration #because acceleration is already in body frame of reference
     return F_desired
