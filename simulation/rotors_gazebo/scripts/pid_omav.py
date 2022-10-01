@@ -59,7 +59,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global sample_time,current_time
-    global target_x,target_y,req_alt
+    global target_x,target_y,req_alt, current_velocity_pose_mat
     global prop_pos_mat, diff_pose_mat, i_pose_mat, omega, helperr, prev_pos_mat, prev_velocity_pose_mat, acceleration_pose_mat
 
     
@@ -143,6 +143,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # print(dTime)
 # ================== Starting calculations for the error terms =================== #
 
+    current_pose_mat = np.round_(np.array([ [x ],
+                                            [-y],
+                                        [-altitude]]),decimals=2)
     i = 0
     for i in range(50):
         if i<49:
@@ -167,6 +170,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         # print(iMem_alt)
         if(iMem_alt > 100): iMem_alt = 100
         if(iMem_alt < -100): iMem_alt = -100
+    #calculating current acceleration for f_desired calculations
+        current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
+        acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
 
     #Updating previous error terms
 
@@ -180,13 +186,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     
     # output_alt = 1 if output_alt > 1 else output_alt
 
-    #calculating current acceleration for f_desired calculations
-    # current_pose_mat = np.round_(np.array([ [x],
-    #                                         [-y],
-    #                                     [-altitude]]),decimals=2)
-    # current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
-    # acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
-    # prev_velocity_pose_mat = current_velocity_pose_mat
+    prev_velocity_pose_mat = current_velocity_pose_mat
 
     # As the y and z axes are flipped of the body frame w.r.t ground frame hence we need to reverse signs of y and z terms
 
@@ -202,7 +202,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
                                         [-iMem_y],
                                         [-iMem_alt]]),decimals=2)
     # print(i_pose_mat)
-    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration)
+    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration_pose_mat)
     
     # prev_pos_mat = current_pose_mat
     

@@ -158,7 +158,7 @@ def calAcc(msg):
     acc_y = round(msg.linear_acceleration.y,2)
     acc_z = round(msg.linear_acceleration.z,2)
 
-def alt_control(odo, imu, pid):
+def alt_control(odo, imu):
     # Set all variables to global so as to keep them updated values
     global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired,speed
     #So here we take readings from the IMU->Orientation and Odometry->(current_velocity & current_position) sensors
