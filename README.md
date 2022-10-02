@@ -134,7 +134,7 @@ Drone when target co-ordinates are given in control_omav.py:
 - [x] Create a control system for the drone using PID
 - [x] Stabilise the Roll, Pitch and Yaw of the Drone 
 - [x] Get the drone to fly at any arbitrary altitude
-- [x] Have the drone fly to given co-ordinates and stabilise itself
+- [ ] Have the drone fly to given co-ordinates and stabilise itself
 - [ ] To make copter fly with an arbitary orientation at a given position
 - [ ] Implement obstacle avoidance 
 
