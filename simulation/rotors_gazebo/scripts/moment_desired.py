@@ -58,9 +58,15 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
                                     [w_y_current],
                                     [w_z_current]]), decimals= 2)
     # Rotation Matrix for velocity from ground frame to body frame
+<<<<<<< HEAD
     # rotation_matrix = np.array([[ 1 ,         0      ,              math.sin(pitch)        ],
     #                             [ 0 , math.cos(roll) ,   -math.sin(roll)*math.cos(pitch)   ],
     #                             [ 0 , math.sin(roll) ,    math.cos(roll)*math.cos(pitch)   ]])
+=======
+    rotation_matrix = np.array([[ 1 ,         0      ,              math.sin(pitch)        ],
+                                [ 0 , math.cos(roll) ,   -math.sin(roll)*math.cos(pitch)   ],
+                                [ 0 , math.sin(roll) ,    math.cos(roll)*math.cos(pitch)   ]])
+>>>>>>> c8d457d65086a07b74fd36fb01fac591cb560854
     # w_current = np.round_(np.matmul( rotation_matrix , w_current ) , decimals = 2)
     
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
@@ -168,7 +174,11 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         # Desired Angular Velocity :
         w_desired = (kq * sign_q_w_error * q_v_error)
         #print(w_desired)
+<<<<<<< HEAD
         # w_desired = np.matmul( rotation_matrix, w_desired)
+=======
+        w_desired = np.matmul( rotation_matrix, w_desired)
+>>>>>>> c8d457d65086a07b74fd36fb01fac591cb560854
         # Intermediate Calculation Terms to find Moment_Desired :
 
         # To Find Error in Angular Velocity which is a 3*1 Matrix
