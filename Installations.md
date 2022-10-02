@@ -1,5 +1,4 @@
 # Installation Instructions on Ubuntu 20.04 for ROS NOETIC
-> **ETH-Zürich** : ethz-asl/rotors_simulator Repository
 
 ## Prerequisites
 
@@ -10,7 +9,7 @@
 ### If not installed any follow the following links :
 
 - [Ubuntu 20.04 LTS Installation](https://ubuntu.com/download/desktop "Ubuntu Installation")
-- [Ros Noetic Ninjemys Installation (Ros 1) ](http://wiki.ros.org/noetic/Installation/Ubuntu "Ros Noetic Installation")
+- [Ros Noetic Installation](http://wiki.ros.org/noetic/Installation/Ubuntu "Ros Noetic Installation")
 - [Gazebo Installation](https://classic.gazebosim.org/tutorials?tut=ros_installing&cat=connect_ros "Gazebo Installation Tutorial")
 
 
@@ -19,7 +18,7 @@
 
 (Commands being run in Ubuntu Terminal in Home Directory)
 
-```
+```sh
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
 wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 sudo apt-get update
@@ -74,7 +73,7 @@ wstool update
 
 
 
-#### 3. Cloning ethz-asl/rotors_simulator Repository :
+#### 3. Cloning this Repository :
 
 **Note the repository is to be cloned in the <workspace_name>/src directory**
 
@@ -82,7 +81,7 @@ wstool update
 
 ```
 cd ~/hexacopter_ws/src
-git clone --recursive git@github.com:ethz-asl/rotors_simulator.git
+git clone git@github.com:aPR0T0/Eklavya-Copter-Control.git
 ```
 
 
@@ -93,14 +92,14 @@ git clone --recursive git@github.com:ethz-asl/rotors_simulator.git
 
 Checking/Installing `python3_catkin_tools` :
 
-```
+```sh
 sudo apt-get update
 sudo apt-get install python3-catkin-tools
 ```
 
 Building Workspace :
 
-```
+```sh
 cd ~/hexacopter_ws
 catkin init
 catkin build
@@ -114,7 +113,7 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 
 #### 5. Add Sourcing to your `~/.bashrc` file :
 
-```
+```sh
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
