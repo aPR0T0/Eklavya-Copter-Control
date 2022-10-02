@@ -202,7 +202,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
                                         [-iMem_y],
                                         [-iMem_alt]]),decimals=2)
     # print(i_pose_mat)
-    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration_pose_mat)
+    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration)
     
     # prev_pos_mat = current_pose_mat
     
