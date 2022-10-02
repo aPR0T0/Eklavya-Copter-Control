@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # Eklavya'22 - Copter Control
 
 Learning about Control Systems, Types of Drones, Types of Rotors.
@@ -17,4 +15,15 @@ The copter we are considering is a hexacopter with tilt brushless motors.
 
 
 ## Project Implementation on Ubuntu 20.04 for ROS NOETIC
->>>>>>> d784068958085dc42b4cfd82cc7a55ac88aed10c
+
+
+# Welcome to Notes
+Here, we have gathered all the basic concepts to understand our project in depth.
+The following concepts are foundation of Overactuated MAV with tilt configuration in other words hexacopter😊 
+- [x] Basics of PID
+- [x] Basics of Control Systems
+- [x] How to use git
+- [x] Linear Algebra
+- [x] Vehicle Dynamics
+- [x] Basic of Control Theory
+- [x] How to an effective markdown (With the cheat sheets) 
