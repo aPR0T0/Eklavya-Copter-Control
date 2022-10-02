@@ -13,8 +13,12 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
 
     #
     rotation_matrix = np.array([[math.cos(theta)*math.cos(gamma),math.sin(gamma)*math.cos(theta),-math.sin(phi)],
-                                [math.sin(phi)*math.sin(theta)*math.cos(gamma)-math.cos(phi)*math.sin(gamma),math.sin(phi)*math.sin(theta)*math.sin(gamma)+math.cos(phi)*math.cos(gamma),math.sin(phi)*math.cos(theta)],
-                                [math.cos(phi)*math.sin(theta)*math.cos(gamma)+math.sin(phi)*math.sin(gamma),math.cos(phi)*math.sin(theta)*math.sin(gamma)-math.sin(phi)*math.cos(gamma),math.cos(phi)*math.cos(theta)]]) #for body to earth
+                                [math.sin(phi)*math.sin(theta)*math.cos(gamma)-math.cos(phi)*math.sin(gamma),
+                                math.sin(phi)*math.sin(theta)*math.sin(gamma)+math.cos(phi)*math.cos(gamma),
+                                math.sin(phi)*math.cos(theta)],
+                                [math.cos(phi)*math.sin(theta)*math.cos(gamma)+math.sin(phi)*math.sin(gamma),
+                                math.cos(phi)*math.sin(theta)*math.sin(gamma)-math.sin(phi)*math.cos(gamma),
+                                math.cos(phi)*math.cos(theta)]]) #for body to earth
 
     # rotation_matrix[0][0] = cos(theta)*cos(gamma)
     # rotation_matrix[0][1] = sin(gamma)*cos(theta)
@@ -33,7 +37,7 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
     grav_matrix = np.array([[0],
                             [0],
                             [-g]])
-    print(acceleration)
+    # print(acceleration)
     
     # The below given matrix is the result of total FN-des without its rotation 
     # F_desired = ( mass_total*grav_matrix -  p_position_err - d_position_err - i_position_err + 0.00005*mass_total*acceleration )

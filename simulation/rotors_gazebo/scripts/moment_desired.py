@@ -57,11 +57,10 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
     w_current = np.round_(np.array([[w_x_current],
                                     [w_y_current],
                                     [w_z_current]]), decimals= 2)
-    w_current_3x3 = np.round_(np.array( [   [   0   ,-w_z_current,w_y_current ],
-                                            [w_z_current,   0   ,-w_x_current ],
-                                            [-w_y_current, w_x_current,   0   ]]),decimals=2)
     # Rotation Matrix for velocity from ground frame to body frame
-    rotation_matrix = np.array([[ 1 , math.sin(roll)*math.tan(pitch) , math.cos(roll)*math.tan(pitch) ],[ 0 , math.cos(roll) , -math.sin(roll) ],[ 0 , math.sin(roll)*(1/math.cos(pitch)) , math.cos(roll)*(1/math.cos(pitch)) ]])
+    rotation_matrix = np.array([[ 1 ,         0      ,              math.sin(pitch)        ],
+                                [ 0 , math.cos(roll) ,   -math.sin(roll)*math.cos(pitch)   ],
+                                [ 0 , math.sin(roll) ,    math.cos(roll)*math.cos(pitch)   ]])
     # w_current = np.round_(np.matmul( rotation_matrix , w_current ) , decimals = 2)
     
     # INITIALIZING PARAMETERS USED IN CALCULATIONS
@@ -186,7 +185,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         #print(q_intermediate_2)
         # To Calculate intermediate for 3rd term in Moment_Desired Equation : q_intermediate_3_1 = J.ω̂ 
         # Dot Product
-        q_intermediate_3_1 = np.round_(np.matmul(I, w_current_3x3) ,decimals=2)
+        q_intermediate_3_1 = np.round_(np.matmul(I, w_current) ,decimals=2)
         
         #print(q_intermediate_3_1)
         # To Calculate 3rd Term in Moment_Desired Equation : q_intermediate_3_2 = ω̂  × (J.ω̂ )
