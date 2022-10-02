@@ -81,6 +81,7 @@ wstool update
 (Note : Here we are using ssh key to clone repository, other methods can also be used. Also, recursive cloning is used so any linked components if any are not missed)
 
 ```
+<<<<<<< HEAD
 cd ~/hexacopter_ws/src
 git clone https://github.com/aPR0T0/Eklavya-Copter-Control.git
 ```
@@ -124,3 +125,8 @@ source ~/.bashrc
 > **ETH-Zürich** : ethz-asl/rotors_simulator Repository
 
 - [ethz-asl/rotors_simulator Repository](https://ubuntu.com/download/desktophttps://github.com/ethz-asl/rotors_simulator.git "ethz-asl/rotors_simulator")
+=======
+    echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+    source ~/.bashrc
+```
+>>>>>>> parent of de97693 (Some more instructions)
