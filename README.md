@@ -22,7 +22,7 @@ The following concepts are foundation of Overactuated MAV with tilt configuratio
 - [x] Linear Algebra
 - [x] Vehicle Dynamics
 - [x] Basic of Control Theory
-- [x] How to an effective markdown (With the cheat sheets) 
+- [x] How to write an effective markdown (With the cheat sheets) 
 
 ## Project Implementation on Ubuntu 20.04 for ROS NOETIC
 
