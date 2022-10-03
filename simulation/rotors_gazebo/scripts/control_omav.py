@@ -195,12 +195,12 @@ def alt_control(odo, imu):
     # print("velocity:",velocity)
     # Logging for debugging purposes
     # print("\nAltitude = " + str(altitude))
-    print("Required alt = ",req_alt)
-    print("Roll =", roll)
-    print("Pitch =", pitch)
-    print("Yaw =", yaw)
-    print("X = ",x)
-    print("Y = ",y)
+    # print("Required alt = ",req_alt)
+    # print("Roll =", roll)
+    # print("Pitch =", pitch)
+    # print("Yaw =", yaw)
+    # print("X = ",x)
+    # print("Y = ",y)
     # sending the data to the PID_alt function which then calculates the speed using them
     speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration)
     flag += 1

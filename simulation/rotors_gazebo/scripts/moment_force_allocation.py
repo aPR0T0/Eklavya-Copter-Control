@@ -52,7 +52,7 @@ def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, d
 
     F_dec =  np.matmul( A_pseudo_inv , desired )
     F_dec = np.round_(F_dec.real , decimals = 2)
-
+    # print(F_dec)
     return F_dec
 
 
