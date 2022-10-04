@@ -104,11 +104,13 @@ def setPID_x(msg):
     kp_x = msg.data[0]
     ki_x =  msg.data[1]
     kd_x = msg.data[2]
+
 def setPID_y(msg):
     global kp_y,ki_y,kd_y
     kp_y = msg.data[0]
     ki_y =  msg.data[1]
     kd_y = msg.data[2]
+
 def setPID_z(msg):
     global kp_z,ki_z,kd_z
     kp_z = msg.data[0]
@@ -130,7 +132,7 @@ def setPID_z(msg):
 def calPos(msg):
     global x,y,altitude
 
-    print("\n Odo frame:",msg.header.frame_id)
+    # print("\n Odo frame:",msg.header.frame_id)
     x = round(msg.pose.pose.position.x,2)
     y = round(msg.pose.pose.position.y,2)
     altitude = round(msg.pose.pose.position.z,2)
@@ -138,9 +140,9 @@ def calPos(msg):
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
-    vel_x = round(msg.twist.twist.angular.x,2)
-    vel_y = round(msg.twist.twist.angular.y,2)
-    vel_z = round(msg.twist.twist.angular.z,2)
+    vel_x = round(msg.angular_velocity.x,2)
+    vel_y = round(msg.angular_velocity.y,2)
+    vel_z = round(msg.angular_velocity.z,2)
 # We also need its current orientation for RPY respectively
 def calOrientation(msg):
     global roll, pitch, yaw
@@ -157,6 +159,7 @@ def calAcc(msg):
     acc_x = round(msg.linear_acceleration.x,2)
     acc_y = round(msg.linear_acceleration.y,2)
     acc_z = round(msg.linear_acceleration.z,2)
+    print("\n Imu frame:",msg.header.frame_id)
 
 def alt_control(odo, imu):
     # Set all variables to global so as to keep them updated values
@@ -166,7 +169,7 @@ def alt_control(odo, imu):
 
     calPos(odo)
 
-    calAng(odo)
+    calAng(imu)
 
     calAcc(imu)
 
@@ -187,11 +190,11 @@ def alt_control(odo, imu):
     # print(k_pose)
     target = (target_x,target_y,req_alt)
     velocity = (vel_x,vel_y,vel_z)
-    acceleration = np.array([   [acc_x],
+    acceleration = np.array([   [-acc_x],
                                 [-acc_y],
-                                [-(acc_z-9.81)]   ])
+                                [(acc_z-9.8)]   ])
 
-    print("acceleration:",acceleration)
+    # print("acceleration:",acceleration)
     # print("velocity:",velocity)
     # Logging for debugging purposes
     # print("\nAltitude = " + str(altitude))
@@ -212,7 +215,7 @@ def control():
     #We can get literally everything we need from the odometry sensor alone, but for extreme real life case we are taking atleast two sensors to start with, so that we are less proned to errors
     rospy.init_node('controller_node', anonymous=False)
     odo_sub = message_filters.Subscriber("/omav/odometry_sensor1/odometry", Odometry)
-    imu_sub = message_filters.Subscriber("omav/ground_truth/imu",Imu)
+    imu_sub = message_filters.Subscriber("omav/imu",Imu)
     # pid_sub = message_filters.Subscriber("/dynamic_tutorials/parameter_updates", Config)
     tr = message_filters.TimeSynchronizer([odo_sub,imu_sub],2) #2 specifies the number of messages it should take from each sensor
     tr.registerCallback(alt_control)

@@ -111,9 +111,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.3
     # this is limiting case where we have reached the desired location in x and y   
 
-    mass_total = 4.04 #Kg this I got from the urdf file
+    mass_total = 4.27 #Kg this I got from the urdf file
 
-    weight = 4.04*g
+    weight = mass_total*g
 
     hover_speed  = 678 #just taking an assumption later will correct it based on the experimanetal data
 

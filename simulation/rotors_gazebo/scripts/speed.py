@@ -24,5 +24,5 @@ def speed_assign( tilt_ang, ang_vel_rot,speed,flag):
     for i1 in range(12):
         if (speed.angular_velocities[i1] < 640): speed.angular_velocities[i1] = 640
     
-    # print(speed.angular_velocities)
+    print(speed.angular_velocities)
     return(speed)

@@ -12,7 +12,7 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
         F_desired = np.zeros((3, 1))    
 
     #
-    rotation_matrix = np.array([[math.cos(theta)*math.cos(gamma),math.sin(gamma)*math.cos(theta),-math.sin(phi)],
+    rotation_matrix = np.array([[math.cos(theta)*math.cos(gamma),math.sin(gamma)*math.cos(theta),-math.sin(theta)],
                                 [math.sin(phi)*math.sin(theta)*math.cos(gamma)-math.cos(phi)*math.sin(gamma),
                                 math.sin(phi)*math.sin(theta)*math.sin(gamma)+math.cos(phi)*math.cos(gamma),
                                 math.sin(phi)*math.cos(theta)],
@@ -43,9 +43,8 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
     # F_desired = ( mass_total*grav_matrix -  p_position_err - d_position_err - i_position_err + 0.00005*mass_total*acceleration )
     F_desired = mass_total*( grav_matrix +  p_position_err + d_position_err + i_position_err )  #this is from earths frame so we need it in the body frame
     F_desired = np.round_(F_desired,decimals=2)
-    print(F_desired)
-    F_desired = F_desired - mass_total*acceleration
+    # print(F_desired)
     F_desired = np.round_((np.matmul(rotation_matrix,F_desired)).real,decimals=2)
-    print(F_desired)
+    # print(F_desired)
     # F_desired = F_desired - mass_total*acceleration #because acceleration is already in body frame of reference
     return F_desired
