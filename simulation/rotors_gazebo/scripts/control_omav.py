@@ -174,8 +174,8 @@ def alt_control(odo, imu):
     # message_filters.Subscriber("/dynamic_tutorials/parameter_updates", Config, setPID)
 
     # calAlt(gps)
-    kap = 8.06428e-05 #0.00099 #> constant for the matrix
-    Mu = 7.2e-06 #0.00004311  #> constant for the matrix
+    kap = 8.06428e-05 # 0.00099 #> constant for the matrix
+    Mu = 7.2e-06  # 0.00004311  #> constant for the matrix
 
     rospy.Subscriber("pid_x", Float64MultiArray, setPID_x)
     rospy.Subscriber("pid_y", Float64MultiArray, setPID_y)
