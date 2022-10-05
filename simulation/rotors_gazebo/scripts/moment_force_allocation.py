@@ -10,7 +10,7 @@ kq = 4 #> 4
 kr = 4 #> 4
 t1 = 0.8660254904
 s_ccw = 1   # Counter clockwise +ve
-s_cw = -1   # Clockwise -ve
+s_cw = 1   # Clockwise -ve
 
 def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration, flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw ,w_x_current, w_y_current, w_z_current, I, kq, kr):
     
