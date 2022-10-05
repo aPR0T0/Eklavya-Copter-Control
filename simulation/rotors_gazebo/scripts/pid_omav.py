@@ -264,14 +264,13 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
 
     # Angular velocties deduction
-    ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    ang_vel= np.zeros(12)
     i = 0
-    for i in range(6):
+    for i in range(12):
         ang_vel[i]= round(abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real)), 2) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
-
     # Tilt Angles deduction
-    tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    tilt_ang = np.zeros(6)
     i = 0
     for i in range(6):
         x1 = relation_matrix[2*i+1]
@@ -279,11 +278,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
         # print(x1) Uses this to get the real value from the matrix
         tilt_ang[i] = round(atan2(x1,x2),2) # atan2(sin/cos)
 
-    #Now, we need to allocate the speed to each rotor
-    ang_vel_rot = tuple(xz*ang_vel)
-    # Uncomment for debugging only
-    # print(ang_vel_rot,tilt_ang)
-    tilt_ang = tuple(tilt_ang)
+    ang_vel_rot = ang_vel
     return tilt_ang, ang_vel_rot
 
 """

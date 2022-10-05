@@ -9,11 +9,12 @@ g  = 9.81
 kq = 4 #> 4
 kr = 4 #> 4
 t1 = 0.8660254904
-
+s_ccw = 1   # Counter clockwise +ve
+s_cw = -1   # Clockwise -ve
 
 def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration, flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw ,w_x_current, w_y_current, w_z_current, I, kq, kr):
     
-    t1 = round( 0.866025404,2 )
+    t1 = round( 0.866025404,4)
 
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged
@@ -22,12 +23,12 @@ def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, d
     # print(F_des)
     M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , w_x_current, w_y_current, w_z_current, I , kq, kr, flag)
     # print(M_des)
-    A = np.array([  [   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ],
-                    [   0   ,   0   ,   0   ,   0   ,   0   ,   t1  ,   0   ,  -t1  ,   0   ,  t1   ,   0    ,  -t1  ],  
-                    [   -1  ,   0   ,   -1  ,   0   ,   -1  ,   0   ,   -1  ,    0  ,   -1  ,   0   ,   -1   ,  0    ],
-                    [ -len  , -kap*(1/Mu) , len , -kap*(1/Mu) , len*0.5 , kap*0.5*(1/Mu) , -len*0.5 , 0.5*kap*(1/Mu) , -len*0.5 , kap*0.5*(1/Mu) , len , kap*(1/Mu) ],
-                    [    0  ,    0  ,    0  ,   0   , t1*len , t1*kap*(1/Mu) , -t1*len , t1*kap*(1/Mu) , t1*len , -t1*kap*(1/Mu) , -t1*len , -kap*t1*(1/Mu) ],
-                    [-kap*(1/Mu),len,kap*(1/Mu),len,-kap*(1/Mu),len,kap*(1/Mu),len,kap*(1/Mu),len,-kap*(1/Mu),len]])  #confirmed
+    A = np.array([  [   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ,   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ],
+                    [   0   ,   0   ,   0   ,   0   ,   0   ,   t1  ,   0   ,  -t1  ,   0   ,  t1   ,   0    ,  -t1  ,   0   ,   0   ,   0   ,   0   ,   0   ,   t1  ,   0   ,  -t1  ,   0   ,  t1   ,   0    ,  -t1  ],  
+                    [   -1  ,   0   ,   -1  ,   0   ,   -1  ,   0   ,   -1  ,    0  ,   -1  ,   0   ,   -1   ,  0    ,   -1  ,   0   ,   -1  ,   0   ,   -1  ,   0   ,   -1  ,    0  ,   -1  ,   0   ,   -1   ,   0   ],
+                    [ -len  , -s_ccw*kap*(1/Mu) , len , -s_cw*kap*(1/Mu) , len*0.5 , s_ccw*kap*0.5*(1/Mu) , -len*0.5 , s_cw*0.5*kap*(1/Mu) , -len*0.5 , s_cw*kap*0.5*(1/Mu) , len , s_ccw*kap*(1/Mu) , -len  , -s_ccw*kap*(1/Mu) , len , -s_cw*kap*(1/Mu) , len*0.5 , s_ccw*kap*0.5*(1/Mu) , -len*0.5 , s_cw*0.5*kap*(1/Mu) , -len*0.5 , s_cw*kap*0.5*(1/Mu) , len , s_ccw*kap*(1/Mu) , -len  , -s_ccw*kap*(1/Mu) , len , -s_cw*kap*(1/Mu) , len*0.5 , s_ccw*kap*0.5*(1/Mu) , -len*0.5 , s_cw*0.5*kap*(1/Mu) , -len*0.5 , s_cw*kap*0.5*(1/Mu) , len , s_ccw*kap*(1/Mu) , -len  , -s_ccw*kap*(1/Mu) , len , -s_cw*kap*(1/Mu) , len*0.5 , s_ccw*kap*0.5*(1/Mu) , -len*0.5 , s_cw*0.5*kap*(1/Mu) , -len*0.5 , s_cw*kap*0.5*(1/Mu) , len , s_ccw*kap*(1/Mu) ],
+                    [    0  ,    0  ,    0  ,   0   , t1*len , t1*s_ccw*kap*(1/Mu) , -t1*len , t1*s_cw*kap*(1/Mu) , t1*len , -t1*s_cw*kap*(1/Mu) , -t1*len , -s_ccw*kap*t1*(1/Mu) ,    0  ,    0  ,    0  ,   0   , t1*len , t1*s_ccw*kap*(1/Mu) , -t1*len , t1*s_cw*kap*(1/Mu) , t1*len , -t1*s_cw*kap*(1/Mu) , -t1*len , -s_ccw*kap*t1*(1/Mu)  ],
+                    [-s_ccw*kap*(1/Mu),len,s_cw*kap*(1/Mu),len,-s_ccw*kap*(1/Mu),len,s_cw*kap*(1/Mu),len,s_cw*kap*(1/Mu),len,-s_ccw*kap*(1/Mu),len,-s_ccw*kap*(1/Mu),len,s_cw*kap*(1/Mu),len,-s_ccw*kap*(1/Mu),len,s_cw*kap*(1/Mu),len,s_cw*kap*(1/Mu),len,-s_ccw*kap*(1/Mu),len]])  #confirmed
     #Transpose of A
     A_trans = np.transpose(A)
 # <--------------------------------pseudo inverse------------------------------>
