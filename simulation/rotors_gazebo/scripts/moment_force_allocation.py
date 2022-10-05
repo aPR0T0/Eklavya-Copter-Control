@@ -14,7 +14,7 @@ s_cw = 1   # Clockwise -ve
 
 def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration, flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw ,w_x_current, w_y_current, w_z_current, I, kq, kr):
     
-    t1 = round( 0.866025404,4)
+    t1 = round( 0.866025404,2)
 
     #allocation matrix ->> We need to find its transpose and then its pseudo inverse
     #<___possibility 1___># here the sines and cos are interchanged

@@ -258,7 +258,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     
     relation_matrix = np.round_(relation_matrix,decimals = 2)
-    relation_matrix = relation_matrix.reshape((12,1))
+    relation_matrix = relation_matrix.reshape((24,1))
 
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
