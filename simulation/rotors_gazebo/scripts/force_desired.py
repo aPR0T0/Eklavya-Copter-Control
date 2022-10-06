@@ -36,7 +36,7 @@ def force_desired( phi, theta, gamma, flag, mass_total, p_position_err, d_positi
     
     grav_matrix = np.array([[0],
                             [0],
-                            [-g]])
+                            [g]])
     # print(acceleration)
     
     # The below given matrix is the result of total FN-des without its rotation 

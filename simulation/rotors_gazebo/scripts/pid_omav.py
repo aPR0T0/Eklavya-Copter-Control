@@ -191,22 +191,22 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # As the y and z axes are flipped of the body frame w.r.t ground frame hence we need to reverse signs of y and z terms
 
     prop_pos_mat = np.round_(np.array([ [ pMem_x ],
-                                        [ -pMem_y],
-                                        [-pMem_alt]]),decimals=2) #position error matrix
+                                        [ pMem_y],
+                                        [pMem_alt]]),decimals=2) #position error matrix
     # print(prop_pos_mat)
     diff_pose_mat = np.round_(np.array([[dMem_x],
-                                        [-dMem_y],
-                                        [-dMem_alt]]),decimals=2)
+                                        [dMem_y],
+                                        [dMem_alt]]),decimals=2)
     # print(diff_pose_mat)
     i_pose_mat = np.round_(np.array([   [iMem_x],
-                                        [-iMem_y],
-                                        [-iMem_alt]]),decimals=2)
+                                        [iMem_y],
+                                        [iMem_alt]]),decimals=2)
     # print(i_pose_mat)
     tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration)
     
     # prev_pos_mat = current_pose_mat
     
-    speed = speed_assign( tilt_ang, ang_vel_rot,speed,flag)
+    speed = speed_assign( tilt_ang, ang_vel_rot,speed)
     
     return speed
 # ======================= Control Allocation Starts here ========================== #
@@ -368,27 +368,3 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     x_err_pub.publish(err_x)
     y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
     y_err_pub.publish(err_y)
-
-
-    # damping 
-
-    # if (0 < err_x < 2):
-    #     damper = 3*abs(err_x)/4
-    #     print("\ndamping in x:",damper)
-    #     err_x = err_x + damper #because the direction of x is same as that of earth's frame
-    # elif (-2 < err_x < 0):
-    #     damper = 3*abs(err_x)/4
-    #     print("\ndamping in x:",damper)
-    #     err_x = err_x - damper
-    # print("\nerr_x = ",err_x)
-
-
-    # if (0 < err_y < 2):
-    #     damper = 3*(1/abs(err_y))/4
-    #     print("\ndamping in y:",damper)
-    #     err_y = err_y - damper
-    # elif (-2 < err_y < 0):
-    #     damper = 3*(1/abs(err_y))/4
-    #     print("\ndamping in y:",damper)
-    #     err_y = err_y + damper
-    # print("\nerr_y = ",err_y)
