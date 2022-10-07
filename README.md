@@ -123,7 +123,7 @@ Drone when target co-ordinates are given in control_omav.py:
 
 
 
-https://user-images.githubusercontent.com/97826285/194611691-46449a35-56b3-4710-a490-077a55a92ab7.mp4
+https://user-images.githubusercontent.com/97826285/194613915-a2ed569a-9e6a-4278-b830-82055c5ecd51.mp4
 
 
 
