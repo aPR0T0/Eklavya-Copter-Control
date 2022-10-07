@@ -197,7 +197,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         
         # To Calculate Moment_Desired using 1st, 2nd and 3rd Term Mdes = kr.(ωdes - ω̂ ) - (roff × BFdes) + (ω̂  × (J.ω̂ ))
         #                                                             = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
-        print("2nd and 1st terms respectively",q_intermediate_3_2, q_intermediate_1)
+        print("2nd and 1st terms respectively",q_intermediate_1, kq*q_intermediate_3_2)
         M_desired = q_intermediate_1 + q_intermediate_3_2
     #M_desired = np.zeros((3, 1))
     M_desired = np.round_(M_desired,decimals=2)

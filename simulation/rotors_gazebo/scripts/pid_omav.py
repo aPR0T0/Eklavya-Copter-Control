@@ -105,11 +105,8 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
 
-    # if(0.6 <= curr_alt_err < 2):
-    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.3
-    # elif( -2 < curr_alt_err <= -0.6):
-    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.3
-    # this is limiting case where we have reached the desired location in x and y   
+    # if (curr_alt_err >  1): curr_alt_err =  1
+    # if (curr_alt_err < -1): curr_alt_err = -1
 
     mass_total = 4.27 #Kg this I got from the urdf file
 
@@ -244,9 +241,9 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # angular velocities
     # 3x1
     
-    I = np.array([  [0.0075 ,-3.4208e-05,2.4695e-05 ],
-                    [   0   ,  0.010939 ,-3.8826e-06],
-                    [   0   ,      0    ,  0.01369  ]]) 
+    I = np.array([  [0.086 ,-3.4208e-05,2.4695e-05 ],
+                    [   0   ,  0.088 ,-3.8826e-06],
+                    [   0   ,      0    ,  0.16  ]]) 
     # The above matrix is already defined in the urdf
 
 #===============================Defining Matrices==================================>#
@@ -324,6 +321,9 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
 
     err_x = target_x - x
     err_y = target_y - y
+
+    # if ( err_x >  1 ): err_x =  1
+    # if ( err_y < -1 ): err_y = -1
 
     dErr_x = err_x - prevErr_x
     dErr_y = err_y - prevErr_y
