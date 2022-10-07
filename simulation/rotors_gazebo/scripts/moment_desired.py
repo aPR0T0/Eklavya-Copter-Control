@@ -129,18 +129,18 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         p2 = q_y_desired
         p3 = q_z_desired
 
-        q0 = q_w_current
-        q1 = q_x_current
-        q2 = q_y_current
-        q3 = q_z_current
+        # q0 = q_w_current
+        # q1 = q_x_current
+        # q2 = q_y_current
+        # q3 = q_z_current
 
-        # Quaternion Error Equations :
-        q_w_error = (p0*q0 + p1*q1 + p2*q2 + p3*q3)
-        q_x_error = (p0*q1 - p1*q0 + p2*q3 - p3*q2)
-        q_y_error = (p0*q2 - p2*q0 - p1*q3 + p3*q1)
-        q_z_error = (p0*q3 - p3*q0 + p1*q2 - p2*q1)
+        # # Quaternion Error Equations :
+        # q_w_error = (p0*q0 + p1*q1 + p2*q2 + p3*q3)
+        # q_x_error = (p0*q1 - p1*q0 + p2*q3 - p3*q2)
+        # q_y_error = (p0*q2 - p2*q0 - p1*q3 + p3*q1)
+        # q_z_error = (p0*q3 - p3*q0 + p1*q2 - p2*q1)
         # May have been affected
-        """
+        
         q0 = q_w_current
         q1 = -q_x_current
         q2 = -q_y_current
@@ -151,7 +151,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         q_x_error = (p0*q1 + p1*q0 + p2*q3 - p3*q2)
         q_y_error = (p0*q2 - p1*q3 + p2*q0 + p3*q1)
         q_z_error = (p0*q3 + p1*q2 - p2*q1 + p3*q0)
-        """
+        
 
         # We Require only the sign of q_w_error for further Calculation
         if(q_w_error < 0):
@@ -165,6 +165,8 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
                                         [q_y_error], 
                                         [q_z_error]]),decimals=2)
 
+        # q_intermediate_1 = kq*q_v_error
+        # q_intermediate_3_2 = kr*w_current
         # Desired Angular Velocity :
         w_desired = (kq * sign_q_w_error * q_v_error)
         #print(w_desired)
@@ -182,7 +184,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         #print(q_intermediate_1)
         # To Calculate 2nd Term in Moment_Desired Equation : q_intermediate_2 = roff × BFdes
         # Cross Product
-        #print(q_intermediate_2)
+        # print(q_intermediate_2)
         # To Calculate intermediate for 3rd term in Moment_Desired Equation : q_intermediate_3_1 = J.ω̂ 
         # Dot Product
         q_intermediate_3_1 = np.round_(np.matmul(I, w_current) ,decimals=2)
@@ -195,6 +197,7 @@ def moment_desired(roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , 
         
         # To Calculate Moment_Desired using 1st, 2nd and 3rd Term Mdes = kr.(ωdes - ω̂ ) - (roff × BFdes) + (ω̂  × (J.ω̂ ))
         #                                                             = q_intermediate_1 - q_intermediate_2 + q_intermediate_3_2
+        print("2nd and 1st terms respectively",q_intermediate_3_2, q_intermediate_1)
         M_desired = q_intermediate_1 + q_intermediate_3_2
     #M_desired = np.zeros((3, 1))
     M_desired = np.round_(M_desired,decimals=2)

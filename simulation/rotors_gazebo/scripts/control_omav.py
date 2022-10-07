@@ -136,7 +136,7 @@ def calPos(msg):
     x = round(msg.pose.pose.position.x,2)
     y = round(msg.pose.pose.position.y,2)
     altitude = round(msg.pose.pose.position.z,2)
-    print(altitude)
+    # print(altitude)
 # We need current velocity of the model so that we know when to stop and when to go
 def calAng(msg):
     global vel_x,vel_y,vel_z
@@ -159,7 +159,7 @@ def calAcc(msg):
     acc_x = round(msg.linear_acceleration.x,2)
     acc_y = round(msg.linear_acceleration.y,2)
     acc_z = round(msg.linear_acceleration.z,2)
-    print("\n Imu frame:",msg.header.frame_id)
+    # print("\n Imu frame:",msg.header.frame_id)
 
 def alt_control(odo, imu):
     # Set all variables to global so as to keep them updated values
