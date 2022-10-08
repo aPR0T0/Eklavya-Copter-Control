@@ -106,9 +106,12 @@ python3 control_omav.py
 
 
 <!--Flowchart -->
-## Algorithm Flowchart
-Simplified code structure  
-<img src="#">
+## Algorithm Flowchart 
+Basic Control system used
+![](./Images/Overall_flow.png)
+Overall controller flow
+![](./Images/Basic_algo_flow.png)
+Simplified code structure 
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
