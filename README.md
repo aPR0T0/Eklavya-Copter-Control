@@ -106,11 +106,12 @@ https://user-images.githubusercontent.com/97826285/194748183-21302200-b96e-4698-
 
 
 <!--Flowchart -->
+
 ## Algorithm Flowchart 
 Basic Control system used
-![](./Images/Overall_flow.png)
+![](./Assets/Overall_flow.png)
 Overall controller flow
-![](./Images/Basic_algo_flow.png)
+![](./Assets/Basic_algo_flow.png)
 Simplified code structure 
 
 <!-- RESULTS AND DEMO -->
