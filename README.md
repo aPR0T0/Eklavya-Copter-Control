@@ -118,11 +118,11 @@ Simplified code structure
 ## Results and Demo
 
 
-Drone at start of the program:  
+Copter at start of the program:  
 
-<img src="#">
+![](./Images/Model.png)
 
-Drone when target co-ordinates are given in control_omav.py:  
+Copter when target co-ordinates are given in control_omav.py:  
 
 
 
@@ -136,7 +136,7 @@ https://user-images.githubusercontent.com/97826285/194613915-a2ed569a-9e6a-4278-
 <!-- FUTURE WORK -->
 ## Future Work
 - [x] Create a control system for the drone using PID
-- [x] Stabilise the Roll, Pitch and Yaw of the Drone 
+- [x] Stabilise the Roll, Pitch and Yaw of the Copter 
 - [x] Get the drone to fly at any arbitrary altitude
 - [x] Have the drone fly to given co-ordinates and stabilise itself
 - [ ] To make copter fly with an arbitary orientation at a given position
