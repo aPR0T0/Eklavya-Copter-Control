@@ -113,6 +113,7 @@ Basic Control system used
 Overall controller flow
 ![](./Images/Basic_algo_flow.png)
 Simplified code structure 
+![](./Images/Simplified_code_struct.png)
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
