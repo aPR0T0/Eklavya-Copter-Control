@@ -109,9 +109,9 @@ https://user-images.githubusercontent.com/97826285/194748183-21302200-b96e-4698-
 
 ## Algorithm Flowchart 
 Basic Control system used
-![](./Assets/Overall_flow.png)
+![](./Images/Overall_flow.png)
 Overall controller flow
-![](./Assets/Basic_algo_flow.png)
+![](./Images/Basic_algo_flow.png)
 Simplified code structure 
 
 <!-- RESULTS AND DEMO -->
