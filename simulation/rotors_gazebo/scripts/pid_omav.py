@@ -21,23 +21,23 @@ from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
 
 
-kp_x = 20
+kp_x = 2
 
-ki_x = 0
+ki_x = 0.0001
 
-kd_x = 10
+kd_x = 2
 
-kp_y = 20
+kp_y = 2
 
-ki_y = 0
+ki_y = 0.0001
 
-kd_y = 10
+kd_y = 2
 
-kp_z = 20
+kp_z = 3
 
-ki_z = 0
+ki_z = 0.00001
 
-kd_z = 10
+kd_z = 5
 
 g = 9.81 # gravitational acceleration
 
@@ -55,7 +55,7 @@ helperr = np.zeros(50)
 helperr_x = np.zeros(50)
 helperr_y = np.zeros(50)
 
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration,orientation):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global sample_time,current_time
@@ -199,7 +199,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
                                         [iMem_y],
                                         [iMem_alt]]),decimals=2)
     # print(i_pose_mat)
-    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration)
+    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration, orientation)
     
     # prev_pos_mat = current_pose_mat
     
@@ -222,7 +222,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
 """
 
-def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap,acceleration):
+def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap,acceleration,orientation):
     # F_des --> Force desired and M_des --> Desired moment
     global current_time, prevTime, dTime, t1
     
@@ -245,9 +245,10 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
                     [   0   ,  0.088 ,-3.8826e-06],
                     [   0   ,      0    ,  0.16  ]]) 
     # The above matrix is already defined in the urdf
+    # print(omega)
 
 #===============================Defining Matrices==================================>#
-    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
+    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr, dTime, orientation)
     # print(F_des)
     # print(A_pseudo_inv)
 

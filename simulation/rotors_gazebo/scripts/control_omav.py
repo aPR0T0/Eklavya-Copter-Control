@@ -145,7 +145,7 @@ def calAng(msg):
     vel_z = round(msg.angular_velocity.z,2)
 # We also need its current orientation for RPY respectively
 def calOrientation(msg):
-    global roll, pitch, yaw
+    global roll, pitch, yaw, orientation
     #the data recieved from the sensor in in quaternion form
     orientation = [ msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w]
     #So, we need to convert that data from quaternion to euler using an in-built function
@@ -205,7 +205,7 @@ def alt_control(odo, imu):
     # print("X = ",x)
     # print("Y = ",y)
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration,orientation)
     flag += 1
     speed_pub.publish(speed)
 

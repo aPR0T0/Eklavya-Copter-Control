@@ -7,5 +7,5 @@ def speed_assign( tilt_ang, ang_vel_rot,speed):
     for t in range(6):
         speed.angular_velocities[12+t] = tilt_ang[t]  
     
-    # print(speed.angular_velocities)
+    print(speed.angular_velocities)
     return(speed)
