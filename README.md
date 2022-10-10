@@ -156,7 +156,7 @@ For more pid values please [click here](./Records%20and%20Reports/Records/PId%20
 * [ETH-Zürich](https://github.com/ethz-asl/rotors_simulator) for the plugins as well as the model of the drone.
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
 * Our mentors [Jash Shah](https://github.com/Jash-Shah), [Sagar Chotalia](https://github.com/sagarchotalia) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
-
+* Other [research papers](./Resources%20and%20Research%20papers) 
 <!-- -->
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
