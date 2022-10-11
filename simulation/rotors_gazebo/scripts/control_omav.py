@@ -15,9 +15,9 @@ from dynamic_reconfigure.msg import Config
 # Initilization of all Parameters
 altitude = 0.30999
 thrust = 0
-vel_x = 0 
-vel_y = 0 
-vel_z = 0
+ang_vel_x = 0 
+ang_vel_y = 0 
+ang_vel_z = 0
 roll = 0
 pitch = 0
 yaw = 0
@@ -137,12 +137,12 @@ def calPos(msg):
     y = round(msg.pose.pose.position.y,2)
     altitude = round(msg.pose.pose.position.z,2)
     # print(altitude)
-# We need current velocity of the model so that we know when to stop and when to go
+# We need current ang_velocities of the model so that we know when to stop and when to go
 def calAng(msg):
-    global vel_x,vel_y,vel_z
-    vel_x = round(msg.angular_velocity.x,2)
-    vel_y = round(msg.angular_velocity.y,2)
-    vel_z = round(msg.angular_velocity.z,2)
+    global ang_vel_x,ang_vel_y,ang_vel_z
+    ang_vel_x = round(msg.angular_velocity.x,2)
+    ang_vel_y = round(msg.angular_velocity.y,2)
+    ang_vel_z = round(msg.angular_velocity.z,2)
 # We also need its current orientation for RPY respectively
 def calOrientation(msg):
     global roll, pitch, yaw, orientation
@@ -161,6 +161,12 @@ def calAcc(msg):
     acc_z = round(msg.linear_acceleration.z,2)
     # print("\n Imu frame:",msg.header.frame_id)
 
+def calVel(msg):
+    global vel_x,vel_y,vel_z
+    vel_x = round(msg.twist.twist.linear.x,2)
+    vel_y = round(msg.twist.twist.linear.y,2)
+    vel_z = round(msg.twist.twist.linear.z,2)
+
 def alt_control(odo, imu):
     # Set all variables to global so as to keep them updated values
     global altitude,req_alt,flag,roll, pitch, yaw,target_x,target_y, roll_desired, pitch_desired, yaw_desired,speed
@@ -173,6 +179,7 @@ def alt_control(odo, imu):
 
     calAcc(imu)
 
+    calVel(odo)
     # setPID(pid)
     # message_filters.Subscriber("/dynamic_tutorials/parameter_updates", Config, setPID)
 
@@ -189,13 +196,14 @@ def alt_control(odo, imu):
     k_pose = (kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,kp_z,ki_z,kd_z)
     # print(k_pose)
     target = (target_x,target_y,req_alt)
-    velocity = (vel_x,vel_y,vel_z)
+    ang_velocities = (ang_vel_x,ang_vel_y,ang_vel_z)
+    velocities = (vel_x,vel_y,vel_z)
     acceleration = np.array([   [-acc_x],
                                 [-acc_y],
                                 [(acc_z-9.8)]   ])
 
     # print("acceleration:",acceleration)
-    # print("velocity:",velocity)
+    # print("ang_velocities:",ang_velocities)
     # Logging for debugging purposes
     # print("\nAltitude = " + str(altitude))
     # print("Required alt = ",req_alt)
@@ -205,7 +213,7 @@ def alt_control(odo, imu):
     # print("X = ",x)
     # print("Y = ",y)
     # sending the data to the PID_alt function which then calculates the speed using them
-    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration,orientation)
+    speed = PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, ang_velocities, kap, Mu, kq, kr, t1,speed,acceleration,orientation,velocities)
     flag += 1
     speed_pub.publish(speed)
 

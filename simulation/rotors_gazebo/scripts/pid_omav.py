@@ -55,11 +55,11 @@ helperr = np.zeros(50)
 helperr_x = np.zeros(50)
 helperr_y = np.zeros(50)
 
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed,acceleration,orientation):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, ang_velocities, kap, Mu, kq, kr, t1, speed,  acceleration, orientation, velocities):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global sample_time,current_time
-    global target_x,target_y,req_alt, current_velocity_pose_mat
+    global target_x,target_y,req_alt, current_velocity_pose_mat, vel_x, vel_y, vel_z
     global prop_pos_mat, diff_pose_mat, i_pose_mat, omega, helperr, prev_pos_mat, prev_velocity_pose_mat, acceleration_pose_mat
 
     
@@ -77,7 +77,8 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     kd_z = k_pose[8]
 
 
-    omega = np.array([[velocity[0]],[velocity[1]],[velocity[2]]])
+    omega = np.array([[ang_velocities[0]],[ang_velocities[1]],[ang_velocities[2]]])
+    vel_x, vel_y, vel_z = velocities[0] , velocities[1] , velocities[2]
     target_x = round(target[0],2)
     target_y = round(target[1],2)
     req_alt = target[2] 
@@ -288,7 +289,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
 
     1. To get to the x we need to pitch either CW or CCW
         * Now if the difference in current_error and previous_error in x is greater than a certain constant let's say 2 units, that means we have surpassed the point x
-            So, Now we need to pitch in the opposite direction of the output error in x and also in the opposite direction of the velocity in x
+            So, Now we need to pitch in the opposite direction of the output error in x and also in the opposite direction of the ang_velocities in x
         
     2. To get to the y we need to roll either CW or CCW
         * Now if the difference in current_error and previous_error in y is greater than a certain constant let's say 2 units, that means we have surpassed the point y
@@ -365,7 +366,25 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     prevErr_x = err_x
     prevErr_y = err_y
 
+
+
     x_err_pub = rospy.Publisher("/x_err", Float64, queue_size=10)
     x_err_pub.publish(err_x)
     y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
     y_err_pub.publish(err_y)
+
+    #equation for correction
+    if(abs(err_x) < 4 and abs(vel_x) > 0.35):
+        dampner = (1/vel_x) * 0.2
+        print("Dampner: ", dampner)
+        err_x = -(err_x * 1.2  - dampner) #in the direction opposite to velocity
+        # err_x = 10 if (err_x > 10) else err_x 
+        # err_x = -10 if (err_x < -10) else err_x 
+
+
+    if(abs(err_y) < 4 and abs(vel_y) > 0.35):
+        dampner_y = (1/vel_y) * 0.1
+        # err_y = (vel_y * 2.35  - dampner_y) #in the direction opposite to velocity
+        err_y = (err_y * 2.1  - dampner_y) #in the direction opposite to velocity
+        # err_y = 10 if (err_y>10) else err_y
+        # err_y = -10 if (err_y <-10) else err_y

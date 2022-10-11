@@ -20,8 +20,8 @@ def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, d
     #<___possibility 1___># here the sines and cos are interchanged
     kap = kap / Mu
     F_des = force_desired( phi, theta, gamma, flag, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration)
-    # print(F_des)
-    M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, orientation,w_x_current, w_y_current, w_z_current, I , kq, kr, flag,dTime)
+    # print(F_des) 
+    M_des = moment_desired(roll_desired, pitch_desired, yaw_desired, orientation,w_x_current, w_y_current, w_z_current, I , kq, kr, flag, dTime)
     # print(M_des)
     A = np.array([  [   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ,   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ],
                     [   0   ,   0   ,   0   ,   0   ,   0   ,   -t1  ,   0   ,  t1  ,   0   ,  -t1   ,   0    ,  t1  ,   0   ,   0   ,   0   ,   0   ,   0   ,   -t1  ,   0   ,  t1  ,   0   ,  -t1   ,   0    ,  -t1  ],  
@@ -30,12 +30,6 @@ def force_calc( phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, d
                     [((-1)*len*(0)), (s_cw*kap*(0)), ((-1)*len*(0)),  (s_acw*kap*(0)), ((-1)*len*(t1)), (s_cw*kap*(t1)), ((-1)*len*(-t1)), (s_acw*kap*(-t1)), ((-1)*len*(t1)), (s_acw*kap*(t1)), ((-1)*len*(-t1)), (s_cw*kap*(-t1)), ((-1)*len*(0)), (s_cw*kap*(0)), ((-1)*len*(0)), (s_acw*kap*(0)), ((-1)*len*(t1)), (s_cw*kap*(t1)), ((-1)*len*(-t1)), (s_acw*kap*(-t1)), ((-1)*len*(t1)), (s_acw*kap*(t1)), ((-1)*len*(-t1)), (s_cw*kap*(-t1))],
                     [((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len ]])  #confirmed
     #Transpose of A
-    # A = np.array([  [   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ,   0   ,   -1  ,   0   ,   1   ,   0   ,  0.5  ,   0   , -0.5  ,   0   , -0.5  ,   0    ,  0.5  ],
-    #                 [   0   ,   0   ,   0   ,   0   ,   0   ,   -t1  ,   0   ,  t1  ,   0   ,  -t1   ,   0    ,  t1  ,   0   ,   0   ,   0   ,   0   ,   0   ,   -t1  ,   0   ,  t1  ,   0   ,  -t1   ,   0    ,  -t1  ],  
-    #                 [   1   ,   0   ,   1   ,   0   ,   1   ,   0   ,   1   ,   0  ,   1  ,   0   ,   1   ,  0    ,   1  ,   0   ,   1  ,   0   ,   1  ,   0   ,   1  ,    0  ,   1  ,   0   ,   1   ,   0   ],
-    #                 [(len*(-1)), ((-1)*s_cw*kap*(-1)), (len*(1)), ((-1)*s_acw*kap*(1)), (len*(0.5)), ((-1)*s_cw*kap*(0.5)), (len*(-0.5)), ((-1)*s_acw*kap*(-0.5)),(len*(-0.5)),  ((-1)*s_acw*kap*(-0.5)),  (len*(0.5)), ((-1)*s_cw*kap*(0.5)), (len*(-1)), ((-1)*s_acw*kap*(-1)), (len*(1)), ((-1)*s_cw*kap*(1)),(len*(0.5)), ((-1)*s_acw*kap*(0.5)),  (len*(-0.5)), ((-1)*s_cw*kap*(-0.5)), (len*(-0.5)), ((-1)*s_cw*kap*(-0.5)),  (len*(0.5)),((-1)*s_acw*kap*(0.5))],
-    #                 [((-1)*len*(0)), (s_cw*kap*(0)), ((-1)*len*(0)),  (s_acw*kap*(0)), ((-1)*len*(t1)), (s_cw*kap*(t1)), ((-1)*len*(-t1)), (s_acw*kap*(-t1)), ((-1)*len*(t1)), (s_acw*kap*(t1)), ((-1)*len*(-t1)), (s_cw*kap*(-t1)), ((-1)*len*(0)), (s_acw*kap*(0)), ((-1)*len*(0)), (s_cw*kap*(0)), ((-1)*len*(t1)), (s_acw*kap*(t1)), ((-1)*len*(-t1)), (s_cw*kap*(-t1)), ((-1)*len*(t1)), (s_cw*kap*(t1)), ((-1)*len*(-t1)), (s_acw*kap*(-t1))],
-    #                 [((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_cw*kap), -len, ((-1)*s_acw*kap), -len ]])  #confirmed
     A_trans = np.transpose(A)
 # <--------------------------------pseudo inverse------------------------------>
     X = np.array(np.matmul(A,A_trans))
