@@ -40,13 +40,13 @@ source /opt/ros/noetic/setup.bash
     Then run following command in terminal `source ~/.bashrc`
 
 * **If you face a problem like:**
-![Error faced](./Resources/References/Installation_Dependencies.png "Error based on unmet dependencies")
+![Error faced](./assets/Installation_Dependencies.png "Error based on unmet dependencies")
     
     Then just before using `line 3` of the above block just type in `sudo apt install -f` (This is auto remove feature of ros of unwanted commands) after this the problem should be solved.
 
 
 * **If you face a problem like:**
-![Error faced](./Resources/References/source_file_exists.png "Source File Already Exists")
+![Error faced](./assets/source_file_exists.png "Source File Already Exists")
     
     It is necessary to solve this error (But in few cases it might be required)
 
@@ -74,7 +74,7 @@ wstool update
 
 
 
-## 3. Cloning ethz-asl/rotors_simulator Repository :
+## 3. Cloning Repository :
 
 **Note the repository is to be cloned in the <workspace_name>/src directory**
 
@@ -82,7 +82,7 @@ wstool update
 
 ```
 cd ~/hexacopter_ws/src
-git clone --recursive git@github.com:ethz-asl/rotors_simulator.git
+git clone https://github.com/aPR0T0/Eklavya-Copter-Control.git
 ```
 
 
@@ -108,7 +108,7 @@ catkin build
 
 If any errors occur you could run `catkin init` and `catkin build` commands again
 
-**Note : There should be total 16 packages (maybe more) installed successfully for installation to be successful**
+**Note : There should be total 11 packages (maybe more) installed successfully for installation to be successful**
 
 
 
@@ -118,3 +118,9 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+
+### REFERENCES :
+> **ETH-Zürich** : ethz-asl/rotors_simulator Repository
+
+- [ethz-asl/rotors_simulator Repository](https://ubuntu.com/download/desktophttps://github.com/ethz-asl/rotors_simulator.git "ethz-asl/rotors_simulator")
