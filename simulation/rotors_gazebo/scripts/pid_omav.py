@@ -51,7 +51,7 @@ len = 0.3 #> assuming that length is 0.3m
 
 xz = 0.707
 
-helperr = np.zeros(50)
+helperr = np.zeros(200)
 helperr_x = np.zeros(50)
 helperr_y = np.zeros(50)
 
@@ -106,9 +106,11 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
 
-    # if (curr_alt_err >  1): curr_alt_err =  1
-    # if (curr_alt_err < -1): curr_alt_err = -1
-
+    if(abs(curr_alt_err) < 4 and abs(vel_z) > 0.35 and abs(curr_alt_err)>0.6):
+        dampner_z = (1/vel_z) * 0.2
+        print("DampnerZ: ", dampner_z)
+        curr_alt_err = (curr_alt_err * 1.2  - dampner_z) 
+        
     mass_total = 4.27 #Kg this I got from the urdf file
 
     weight = mass_total*g
@@ -145,10 +147,10 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
                                             [-y],
                                         [-altitude]]),decimals=2)
     i = 0
-    for i in range(50):
-        if i<49:
+    for i in range(200):
+        if i<199:
             helperr[i] = helperr[i+1]
-    helperr[49] = curr_alt_err 
+    helperr[199] = curr_alt_err 
     if ( dTime >= sample_time ):
 
         # Proportional Terms
@@ -374,15 +376,15 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     y_err_pub.publish(err_y)
 
     #equation for correction
-    if(abs(err_x) < 4 and abs(vel_x) > 0.35):
+    if(abs(err_x) < 4 and abs(vel_x) > 0.35 and abs(err_x)>0.6):
         dampner = (1/vel_x) * 0.2
         print("Dampner: ", dampner)
-        err_x = -(err_x * 1.2  - dampner) #in the direction opposite to velocity
+        err_x = (err_x * 1.2  - dampner) #in the direction opposite to velocity
         # err_x = 10 if (err_x > 10) else err_x 
         # err_x = -10 if (err_x < -10) else err_x 
 
 
-    if(abs(err_y) < 4 and abs(vel_y) > 0.35):
+    if(abs(err_y) < 4 and abs(vel_y) > 0.35 and abs(err_y>0.6)):
         dampner_y = (1/vel_y) * 0.1
         # err_y = (vel_y * 2.35  - dampner_y) #in the direction opposite to velocity
         err_y = (err_y * 2.1  - dampner_y) #in the direction opposite to velocity
