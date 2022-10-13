@@ -4,7 +4,7 @@
 ## Prerequisites
 
 - Ubuntu 20.04 OS
-- ROS Noetic Ninjemys (Note: We will be using Ros 1 and python3)
+- ROS Noetic Ninjemys (Note: We will be using Ros1 and Python3)
 - Gazebo and Gazebo Ros Installation
 
 ### If not installed any follow the following links :
