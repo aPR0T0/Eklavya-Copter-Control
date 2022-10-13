@@ -7,7 +7,7 @@
 - ROS Noetic Ninjemys (Note: We will be using Ros1 and Python3)
 - Gazebo and Gazebo Ros Installation
 
-### If not installed any follow the following links :
+### If not installed follow the following links :
 
 - [Ubuntu 20.04 LTS Installation](https://ubuntu.com/download/desktop "Ubuntu Installation")
 - [Ros Noetic Ninjemys Installation (Ros 1) ](http://wiki.ros.org/noetic/Installation/Ubuntu "Ros Noetic Installation")
@@ -15,7 +15,7 @@
 
 
 
-## 1. Install and initialize ROS kinetic desktop full, additional ROS packages, catkin-tools, and wstool :
+## 1. Install and initialize ROS Noetic Ninjemys, additional requried ROS packages, catkin-tools and wstool :
 
 (Commands being run in Ubuntu Terminal in Home Directory)
 
@@ -48,7 +48,7 @@ source /opt/ros/noetic/setup.bash
 * **If you face a problem like:**
 ![Error faced](./assets/source_file_exists.png "Source File Already Exists")
     
-    It is necessary to solve this error (But in few cases it might be required)
+    It is not necessary to solve this error (But in few cases it might be required)
 
     Run `sudo rm <path mentioned in error>`, for example `sudo rm /etc/ros/rosdep/sources.list.d/20-default.list`
 
@@ -78,16 +78,16 @@ wstool update
 
 **Note the repository is to be cloned in the <workspace_name>/src directory**
 
-(Note : Here we are using ssh key to clone repository, other methods can also be used. Also, recursive cloning is used so any linked components if any are not missed)
+(Note : Here we are using https to clone repository, other methods like ssh key,.. can also be used. Also, recursive cloning is used so any linked components if any are not missed (Recursive cloning is not essential, but is done to prevent any missing of essential linked components in certain cases))
 
 ```
 cd ~/hexacopter_ws/src
-git clone https://github.com/aPR0T0/Eklavya-Copter-Control.git
+git clone --recursive https://github.com/aPR0T0/Eklavya-Copter-Control.git
 ```
 
 
 
-## 4. Building Workspace with `python3_catkin_tools` (therefore you need `python3_catkin_tools`) :
+## 4. Building Workspace with `python3_catkin_tools` (therefore we require `python3_catkin_tools`) :
 
 (Commands being run in Ubuntu Terminal in <workspace_name> directory)
 
@@ -108,7 +108,7 @@ catkin build
 
 If any errors occur you could run `catkin init` and `catkin build` commands again
 
-**Note : There should be total 11 packages (maybe more) installed successfully for installation to be successful**
+**Note : There should be total 10 packages (maybe more) installed successfully for installation to be successful**
 
 
 
