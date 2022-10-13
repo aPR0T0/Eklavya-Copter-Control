@@ -128,7 +128,8 @@ Copter when target co-ordinates are given in control_omav.py:
 
 
 
-https://user-images.githubusercontent.com/97826285/194613915-a2ed569a-9e6a-4278-b830-82055c5ecd51.mp4
+https://user-images.githubusercontent.com/97826285/195662025-274e2176-06e9-4cdd-b471-456354d2e4d2.mp4
+
 
 
 For more results and demo please [click here](./Records%20and%20Reports/Records/Recordings)
