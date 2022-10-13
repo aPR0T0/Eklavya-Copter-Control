@@ -109,11 +109,11 @@ https://user-images.githubusercontent.com/97826285/194748183-21302200-b96e-4698-
 
 ## Algorithm Flowchart 
 Basic Control system used
-![](./Images/Overall_flow.png)
+![](./assets/Overall_flow.png)
 Overall controller flow
-![](./Images/Basic_algo_flow.png)
+![](./assets/Basic_algo_flow.png)
 Simplified code structure 
-![](./Images/Simplified_code_struct.png)
+![](./assets/Simplified_code_struct.png)
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
@@ -121,7 +121,7 @@ Simplified code structure
 
 Copter at start of the program:  
 
-![](./Images/Model.png)
+![](./assets/Model.png)
 
 Copter when target co-ordinates are given in control_omav.py:  
 
