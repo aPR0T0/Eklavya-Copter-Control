@@ -1,0 +1,17 @@
+{
+    "python.linting.enabled": false,
+    "python.autoComplete.extraPaths": [
+        "/home/proto/Eklavya_copter_ws/devel/lib/python3/dist-packages",
+        "/home/proto/Simulation/devel/lib/python3/dist-packages",
+        "/home/proto/omav_ws/devel/lib/python3/dist-packages",
+        "/home/proto/copter/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/proto/Eklavya_copter_ws/devel/lib/python3/dist-packages",
+        "/home/proto/Simulation/devel/lib/python3/dist-packages",
+        "/home/proto/omav_ws/devel/lib/python3/dist-packages",
+        "/home/proto/copter/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
+}
