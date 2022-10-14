@@ -108,7 +108,7 @@ Our full project report can be found [here](./report/Project_Report_Copter_Contr
 
 ### Installation
 
-[Installation Guide](./asset/Installations.md "Installation")
+[Installation Guide](./assets/Installations.md "Installation")
 
 ### Execution
 Open two terminal windows and run the following commands
