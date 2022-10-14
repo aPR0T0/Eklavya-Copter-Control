@@ -144,7 +144,7 @@ Simplified code structure
 
 ![](./assets/Model.png)
 
-Copter when target co-ordinates are given in control_omav.py:  
+## Implementation
 
 <img src="/assets/Copter-Control.gif" width= "720">
 
