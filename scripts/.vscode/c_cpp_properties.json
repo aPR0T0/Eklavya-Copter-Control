@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/proto/Eklavya_copter_ws/devel/include/**",
+        "/home/proto/Simulation/devel/include/**",
+        "/home/proto/omav_ws/devel/include/**",
+        "/home/proto/copter/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/proto/Eklavya_copter_ws/src/dynamic_tutorials/include/**",
+        "/home/proto/copter/src/mav_comm/mav_msgs/include/**",
+        "/home/proto/copter/src/mav_comm/mav_planning_msgs/include/**",
+        "/home/proto/copter/src/pid/include/**",
+        "/home/proto/copter/src/rotors_simulator/rotors_control/include/**",
+        "/home/proto/Eklavya_copter_ws/src/rotors_gazebo_plugins/include/**",
+        "/home/proto/copter/src/rotors_simulator/rotors_hil_interface/include/**",
+        "/home/proto/copter/src/rotors_simulator/rotors_joy_interface/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
