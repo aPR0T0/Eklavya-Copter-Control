@@ -6,8 +6,8 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 
 g  = 9.81
-kq = 4 #> 4
-kr = 4 #> 4
+kq = 2 #> 4
+kr = 160 #> 4
 t1 = 0.8660254904
 s_cw =  -1  # clockwise -ve
 s_acw = 1   # anti- Clockwise +ve

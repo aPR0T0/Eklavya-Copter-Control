@@ -21,23 +21,27 @@ from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
 
 
-kp_x = 2
+kp_x = 0.1
 
 ki_x = 0.0001
 
-kd_x = 2
+kd_x = 0.75
 
-kp_y = 2
+kp_y = 0.15
 
 ki_y = 0.0001
 
-kd_y = 2
+kd_y = 0.75
 
-kp_z = 3
+kp_z = 0.75
 
-ki_z = 0.00001
+ki_z = 0.0005
 
-kd_z = 5
+kd_z = 4
+
+kq = 2.5
+
+kr = 160
 
 g = 9.81 # gravitational acceleration
 
