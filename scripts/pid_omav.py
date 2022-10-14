@@ -8,10 +8,10 @@
         dd(X) =  Double Derivative
         _mat  =  Matrix
 """
-from this import d
+
 from moment_desired import *
 from moment_force_allocation import *
-from cmath import cos, sin, sqrt
+from math import sqrt
 from math import atan2
 import time
 import numpy as np 
@@ -21,23 +21,27 @@ from std_msgs.msg import Float64, Float64MultiArray
 from mav_msgs.msg import Actuators
 
 
-kp_x = 20
+kp_x = 0.1
 
-ki_x = 0
+ki_x = 0.0001
 
-kd_x = 10
+kd_x = 0.75
 
-kp_y = 20
+kp_y = 0.15
 
-ki_y = 0
+ki_y = 0.0001
 
-kd_y = 10
+kd_y = 0.75
 
-kp_z = 20
+kp_z = 0.75
 
-ki_z = 0
+ki_z = 0.0005
 
-kd_z = 10
+kd_z = 4
+
+kq = 2.5
+
+kr = 160
 
 g = 9.81 # gravitational acceleration
 
@@ -51,15 +55,15 @@ len = 0.3 #> assuming that length is 0.3m
 
 xz = 0.707
 
-helperr = np.zeros(20)
-helperr_x = np.zeros(20)
-helperr_y = np.zeros(20)
+helperr = np.zeros(200)
+helperr_x = np.zeros(50)
+helperr_y = np.zeros(50)
 
-def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, velocity, kap, Mu, kq, kr, t1,speed):
+def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_desired, yaw_desired, k_pose, ang_velocities, kap, Mu, kq, kr, t1, speed,  acceleration, orientation, velocities):
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt,prevTime, ddMem_alt, prevdMem_alt
     global sample_time,current_time
-    global target_x,target_y,req_alt
+    global target_x,target_y,req_alt, current_velocity_pose_mat, vel_x, vel_y, vel_z
     global prop_pos_mat, diff_pose_mat, i_pose_mat, omega, helperr, prev_pos_mat, prev_velocity_pose_mat, acceleration_pose_mat
 
     
@@ -77,15 +81,16 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     kd_z = k_pose[8]
 
 
-    omega = np.array([[velocity[0]],[velocity[1]],[velocity[2]]])
+    omega = np.array([[ang_velocities[0]],[ang_velocities[1]],[ang_velocities[2]]])
+    vel_x, vel_y, vel_z = velocities[0] , velocities[1] , velocities[2]
     target_x = round(target[0],2)
     target_y = round(target[1],2)
-    req_alt = target[2] - 0.17
+    req_alt = target[2] 
 
     # setting time for the differential terms and for later applications too
     sample_time = 0.005
     current_time = time.time()
-    altitude = altitude
+    altitude = altitude - 0.17
     #Controller for x and y. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y)
 
@@ -94,14 +99,6 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     err_yaw   =  (math.pi/180) * yaw_desired    - (yaw)  #for our application we don't want the hexacopter to yaw like at all
 
     curr_alt_err = req_alt - altitude
-    # if(0.6 <= curr_alt_err < 2):
-    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.4
-    # elif( -2 < curr_alt_err <= -0.6):
-    #     curr_alt_err = curr_alt_err - (1/curr_alt_err)*0.4
-    #this is limiting case where we have reached the desired location in x and y
-    # if(-2.5 <=setpoint_pitch <=2.5 and -2.5<= setpoint_roll <= 2.5): 
-    #     err_roll = setpoint_roll
-    #     err_pitch = setpoint_pitch
 
     # Publishing error values to be plotted in rqt
     alt_err_pub = rospy.Publisher("/alt_err", Float64, queue_size=10)
@@ -113,9 +110,16 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
 
-    mass_total = 4.04 #Kg this I got from the urdf file
+    # if(abs(curr_alt_err) < 4 and abs(vel_z) > 0.5 and abs(curr_alt_err)>0.3):
+    #     dampner_z = (1/vel_z) * 0.2
+    #     print("DampnerZ: ", dampner_z)
+    #     curr_alt_err = (abs(curr_alt_err) * 1.3  - dampner_z)
+    #     if (curr_alt_err < 0):
+    #         curr_alt_err = -curr_alt_err
 
-    weight = 4.04*g
+    mass_total = 4.27 #Kg this I got from the urdf file
+
+    weight = mass_total*g
 
     hover_speed  = 678 #just taking an assumption later will correct it based on the experimanetal data
 
@@ -130,7 +134,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         ddMem_alt = 0
         prev_pos_mat = np.array([   [0],
                                     [0],
-                                [altitude]])
+                                [-altitude]])
         prev_velocity_pose_mat = np.array([ [0],
                                             [0],
                                             [0]])
@@ -145,11 +149,14 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     # print(dTime)
 # ================== Starting calculations for the error terms =================== #
 
+    current_pose_mat = np.round_(np.array([ [x ],
+                                            [-y],
+                                        [-altitude]]),decimals=2)
     i = 0
-    for i in range(20):
-        if i<19:
+    for i in range(200):
+        if i<199:
             helperr[i] = helperr[i+1]
-    helperr[19] = curr_alt_err 
+    helperr[199] = curr_alt_err 
     if ( dTime >= sample_time ):
 
         # Proportional Terms
@@ -169,6 +176,9 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
         # print(iMem_alt)
         if(iMem_alt > 100): iMem_alt = 100
         if(iMem_alt < -100): iMem_alt = -100
+    #calculating current acceleration for f_desired calculations
+        current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
+        acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
 
     #Updating previous error terms
 
@@ -182,33 +192,27 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     
     # output_alt = 1 if output_alt > 1 else output_alt
 
-    #calculating current acceleration for f_desired calculations
-    current_pose_mat = np.round_(np.array([ [x],
-                                            [-y],
-                                        [-altitude]]),decimals=2)
-    current_velocity_pose_mat = ((current_pose_mat - prev_pos_mat)/dTime)
-    acceleration_pose_mat = np.round_((current_velocity_pose_mat - prev_velocity_pose_mat)/dTime, decimals=2)
     prev_velocity_pose_mat = current_velocity_pose_mat
 
     # As the y and z axes are flipped of the body frame w.r.t ground frame hence we need to reverse signs of y and z terms
 
     prop_pos_mat = np.round_(np.array([ [ pMem_x ],
-                                        [ -pMem_y],
-                                        [-pMem_alt]]),decimals=2) #position error matrix
+                                        [ pMem_y],
+                                        [pMem_alt]]),decimals=2) #position error matrix
     # print(prop_pos_mat)
     diff_pose_mat = np.round_(np.array([[dMem_x],
-                                        [-dMem_y],
-                                        [-dMem_alt]]),decimals=2)
+                                        [dMem_y],
+                                        [dMem_alt]]),decimals=2)
     # print(diff_pose_mat)
     i_pose_mat = np.round_(np.array([   [iMem_x],
-                                        [-iMem_y],
-                                        [-iMem_alt]]),decimals=2)
+                                        [iMem_y],
+                                        [iMem_alt]]),decimals=2)
     # print(i_pose_mat)
-    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap)
+    tilt_ang, ang_vel_rot = control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap, acceleration, orientation)
     
-    prev_pos_mat = current_pose_mat
+    # prev_pos_mat = current_pose_mat
     
-    speed = speed_assign( tilt_ang, ang_vel_rot,speed,flag)
+    speed = speed_assign( tilt_ang, ang_vel_rot,speed)
     
     return speed
 # ======================= Control Allocation Starts here ========================== #
@@ -227,7 +231,7 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
 
 """
 
-def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap):
+def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag, roll_desired, pitch_desired, yaw_desired, kq, kr, Mu, kap,acceleration,orientation):
     # F_des --> Force desired and M_des --> Desired moment
     global current_time, prevTime, dTime, t1
     
@@ -246,13 +250,14 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # angular velocities
     # 3x1
     
-    I = np.array([  [0.0075 ,-3.4208e-05,2.4695e-05],
-                    [   0   ,  0.010939 ,-3.8826e-06],
-                    [   0   ,      0    ,   0.01369]]) 
+    I = np.array([  [0.086 ,-3.4208e-05,2.4695e-05 ],
+                    [   0   ,  0.088 ,-3.8826e-06],
+                    [   0   ,      0    ,  0.16  ]]) 
     # The above matrix is already defined in the urdf
+    # print(omega)
 
 #===============================Defining Matrices==================================>#
-    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration_pose_mat,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr)
+    relation_matrix = force_calc(phi, theta, gamma, Mu, kap, len, t1, mass_total, prop_pos_mat, diff_pose_mat, i_pose_mat, acceleration,flag, roll_desired, pitch_desired, yaw_desired, roll, pitch, yaw , omega[0][0], omega[1][0], omega[2][0], I,kq,kr, dTime, orientation)
     # print(F_des)
     # print(A_pseudo_inv)
 
@@ -260,20 +265,19 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
     # Now, here we consider xci = w^2*cos(αi) and xsi = w^2*sin(αi) 
     
     relation_matrix = np.round_(relation_matrix,decimals = 2)
-    relation_matrix = relation_matrix.reshape((12,1))
+    relation_matrix = relation_matrix.reshape((24,1))
 
     # Now, we are going to get the angles and the velocities for the rotors
     #Note: that we have not before just considered the real values from sins and cos it may cause some problem
 
     # Angular velocties deduction
-    ang_vel= np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    ang_vel= np.zeros(12)
     i = 0
-    for i in range(6):
+    for i in range(12):
         ang_vel[i]= round(abs((1/sqrt(Mu))*(sqrt(sqrt(pow(relation_matrix[2*i],2) + pow(relation_matrix[2*i+1],2))).real)), 2) # ang_vel^2 = sqrt((Xci)^2+(Xsi)^2))
 
-
     # Tilt Angles deduction
-    tilt_ang = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    tilt_ang = np.zeros(6)
     i = 0
     for i in range(6):
         x1 = relation_matrix[2*i+1]
@@ -281,11 +285,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
         # print(x1) Uses this to get the real value from the matrix
         tilt_ang[i] = round(atan2(x1,x2),2) # atan2(sin/cos)
 
-    #Now, we need to allocate the speed to each rotor
-    ang_vel_rot = tuple(xz*ang_vel)
-    # Uncomment for debugging only
-    # print(ang_vel_rot,tilt_ang)
-    tilt_ang = tuple(tilt_ang)
+    ang_vel_rot = ang_vel
     return tilt_ang, ang_vel_rot
 
 """
@@ -297,7 +297,7 @@ def control_allocation( roll, pitch, yaw, hover_speed, mass_total, weight, flag,
 
     1. To get to the x we need to pitch either CW or CCW
         * Now if the difference in current_error and previous_error in x is greater than a certain constant let's say 2 units, that means we have surpassed the point x
-            So, Now we need to pitch in the opposite direction of the output error in x and also in the opposite direction of the velocity in x
+            So, Now we need to pitch in the opposite direction of the output error in x and also in the opposite direction of the ang_velocities in x
         
     2. To get to the y we need to roll either CW or CCW
         * Now if the difference in current_error and previous_error in y is greater than a certain constant let's say 2 units, that means we have surpassed the point y
@@ -332,21 +332,24 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     err_x = target_x - x
     err_y = target_y - y
 
+    # if ( err_x >  1 ): err_x =  1
+    # if ( err_y < -1 ): err_y = -1
+
     dErr_x = err_x - prevErr_x
     dErr_y = err_y - prevErr_y
 
     sample_time = 0.005
 
     i = 0
-    for i in range(20):
-        if i<19:
+    for i in range(50):
+        if i<49:
             helperr_x[i] = helperr_x[i+1]
-    helperr_x[19] = err_x
+    helperr_x[49] = err_x
     i = 0
-    for i in range(20):
-        if i<19:
+    for i in range(50):
+        if i<49:
             helperr_y[i] = helperr_y[i+1]
-    helperr_y[19] = err_y 
+    helperr_y[49] = err_y 
     if(dTime >= sample_time):
         
         # Proportional terms
@@ -371,31 +374,25 @@ def position_controller(target_x, target_y, x, y, flag, kp_x, ki_x, kd_x, kp_y, 
     prevErr_x = err_x
     prevErr_y = err_y
 
+
+
     x_err_pub = rospy.Publisher("/x_err", Float64, queue_size=10)
     x_err_pub.publish(err_x)
     y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
     y_err_pub.publish(err_y)
 
-
-    # damping 
-
-    # if (0 < err_x < 2):
-    #     damper = 3*abs(err_x)/4
-    #     print("\ndamping in x:",damper)
-    #     err_x = err_x + damper #because the direction of x is same as that of earth's frame
-    # elif (-2 < err_x < 0):
-    #     damper = 3*abs(err_x)/4
-    #     print("\ndamping in x:",damper)
-    #     err_x = err_x - damper
-    # print("\nerr_x = ",err_x)
+    #equation for correction
+    if(abs(err_x) < 4 and abs(vel_x) > 0.35 and abs(err_x)>0.6):
+        dampner = (1/vel_x) * 0.2
+        print("Dampner: ", dampner)
+        err_x = (err_x * 1.2  - dampner) #in the direction opposite to velocity
+        # err_x = 10 if (err_x > 10) else err_x 
+        # err_x = -10 if (err_x < -10) else err_x 
 
 
-    # if (0 < err_y < 2):
-    #     damper = 3*(1/abs(err_y))/4
-    #     print("\ndamping in y:",damper)
-    #     err_y = err_y - damper
-    # elif (-2 < err_y < 0):
-    #     damper = 3*(1/abs(err_y))/4
-    #     print("\ndamping in y:",damper)
-    #     err_y = err_y + damper
-    # print("\nerr_y = ",err_y)
+    if(abs(err_y) < 4 and abs(vel_y) > 0.35 and abs(err_y>0.6)):
+        dampner_y = (1/vel_y) * 0.1
+        # err_y = (vel_y * 2.35  - dampner_y) #in the direction opposite to velocity
+        err_y = (err_y * 2.1  - dampner_y) #in the direction opposite to velocity
+        # err_y = 10 if (err_y>10) else err_y
+        # err_y = -10 if (err_y <-10) else err_y
