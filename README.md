@@ -131,9 +131,9 @@ Copter when target co-ordinates are given in control_omav.py:
 https://user-images.githubusercontent.com/97826285/194613915-a2ed569a-9e6a-4278-b830-82055c5ecd51.mp4
 
 
-For more results and demo please [click here](./Records%20and%20Reports/Records/Recordings)
+For more results and demo please [click here](./report/Records/Recordings)
 
-For more pid values please [click here](./Records%20and%20Reports/Records/PId%20Values%20for%20tests)
+For more pid values please [click here](./report/Records/PId%20Values%20for%20tests)
 
 <!-- FUTURE WORK -->
 ## Future Work
