@@ -117,6 +117,7 @@ chmod +x .
 python3 control_omav.py
 ```
 
+https://user-images.githubusercontent.com/104023019/195927648-419731df-11d3-4492-abe2-749a5bb5901d.mp4
 
 
 <!--Flowchart -->
@@ -138,7 +139,6 @@ Simplified code structure
 ![](./assets/Model.png)
 
 Copter when target co-ordinates are given in control_omav.py:  
-
 
 <!-- FUTURE WORK -->
 ## Future Work
