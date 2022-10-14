@@ -52,7 +52,6 @@ Our full project report can be found [here]()
  ┃ ┗ 📂launch                             # launch files
  ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
  ┃ ┣ 📂models                             # files and meshes used to render the model
- ┣ 📂scripts                              # python programs used to run the drone 
  ┃ ┣ 📂worlds                             # world files
  ┃ ┃ ┗ 🗃️basic.world
  ┃ ┣ 🗃️CMakeLists.txt
@@ -63,7 +62,8 @@ Our full project report can be found [here]()
  ┃ ┣ 📂meshes
  ┃ ┗ 📂urdf
  ┃ ┃ ┗ 🗃️omav.xacro
- ┃ ┗ 📂rotors_gazebo_plugins  
+ ┃ ┗ 📂rotors_gazebo_plugins 
+ ┣ 📂scripts                            # python programs used to run the drone 
  ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
  ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
  ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
