@@ -41,6 +41,7 @@ This project involves understanding key concepts of Dynamics of UAVs, Modern Rob
 Our full project report can be found [here](./report/Project_Report_Copter_Control.pdf)
 
 [Brief Presentation](./report/Copter-Control.pptx) can be found here
+
 [Detailed Presentation](https://www.canva.com/design/DAFO6QGqbzk/BZ5_9Rk-LoEGTwhVJiBExA/view?utm_content=DAFO6QGqbzk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) can be found here
 
 ## Project workflow
@@ -88,6 +89,7 @@ Our full project report can be found [here](./report/Project_Report_Copter_Contr
  ┃ ┣🗃️moment_force_allocation.py
  ┃ ┣🗃️speed.py
  ┃ ┗🗃️takeoff.py                        # Drone Testing Script
+ ┣ 🗃️LICENSE
  ┣ 🗃️README.md
  ┣ 🗃️dependencies.rosinstall
  ┣ 🗃️rotors_demos.rosinstall
