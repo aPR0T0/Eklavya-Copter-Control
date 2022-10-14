@@ -118,8 +118,6 @@ python3 control_omav.py
 ```
 
 
-https://user-images.githubusercontent.com/97826285/194748183-21302200-b96e-4698-a9fe-57ef9b356e57.mp4
-
 
 <!--Flowchart -->
 
@@ -140,8 +138,6 @@ Simplified code structure
 ![](./assets/Model.png)
 
 Copter when target co-ordinates are given in control_omav.py:  
-
-<img src="/assets/Copter-Control.mp4" width= "720">
 
 
 <!-- FUTURE WORK -->
