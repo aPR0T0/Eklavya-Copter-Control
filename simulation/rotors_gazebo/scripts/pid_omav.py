@@ -106,12 +106,12 @@ def PID_alt(roll, pitch, yaw, x, y, target, altitude, flag, roll_desired, pitch_
     yaw_err_pub = rospy.Publisher("/yaw_err", Float64, queue_size=10)
     yaw_err_pub.publish(err_yaw)
 
-    if(abs(curr_alt_err) < 4 and abs(vel_z) > 0.5 and abs(curr_alt_err)>0.3):
-        dampner_z = (1/vel_z) * 0.2
-        print("DampnerZ: ", dampner_z)
-        curr_alt_err = (abs(curr_alt_err) * 1.3  - dampner_z)
-        if (curr_alt_err < 0):
-            curr_alt_err = -curr_alt_err
+    # if(abs(curr_alt_err) < 4 and abs(vel_z) > 0.5 and abs(curr_alt_err)>0.3):
+    #     dampner_z = (1/vel_z) * 0.2
+    #     print("DampnerZ: ", dampner_z)
+    #     curr_alt_err = (abs(curr_alt_err) * 1.3  - dampner_z)
+    #     if (curr_alt_err < 0):
+    #         curr_alt_err = -curr_alt_err
 
     mass_total = 4.27 #Kg this I got from the urdf file
 
