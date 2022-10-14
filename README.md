@@ -52,14 +52,7 @@ Our full project report can be found [here]()
  ┃ ┗ 📂launch                             # launch files
  ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
  ┃ ┣ 📂models                             # files and meshes used to render the model
- ┣ 📂scripts                            # python programs used to run the drone   
- ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
- ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
- ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
- ┃ ┣🗃️moment_desired.py                 # gets moment desired in body frame using some cool quaternions
- ┃ ┣🗃️moment_force_allocation.py        # recieves both force and moments and blend them together smoothly
- ┃ ┣🗃️speed.py                          # Co-axial rotors need this for speed distribution 
- ┃ ┗🗃️takeoff.py                        # Simple test file for rookies  
+ ┣ 📂scripts                              # python programs used to run the drone 
  ┃ ┣ 📂worlds                             # world files
  ┃ ┃ ┗ 🗃️basic.world
  ┃ ┣ 🗃️CMakeLists.txt
@@ -69,9 +62,16 @@ Our full project report can be found [here]()
  ┃ 📂rotos_description                    # All urdfs and meshes are found in here
  ┃ ┣ 📂meshes
  ┃ ┗ 📂urdf
- ┃   ┗ 🗃️omav.xacro
- ┃ ┗ 📂rotors_gazebo_plugins                                  # Fun to make custom msg file (To get an idea of how a custom message works)
- ┗ 📂Resources and Research papers          #Contains all the research papers that we included for our case study
+ ┃ ┃ ┗ 🗃️omav.xacro
+ ┃ ┗ 📂rotors_gazebo_plugins  
+ ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
+ ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
+ ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
+ ┃ ┣🗃️moment_desired.py                 # gets moment desired in body frame using some cool quaternions
+ ┃ ┣🗃️moment_force_allocation.py        # recieves both force and moments and blend them together smoothly
+ ┃ ┣🗃️speed.py                          # Co-axial rotors need this for speed distribution 
+ ┃ ┗🗃️takeoff.py                        # Simple test file for rookies
+ ┗ 📂Resources and Research papers      #Contains all the research papers that we included for our case study
  ```
 
 <!-- GETTING STARTED -->
