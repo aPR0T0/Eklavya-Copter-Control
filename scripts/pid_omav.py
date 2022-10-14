@@ -37,7 +37,11 @@ kp_z = 0.75
 
 ki_z = 0.0005
 
-kd_z = 5
+kd_z = 4
+
+kq = 2.5
+
+kr = 160
 
 g = 9.81 # gravitational acceleration
 
