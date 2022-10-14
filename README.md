@@ -160,16 +160,16 @@ Designing & Implementing an Optimal Control System of an Overactuated Hexa-copte
 
 <!-- CONTRIBUTORS -->
 ## Contributors
-* [Alqama Shaikh](https://github.com/aPR0T0)
 * [Aryan Shah](https://github.com/ars-21)
+* [Alqama Shaikh](https://github.com/aPR0T0)
 
 
 <!-- ACKNOWLEDGEMENTS AND REFERENCES -->
-## Acknowledgements and Resources
+## Acknowledgements and References
 * [SRA VJTI](http://sra.vjti.info/) Eklavya 2022  
 * [ETH-Zürich : ethz-asl/rotors_simulator Repository](https://github.com/ethz-asl/rotors_simulator) for the plugins as well as the model of the drone.
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
-* Our mentors [Jash Shah](https://github.com/Jash-Shah), [Sagar Chotalia](https://github.com/sagarchotalia) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
+* Our mentors [Sagar Chotalia](https://github.com/sagarchotalia), [Jash Shah](https://github.com/Jash-Shah) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
  
 <!-- -->
 ## License
