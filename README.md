@@ -1,5 +1,7 @@
 # Eklavya'22 Copter Control 
 
+![](./assets/Copter-Control.jpg)
+
 Designing & Implementing an Optimal Control System of an Overactuated Hexacopter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.
 
 ## Demo
@@ -35,6 +37,9 @@ Extending the maneuverability of unmanned areal vehicles promises to yield a con
 This project involves understanding key concepts of Dynamics of UAVs, Modern Robotics, Control Systems, ROS, Gazebo which is essential knowledge to understand and work in the field of Robotics
 
 Our full project report can be found [here](./report/Project_Report_Copter_Control.pdf)
+
+[Brief Presentation](./report/Copter-Control.pptx) can be found here
+[Detailed Presentation](https://www.canva.com/design/DAFO6QGqbzk/BZ5_9Rk-LoEGTwhVJiBExA/view?utm_content=DAFO6QGqbzk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) can be found here
 
 ## Project workflow
 - To learn about different control systems
@@ -112,13 +117,10 @@ roslaunch rotors_gazebo mav.launch mav_name:=omav
 - Terminal 2
 ```sh
 source ~/catkin_ws/devel/setup.bash
-cd ~/Eklavya-Copter-Control/simulation/scripts
+cd ~/Eklavya-Copter-Control/scripts
 chmod +x .                      
 python3 control_omav.py
 ```
-
-https://user-images.githubusercontent.com/104023019/195927648-419731df-11d3-4492-abe2-749a5bb5901d.mp4
-
 
 <!--Flowchart -->
 
@@ -140,15 +142,20 @@ Simplified code structure
 
 Copter when target co-ordinates are given in control_omav.py:  
 
-[![Watch the video]()](https://drive.google.com/file/d/1x4tJ7PMI25mfukPFfVF5TYyVnIOuVlXN/view?usp=sharing)
+<img src="/assets/Copter-Control.gif" width= "720">
 
 <!-- FUTURE WORK -->
 ## Future Work
-- [x] Create a control system for the drone using PID
-- [x] Stabilise the Roll, Pitch and Yaw of the Copter 
-- [x] Get the drone to fly at any arbitrary altitude
-- [x] Have the drone fly to given co-ordinates and stabilise itself
-- [ ] To make copter fly with an arbitary orientation at a given position
+Designing & Implementing an Optimal Control System of an Overactuated Hexa-copter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about the dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.
+
+- [x] Designing Optimal Control System for Position Control using PID Algorithm
+- [x] Designing Optimal Control System for Attitude Control
+- [x] Implementing Control System with PID Tuning in Simulation(Gazebo) for reaching arbitrary altitude
+- [x] Implementing Control System with PID Tuning in Simulation(Gazebo) for reaching Co-ordinates in free space
+- [x] Implementing Control System with Tuning in Simulation(Gazebo) with decoupled Position and Orientation
+- [ ] Improve Tuning, Control Algorithm for Efficient, Accurate, Stable and Fast Flight with decoupled Position and Orientation
+- [ ] Achieve Stable Flight in presence of external disturbances like Wind,...
+- [ ] Exploring different Control Systems & Approaches to improve performance of system
 - [ ] Implement obstacle avoidance 
 
 <!-- CONTRIBUTORS -->
