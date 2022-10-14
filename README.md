@@ -1,11 +1,20 @@
-# Eklavya-Copter-Control
+# Eklavya'22 Copter Control 
 
-Controlling a hexacopter with coaxial tilt rotors in simulation, understanding the various dynamics of such a system and creating a controller that will enable a stable positioning system with multiple functionalities.
+![](./assets/Copter-Control.jpg)
+
+**Designing & Implementing an Optimal Control System of an Overactuated Hexacopter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.**
+
+
+## Demo
+
+<img src="/assets/Demo.gif" width= "720">
+
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 - [Project](#Eklavya-Copter-Control)
+  - [Demo](#demo)
   - [Table of Contents](#table-of-contents)
   - [About The Project](#about-the-project)
     - [Tech Stack](#tech-stack)
@@ -23,67 +32,83 @@ Controlling a hexacopter with coaxial tilt rotors in simulation, understanding t
   - [Citation](#citation)
 <!--ABOUT THE PROJECT -->
 ## About The Project
-Drone aviation is an emerging industry. With possibilities for its applications in agriculture, healthcare, e-commerce as well as traffic control. We wanted to get first hand experience with how a drone is designed as well as how it flies to get a firm grasp on the principles needed to work with drones in the future.  
-Our full project report can be found [here]()
+Drone aviation is an emerging industry with possible applications in agriculture, healthcare, e-commerce as well as traffic control. We were interesting in getting first hand experience in Dynamics of a UAV to get a firm grasp on the principles needed to work with drones in the future.
+
+Extending the maneuverability of unmanned areal vehicles promises to yield a considerable increase in the areas in which these systems can be used. Some such applications are the performance of more complicated inspection tasks and the generation of complex uninterrupted movements of an attached camera. In our project, we our designing and implementing a control system for a novel aerial platform that combines the advantages of existing multi-rotor systems with the agility of omnidirectionally controllable platforms. We are using a hexacopter with co-axial tiltable rotors(omav) allowing the system to decouple the control of position and orientation.
+
+This project involves understanding key concepts of Dynamics of UAVs, Modern Robotics, Control Systems, ROS, Gazebo which is essential knowledge to understand and work in the field of Robotics
+
+Our full project report can be found [here](./report/Project_Report_Copter_Control.pdf)
+
+[Brief Presentation](./report/Copter-Control.pptx) can be found here
+
+[Detailed Presentation](https://www.canva.com/design/DAFO6QGqbzk/BZ5_9Rk-LoEGTwhVJiBExA/view?utm_content=DAFO6QGqbzk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) can be found here
 
 ## Project workflow
-- To learn about different control systems and make gazebo simulation of a modelled hexacopter by ETH-Zürich
-- Make the control system
-- Implementation
+- To learn about different control systems
+- Understanding Dynamics of a UAV and of our system(omav)
+- Design a Control System for our model(omav)which is a model of hexacopter modelled by ETH-Zürich
+- Implementing the Control System in Simulation(Gazebo)
 
 ### Tech Stack
 
 - [ROS Noetic](http://wiki.ros.org/noetic)
 - [Gazebo](http://gazebosim.org/)
 - [Python 3](https://www.python.org/downloads/)
+- Modern Robotics
+- Control Systems
 
 
 ### File Structure
 ```
 👨‍💻Eklavya-Copter-Control
- ┣ 📂Images                                 #contains gifs, videos and images of the results          
- ┣ 📂Resources and Research papers          #Contains all the research papers that we included for our case study
- ┣ 📂simulation
- ┃ ┣ 📂rotors_gazebo
- ┃ ┃ ┗ 📂launch                             # launch files
- ┃ ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
- ┃ ┃ ┣ 📂models                             # files and meshes used to render the model
- ┃ ┃ ┣ 📂scripts                            # python programs used to run the drone   
- ┃ ┃ ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
- ┃ ┃ ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
- ┃ ┃ ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
- ┃ ┃ ┃ ┣🗃️moment_desired.py                 # gets moment desired in body frame using some cool quaternions
- ┃ ┃ ┃ ┣🗃️moment_force_allocation.py        # recieves both force and moments and blend them together smoothly
- ┃ ┃ ┃ ┣🗃️speed.py                          # Co-axial rotors need this for speed distribution 
- ┃ ┃ ┃ ┗🗃️takeoff.py                        # Simple test file for rookies  
- ┃ ┃ ┣ 📂worlds                             # world files
- ┃ ┃ ┃ ┗ 🗃️basic.world
- ┃ ┃ ┣ 🗃️CMakeLists.txt
- ┃ ┃ ┗ 🗃️package.xml
- ┃ ┣ 📂dynamic_tutorials                    # Contains files for pid sliders
- ┃ ┣ 📂rotors_comm                          # Contains msg files for windspeed
- ┃ ┣ 📂rotos_description                    # All urdfs and meshes are found in here
- ┃ ┃ ┣ 📂meshes
- ┃ ┃ ┗ 📂urdf
- ┃ ┃   ┗ 🗃️omav.xacro
- ┃ ┗ 📂rotors_gazebo_plugins
- ┣📂Some Basic Concepts                     # All the learnings throughout this project are listed here
- ┗📂drone                                   # Fun to make custom msg file (To get an idea of how a custom message works)
-
+ ┣ 📂assets                             # Installation.md & all reference gifs, images
+ ┣ 📂report                             # Project Report & Presentation
+ ┣ 📂rotors_comm                        # msg files for WindSpeed
+ ┣ 📂rotos_description                  # All urdfs and meshes
+ ┃ ┣ 📂meshes
+ ┃ ┣ 📂urdf
+ ┃ ┃ ┗ 🗃️omav.xacro                     # Drone Model
+ ┃ ┣ 🗃️CMakeLists.txt
+ ┃ ┗ 🗃️package.xml
+ ┣ 📂rotors_gazebo                      # Launch Files, World Files & other Gazebo resources
+ ┃ ┣ 📂launch
+ ┃ ┃ ┗ 🗃️mav.launch                     # Main Launch File
+ ┃ ┣ 📂models
+ ┃ ┣ 📂resource
+ ┃ ┣ 📂worlds
+ ┃ ┃ ┗ 🗃️basic.world                    # World used in Gazebo
+ ┃ ┣ 🗃️CMakeLists.txt
+ ┃ ┗ 🗃️package.xml
+ ┣ 📂rotors_gazebo_plugins              # All Gazebo Plugins
+ ┣ 📂scripts                            # Controller Python Scripts
+ ┃ ┣🗃️control_omav.py                   # Main Controller Script
+ ┃ ┣🗃️pid_omav.py
+ ┃ ┣🗃️force_desired.py
+ ┃ ┣🗃️moment_desired.py
+ ┃ ┣🗃️moment_force_allocation.py
+ ┃ ┣🗃️speed.py
+ ┃ ┗🗃️takeoff.py                        # Drone Testing Script
+ ┣ 🗃️LICENSE
+ ┣ 🗃️README.md
+ ┣ 🗃️dependencies.rosinstall
+ ┣ 🗃️rotors_demos.rosinstall
+ ┣ 🗃️rotors_hil.rosinstall
+ ┗ 🗃️rotors_minimal.rosinstall
  ```
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
 ### Prerequisites and installlation
-* Tested on [Ubuntu 20.04](https://ubuntu.com/download/desktop)
+* [Ubuntu 20.04](https://ubuntu.com/download/desktop)
 * [ROS Noetic](http://wiki.ros.org/noetic/Installation)
 * [Gazebo Sim](http://gazebosim.org/)
-* Do visit these websites for the installation steps of the above mentioned software. It is recommended to install Gazebo along with ROS and not seperately
+* It is recommended to install Gazebo along with ROS and not seperately
 
 ### Installation
 
-[Installation Guide](./Installations.md "Installation")
+[Installation Guide](./assets/Installations.md "Installation")
 
 ### Execution
 Open two terminal windows and run the following commands
@@ -96,72 +121,70 @@ roslaunch rotors_gazebo mav.launch mav_name:=omav
 - Terminal 2
 ```sh
 source ~/catkin_ws/devel/setup.bash
-cd ~/Eklavya-Copter-Control/simulation/rotors_gazebo/scripts
+cd ~/Eklavya-Copter-Control/scripts
 chmod +x .                      
 python3 control_omav.py
 ```
 
-
-https://user-images.githubusercontent.com/97826285/194748183-21302200-b96e-4698-a9fe-57ef9b356e57.mp4
-
-
 <!--Flowchart -->
 
 ## Algorithm Flowchart 
-Basic Control system used
-![](./Images/Overall_flow.png)
-Overall controller flow
-![](./Images/Basic_algo_flow.png)
+Control System
+![](./assets/Overall_flow.png)
+Controller and Sensor Readings, Reference Data Flowchart
+![](./assets/Basic_algo_flow.png)
 Simplified code structure 
-![](./Images/Simplified_code_struct.png)
+![](./assets/Simplified_code_struct.png)
 
-<!-- RESULTS AND DEMO -->
-## Results and Demo
+<!-- Model And Implementation -->
+## Model And Implementation
 
+### Model  
 
-Copter at start of the program:  
+![](./assets/Model.png)
 
-![](./Images/Model.png)
+### Gains (Tuning Parameters)
 
-Copter when target co-ordinates are given in control_omav.py:  
+![](./assets/Gains.jpeg)
 
-
-
-
-https://user-images.githubusercontent.com/97826285/195662025-274e2176-06e9-4cdd-b471-456354d2e4d2.mp4
+### Implementation
 
 
+<img src="/assets/Copter-Control.gif" width= "720">
 
-For more results and demo please [click here](./Records%20and%20Reports/Records/Recordings)
-
-For more pid values please [click here](./Records%20and%20Reports/Records/PId%20Values%20for%20tests)
 
 <!-- FUTURE WORK -->
 ## Future Work
-- [x] Create a control system for the drone using PID
-- [x] Stabilise the Roll, Pitch and Yaw of the Copter 
-- [x] Get the drone to fly at any arbitrary altitude
-- [x] Have the drone fly to given co-ordinates and stabilise itself
-- [ ] To make copter fly with an arbitary orientation at a given position
+Designing & Implementing an Optimal Control System of an Overactuated Hexa-copter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about the dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.
+
+- [x] Designing Optimal Control System for Position Control using PID Algorithm
+- [x] Designing Optimal Control System for Attitude Control
+- [x] Implementing Control System with PID Tuning in Simulation(Gazebo) for reaching arbitrary altitude
+- [x] Implementing Control System with PID Tuning in Simulation(Gazebo) for reaching Co-ordinates in free space
+- [x] Implementing Control System with Tuning in Simulation(Gazebo) with decoupled Position and Orientation
+- [ ] Improve Tuning, Control Algorithm for Efficient, Accurate, Stable and Fast Flight with decoupled Position and Orientation
+- [ ] Achieve Stable Flight in presence of external disturbances like Wind,...
+- [ ] Exploring different Control Systems & Approaches to improve performance of system
 - [ ] Implement obstacle avoidance 
 
 <!-- CONTRIBUTORS -->
 ## Contributors
-* [Alqama Shaikh](https://github.com/aPR0T0)
 * [Aryan Shah](https://github.com/ars-21)
+* [Alqama Shaikh](https://github.com/aPR0T0)
 
 
 <!-- ACKNOWLEDGEMENTS AND REFERENCES -->
-## Acknowledgements and Resources
+## Acknowledgements and References
 * [SRA VJTI](http://sra.vjti.info/) Eklavya 2022  
-* [ETH-Zürich](https://github.com/ethz-asl/rotors_simulator) for the plugins as well as the model of the drone.
+* [ETH-Zürich : ethz-asl/rotors_simulator Repository](https://github.com/ethz-asl/rotors_simulator) for the plugins as well as the model of the drone.
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
-* Our mentors [Jash Shah](https://github.com/Jash-Shah), [Sagar Chotalia](https://github.com/sagarchotalia) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
-* Other [research papers](./Resources%20and%20Research%20papers) 
-<!-- -->
+* Our mentors [Sagar Chotalia](https://github.com/sagarchotalia), [Jash Shah](https://github.com/Jash-Shah) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
+ 
+<!-- License -->
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
 
+<!-- Citation -->
 ## Citation
 ```sh
 @Inbook{Furrer2016,
