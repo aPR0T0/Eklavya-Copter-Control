@@ -2,7 +2,8 @@
 
 ![](./assets/Copter-Control.jpg)
 
-Designing & Implementing an Optimal Control System of an Overactuated Hexacopter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.
+**Designing & Implementing an Optimal Control System of an Overactuated Hexacopter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.**
+
 
 ## Demo
 
@@ -59,33 +60,33 @@ Our full project report can be found [here](./report/Project_Report_Copter_Contr
 ### File Structure
 ```
 👨‍💻Eklavya-Copter-Control
- ┣ 📂assets                                 #contains gifs, videos and images of the results
- ┣ 📂report
- ┣ 📂rotors_comm                          # Contains msg files for windspeed
- ┣ 📂rotos_description                    # All urdfs and meshes are found in here
+ ┣ 📂assets                             # Installation.md & all reference gifs, images
+ ┣ 📂report                             # Project Report & Presentation
+ ┣ 📂rotors_comm                        # msg files for WindSpeed
+ ┣ 📂rotos_description                  # All urdfs and meshes
  ┃ ┣ 📂meshes
  ┃ ┣ 📂urdf
- ┃ ┃ ┗ 🗃️omav.xacro
+ ┃ ┃ ┗ 🗃️omav.xacro                     # Drone Model
  ┃ ┣ 🗃️CMakeLists.txt
  ┃ ┗ 🗃️package.xml
- ┣ 📂rotors_gazebo
- ┃ ┣ 📂launch                             # launch files
- ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
- ┃ ┣ 📂models                             # files and meshes used to render the model
- ┃ ┣ 📂resource                             # files and meshes used to render the model
- ┃ ┣ 📂worlds                             # world files
- ┃ ┃ ┗ 🗃️basic.world
+ ┣ 📂rotors_gazebo                      # Launch Files, World Files & other Gazebo resources
+ ┃ ┣ 📂launch
+ ┃ ┃ ┗ 🗃️mav.launch                     # Main Launch File
+ ┃ ┣ 📂models
+ ┃ ┣ 📂resource
+ ┃ ┣ 📂worlds
+ ┃ ┃ ┗ 🗃️basic.world                    # World used in Gazebo
  ┃ ┣ 🗃️CMakeLists.txt
  ┃ ┗ 🗃️package.xml
- ┣ 📂rotors_gazebo_plugins 
- ┣ 📂scripts                            # python programs used to run the drone 
- ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
- ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
- ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
- ┃ ┣🗃️moment_desired.py                 # gets moment desired in body frame using some cool quaternions
- ┃ ┣🗃️moment_force_allocation.py        # recieves both force and moments and blend them together smoothly
- ┃ ┣🗃️speed.py                          # Co-axial rotors need this for speed distribution 
- ┃ ┗🗃️takeoff.py                        # Simple test file for rookies
+ ┣ 📂rotors_gazebo_plugins              # All Gazebo Plugins
+ ┣ 📂scripts                            # Controller Python Scripts
+ ┃ ┣🗃️control_omav.py                   # Main Controller Script
+ ┃ ┣🗃️pid_omav.py
+ ┃ ┣🗃️force_desired.py
+ ┃ ┣🗃️moment_desired.py
+ ┃ ┣🗃️moment_force_allocation.py
+ ┃ ┣🗃️speed.py
+ ┃ ┗🗃️takeoff.py                        # Drone Testing Script
  ┣ 🗃️README.md
  ┣ 🗃️dependencies.rosinstall
  ┣ 🗃️rotors_demos.rosinstall
