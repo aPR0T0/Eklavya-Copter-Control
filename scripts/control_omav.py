@@ -27,9 +27,13 @@ z  = 0
 acc_x = 0
 acc_y = 0
 acc_z = 0
+<<<<<<< HEAD
 kq = 2
 
 kr = 160
+=======
+    
+>>>>>>> 573e86d6b059146c040f91ee98a6c8e5a31415c3
 speed = Actuators()
 
 speed.angular_velocities.append(0)

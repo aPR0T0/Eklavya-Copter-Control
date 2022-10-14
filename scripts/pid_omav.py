@@ -22,6 +22,7 @@ from mav_msgs.msg import Actuators
 
 
 kp_x = 0.1
+<<<<<<< HEAD
 
 ki_x = 0.0001
 
@@ -42,6 +43,24 @@ kd_z = 4
 kq = 2.5
 
 kr = 160
+=======
+
+ki_x = 0.0001
+
+kd_x = 0.75
+
+kp_y = 0.15
+
+ki_y = 0.0001
+
+kd_y = 0.75
+
+kp_z = 0.75
+
+ki_z = 0.0005
+
+kd_z = 5
+>>>>>>> 573e86d6b059146c040f91ee98a6c8e5a31415c3
 
 g = 9.81 # gravitational acceleration
 
