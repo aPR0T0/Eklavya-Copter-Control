@@ -2,10 +2,15 @@
 
 Designing & Implementing an Optimal Control System of an Overactuated Hexacopter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.
 
+## Demo
+
+![Untitled video - Made with Clipchamp](https://user-images.githubusercontent.com/97826285/195906270-f6bd1d8b-2e41-4e11-8077-b7f6a4cfb0b2.gif)
+
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 - [Project](#Eklavya-Copter-Control)
+  - [Demo](#demo)
   - [Table of Contents](#table-of-contents)
   - [About The Project](#about-the-project)
     - [Tech Stack](#tech-stack)
@@ -41,32 +46,31 @@ Our full project report can be found [here]()
 ### File Structure
 ```
 👨‍💻Eklavya-Copter-Control
- ┣ 📂Images                                 #contains gifs, videos and images of the results          
+ ┣ 📂Assets                                 #contains gifs, videos and images of the results          
  ┣ 📂Resources and Research papers          #Contains all the research papers that we included for our case study
- ┣ 📂simulation
- ┃ ┣ 📂rotors_gazebo
- ┃ ┃ ┗ 📂launch                             # launch files
- ┃ ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
- ┃ ┃ ┣ 📂models                             # files and meshes used to render the model
- ┃ ┃ ┣ 📂scripts                            # python programs used to run the drone   
- ┃ ┃ ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
- ┃ ┃ ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
- ┃ ┃ ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
- ┃ ┃ ┃ ┣🗃️moment_desired.py                 # gets moment desired in body frame using some cool quaternions
- ┃ ┃ ┃ ┣🗃️moment_force_allocation.py        # recieves both force and moments and blend them together smoothly
- ┃ ┃ ┃ ┣🗃️speed.py                          # Co-axial rotors need this for speed distribution 
- ┃ ┃ ┃ ┗🗃️takeoff.py                        # Simple test file for rookies  
- ┃ ┃ ┣ 📂worlds                             # world files
- ┃ ┃ ┃ ┗ 🗃️basic.world
- ┃ ┃ ┣ 🗃️CMakeLists.txt
- ┃ ┃ ┗ 🗃️package.xml
- ┃ ┣ 📂dynamic_tutorials                    # Contains files for pid sliders
- ┃ ┣ 📂rotors_comm                          # Contains msg files for windspeed
- ┃ ┣ 📂rotos_description                    # All urdfs and meshes are found in here
- ┃ ┃ ┣ 📂meshes
- ┃ ┃ ┗ 📂urdf
- ┃ ┃   ┗ 🗃️omav.xacro
- ┃ ┗ 📂rotors_gazebo_plugins
+ ┣ 📂rotors_gazebo
+ ┃ ┗ 📂launch                             # launch files
+ ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
+ ┃ ┣ 📂models                             # files and meshes used to render the model
+ ┣ 📂scripts                            # python programs used to run the drone   
+ ┃ ┣🗃️control_omav.py                   # controller which initializes the controller node
+ ┃ ┣🗃️pid_omav.py                       # contains the pid term calculations
+ ┃ ┣🗃️force_desired.py                  # gets force the copter needs from inertial frame and then trasforms it to body frame
+ ┃ ┣🗃️moment_desired.py                 # gets moment desired in body frame using some cool quaternions
+ ┃ ┣🗃️moment_force_allocation.py        # recieves both force and moments and blend them together smoothly
+ ┃ ┣🗃️speed.py                          # Co-axial rotors need this for speed distribution 
+ ┃ ┗🗃️takeoff.py                        # Simple test file for rookies  
+ ┃ ┣ 📂worlds                             # world files
+ ┃ ┃ ┗ 🗃️basic.world
+ ┃ ┣ 🗃️CMakeLists.txt
+ ┃ ┗ 🗃️package.xml
+ ┃ 📂dynamic_tutorials                    # Contains files for pid sliders
+ ┃ 📂rotors_comm                          # Contains msg files for windspeed
+ ┃ 📂rotos_description                    # All urdfs and meshes are found in here
+ ┃ ┣ 📂meshes
+ ┃ ┗ 📂urdf
+ ┃   ┗ 🗃️omav.xacro
+ ┃ 📂rotors_gazebo_plugins
  ┣📂Some Basic Concepts                     # All the learnings throughout this project are listed here
  ┗📂drone                                   # Fun to make custom msg file (To get an idea of how a custom message works)
 
@@ -109,11 +113,11 @@ https://user-images.githubusercontent.com/97826285/194748183-21302200-b96e-4698-
 
 ## Algorithm Flowchart 
 Basic Control system used
-![](./assets/Overall_flow.png)
+![](./Images/Overall_flow.png)
 Overall controller flow
-![](./assets/Basic_algo_flow.png)
+![](./Images/Basic_algo_flow.png)
 Simplified code structure 
-![](./assets/Simplified_code_struct.png)
+![](./Images/Simplified_code_struct.png)
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
@@ -121,7 +125,7 @@ Simplified code structure
 
 Copter at start of the program:  
 
-![](./assets/Model.png)
+![](./Images/Model.png)
 
 Copter when target co-ordinates are given in control_omav.py:  
 
@@ -131,9 +135,9 @@ Copter when target co-ordinates are given in control_omav.py:
 https://user-images.githubusercontent.com/97826285/194613915-a2ed569a-9e6a-4278-b830-82055c5ecd51.mp4
 
 
-For more results and demo please [click here](./report/Records/Recordings)
+For more results and demo please [click here](./Records%20and%20Reports/Records/Recordings)
 
-For more pid values please [click here](./report/Records/PId%20Values%20for%20tests)
+For more pid values please [click here](./Records%20and%20Reports/Records/PId%20Values%20for%20tests)
 
 <!-- FUTURE WORK -->
 ## Future Work
