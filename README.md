@@ -4,8 +4,7 @@ Designing & Implementing an Optimal Control System of an Overactuated Hexacopter
 
 ## Demo
 
-![Untitled video - Made with Clipchamp](https://user-images.githubusercontent.com/97826285/195906270-f6bd1d8b-2e41-4e11-8077-b7f6a4cfb0b2.gif)
-
+<img src="/assets/Demo.gif" width= "480">
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
