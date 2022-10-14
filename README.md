@@ -56,9 +56,9 @@ Our full project report can be found [here]()
  ┃ ┃ ┗ 🗃️basic.world
  ┃ ┣ 🗃️CMakeLists.txt
  ┃ ┗ 🗃️package.xml
- ┃ 📂dynamic_tutorials                    # Contains files for pid sliders
- ┃ 📂rotors_comm                          # Contains msg files for windspeed
- ┃ 📂rotos_description                    # All urdfs and meshes are found in here
+ ┣ 📂dynamic_tutorials                    # Contains files for pid sliders
+ ┣ 📂rotors_comm                          # Contains msg files for windspeed
+ ┣ 📂rotos_description                    # All urdfs and meshes are found in here
  ┃ ┣ 📂meshes
  ┃ ┗ 📂urdf
  ┃ ┃ ┗ 🗃️omav.xacro
