@@ -48,7 +48,6 @@ Our full project report can be found [here]()
 ```
 👨‍💻Eklavya-Copter-Control
  ┣ 📂Assets                                 #contains gifs, videos and images of the results          
- ┣ 📂Resources and Research papers          #Contains all the research papers that we included for our case study
  ┣ 📂rotors_gazebo
  ┃ ┗ 📂launch                             # launch files
  ┃ ┃ ┗ 🗃️mav.launch                       # There are other launch files too but this is basic
@@ -71,10 +70,8 @@ Our full project report can be found [here]()
  ┃ ┣ 📂meshes
  ┃ ┗ 📂urdf
  ┃   ┗ 🗃️omav.xacro
- ┃ 📂rotors_gazebo_plugins
- ┣📂Some Basic Concepts                     # All the learnings throughout this project are listed here
- ┗📂drone                                   # Fun to make custom msg file (To get an idea of how a custom message works)
-
+ ┃ ┗ 📂rotors_gazebo_plugins                                  # Fun to make custom msg file (To get an idea of how a custom message works)
+ ┗ 📂Resources and Research papers          #Contains all the research papers that we included for our case study
  ```
 
 <!-- GETTING STARTED -->
