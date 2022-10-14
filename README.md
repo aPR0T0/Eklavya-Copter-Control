@@ -140,6 +140,8 @@ Simplified code structure
 
 Copter when target co-ordinates are given in control_omav.py:  
 
+[![Watch the video]()](https://drive.google.com/file/d/1x4tJ7PMI25mfukPFfVF5TYyVnIOuVlXN/view?usp=sharing)
+
 <!-- FUTURE WORK -->
 ## Future Work
 - [x] Create a control system for the drone using PID
