@@ -143,6 +143,10 @@ Simplified code structure
 
 ![](./assets/Model.png)
 
+### Gains (Tuning Parameters)
+
+![](./assets/Gains.jpeg)
+
 ### Implementation
 
 
