@@ -136,17 +136,18 @@ Controller and Sensor Readings, Reference Data Flowchart
 Simplified code structure 
 ![](./assets/Simplified_code_struct.png)
 
-<!-- RESULTS AND DEMO -->
-## Results and Demo
-
+<!-- Model And Implementation -->
+## Model And Implementation
 
 ### Model  
 
 ![](./assets/Model.png)
 
-## Implementation
+### Implementation
+
 
 <img src="/assets/Copter-Control.gif" width= "720">
+
 
 <!-- FUTURE WORK -->
 ## Future Work
@@ -175,10 +176,11 @@ Designing & Implementing an Optimal Control System of an Overactuated Hexa-copte
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
 * Our mentors [Sagar Chotalia](https://github.com/sagarchotalia), [Jash Shah](https://github.com/Jash-Shah) and [Ayush Kaura](https://github.com/Ayush-Kaura) for their guidance throughout the whole project
  
-<!-- -->
+<!-- License -->
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
 
+<!-- Citation -->
 ## Citation
 ```sh
 @Inbook{Furrer2016,
