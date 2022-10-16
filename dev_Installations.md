@@ -120,7 +120,7 @@ source ~/.bashrc
 ```
 
 
-### REFERENCES :
+## REFERENCES :
 > **ETH-Zürich** : ethz-asl/rotors_simulator Repository
 
 - [ethz-asl/rotors_simulator Repository](https://github.com/ethz-asl/rotors_simulator.git "ethz-asl/rotors_simulator")

@@ -118,3 +118,43 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+## Basic Usage
+-----------
+
+Launch the simulator with a hex-rotor helicopter model, in our case, the AscTec Firefly in a basic world.
+
+```
+$ roslaunch rotors_gazebo mav.launch mav_name:=omav world_name:=basic
+```
+
+There are some basic launch files where you can load the different multicopters with additional sensors. They can all be found in `~/catkin_ws/src/rotors_gazebo/launch`.
+
+The `world_name` argument looks for a .world file with a corresponding name in `~/catkin_ws/src/rotors_gazebo/worlds`. By default, all launch files, with the exception of those that have the world name explicitly included in the file name, use the empty world described in `basic.world`.
+
+### Getting the multicopter to fly
+
+To let the multicopter fly you need to generate thrust with the rotors, this is achieved by sending commands to the multicopter, which make the rotors spin.
+There are currently a few ways to send commands to the multicopter, we will show one of them here.
+The rest is documented [here](../../wiki) in our Wiki.
+
+#### Send direct motor commands
+
+We will for now just send some constant motor velocities to the multicopter.
+
+```
+$ rostopic pub /firefly/command/motor_speed mav_msgs/Actuators '{angular_velocities: [700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 700, 0, 0, 0, 0, 0, 0]}'
+```
+
+> **Note** The size of the `motor_speed` array should be equal to the number of motors you have in your model of choice (e.g. 6 in the Firefly model). Also, the last 6 elements are preserved for the angles of the tilt rotors
+
+> You can play with the numbers and will realize that the Firefly will take off with motor speeds of about 545 on each rotor. The multicopter is unstable though, since there is no controller running, if you just set the motor speeds.
+
+
+#### Let the helicopter hover with ground truth odometry
+
+You can let the helicopter hover with ground truth odometry (perfect state estimation), by launching:
+
+```
+$ roslaunch rotors_gazebo mav.launch mav_name:=omav world_name:=basic
+```
