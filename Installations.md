@@ -1,5 +1,5 @@
 # Installation Instructions on Ubuntu 20.04 for ROS NOETIC
-> **ETH-Zürich** : ethz-asl/rotors_simulator Repository
+> **Eklavya-Copter-Control** : aPR0T0/Eklavya-Copter-Control Repository
 
 ## Prerequisites
 
@@ -118,9 +118,3 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
-
-
-### REFERENCES :
-> **ETH-Zürich** : ethz-asl/rotors_simulator Repository
-
-- [ethz-asl/rotors_simulator Repository](https://ubuntu.com/download/desktophttps://github.com/ethz-asl/rotors_simulator.git "ethz-asl/rotors_simulator")
