@@ -62,39 +62,39 @@ Our full project report can be found [here](./report/Project_Report_Copter_Contr
 ### File Structure
 ```
 👨‍💻Eklavya-Copter-Control
- ┣ 📂assets                             # Installation.md & all reference gifs, images
- ┣ 📂report                             # Project Report & Presentation
- ┣ 📂rotors_comm                        # msg files for WindSpeed
- ┣ 📂rotos_description                  # All urdfs and meshes
- ┃ ┣ 📂meshes
- ┃ ┣ 📂urdf
- ┃ ┃ ┗ 🗃️omav.xacro                     # Drone Model
- ┃ ┣ 🗃️CMakeLists.txt
- ┃ ┗ 🗃️package.xml
- ┣ 📂rotors_gazebo                      # Launch Files, World Files & other Gazebo resources
- ┃ ┣ 📂launch
- ┃ ┃ ┗ 🗃️mav.launch                     # Main Launch File
- ┃ ┣ 📂models
- ┃ ┣ 📂resource
- ┃ ┣ 📂worlds
- ┃ ┃ ┗ 🗃️basic.world                    # World used in Gazebo
- ┃ ┣ 🗃️CMakeLists.txt
- ┃ ┗ 🗃️package.xml
- ┣ 📂rotors_gazebo_plugins              # All Gazebo Plugins
- ┣ 📂scripts                            # Controller Python Scripts
- ┃ ┣🗃️control_omav.py                   # Main Controller Script
- ┃ ┣🗃️pid_omav.py
- ┃ ┣🗃️force_desired.py
- ┃ ┣🗃️moment_desired.py
- ┃ ┣🗃️moment_force_allocation.py
- ┃ ┣🗃️speed.py
- ┃ ┗🗃️takeoff.py                        # Drone Testing Script
+ ┣ 📂assets                               # reference gifs, images
+ ┣ 📂Images
+ ┣ 📂Records and Reports                  # Project Report & Presentation
+ ┣ 📂simulation
+ ┃ ┣ 📂rotors_comm                        # msg files for WindSpeed
+ ┃ ┣ 📂rotos_description                  # All urdfs and meshes
+ ┃ ┃ ┣ 📂meshes
+ ┃ ┃ ┣ 📂urdf
+ ┃ ┃ ┃ ┗ 🗃️omav.xacro                     # Drone Model
+ ┃ ┃ ┣ 🗃️CMakeLists.txt
+ ┃ ┃ ┗ 🗃️package.xml
+ ┃ ┣ 📂rotors_gazebo                      # Launch Files, World Files & other Gazebo resources
+ ┃ ┃ ┣ 📂scripts   
+ ┃ ┃ ┃ ┣🗃️control_omav.py
+ ┃ ┃ ┃ ┣🗃️pid_omav.py
+ ┃ ┃ ┃ ┣🗃️force_desired.py
+ ┃ ┃ ┃ ┣🗃️moment_desired.py
+ ┃ ┃ ┃ ┣🗃️moment_force_allocation.py
+ ┃ ┃ ┃ ┣🗃️speed.py
+ ┃ ┃ ┃ ┗🗃️takeoff.py                      # Drone Testing Script
+ ┃ ┃ ┣ 📂launch
+ ┃ ┃ ┃ ┗ 🗃️mav.launch                     # Main Launch File
+ ┃ ┃ ┣ 📂models
+ ┃ ┃ ┣ 📂resource
+ ┃ ┃ ┣ 📂worlds
+ ┃ ┃ ┃ ┗ 🗃️basic.world                    # World used in Gazebo
+ ┃ ┃ ┣ 🗃️CMakeLists.txt
+ ┃ ┃ ┗ 🗃️package.xml
+ ┃ ┗ 📂rotors_gazebo_plugins              # All Gazebo Plugins                       
  ┣ 🗃️LICENSE
- ┣ 🗃️README.md
- ┣ 🗃️dependencies.rosinstall
- ┣ 🗃️rotors_demos.rosinstall
- ┣ 🗃️rotors_hil.rosinstall
- ┗ 🗃️rotors_minimal.rosinstall
+ ┣ 🗃️Installations.md
+ ┣ 🗃️Instructions.md
+ ┗ 🗃️README.md
  ```
 
 <!-- GETTING STARTED -->
