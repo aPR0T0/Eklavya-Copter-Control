@@ -24,7 +24,7 @@
     - [Installation](#installation)
     - [Execution](#execution)
   - [Algorithm Flowchart](#algorithm-flowchart)
-  - [Results and Demo](#results-and-demo)
+  - [Model and Implementation](#model-and-implementation)
   - [Future Work](#future-work)
   - [Contributors](#contributors)
   - [Acknowledgements and Resources](#acknowledgements-and-resources)
