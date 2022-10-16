@@ -13,7 +13,7 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-- [<span style="color:purple">Project</span>](#Eklavya-Copter-Control)
+- [<span style="color:black">Project</span>](#Eklavya-Copter-Control)
   - [<span style="color:purple">Demo</span>](#demo)
   - [<span style="color:purple">Table of Contents</span>](#table-of-contents)
   - [<span style="color:purple">About The Project</span>](#about-the-project)
