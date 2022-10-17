@@ -27,7 +27,7 @@
   - [Model and Implementation](#model-and-implementation)
   - [Future Work](#future-work)
   - [Contributors](#contributors)
-  - [Acknowledgements and Resources](#acknowledgements-and-resources)
+  - [Acknowledgements and Resources](#acknowledgements-and-references)
   - [License](#license)
   - [Citation](#citation)
 <!--ABOUT THE PROJECT -->
