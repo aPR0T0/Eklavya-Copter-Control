@@ -40,9 +40,9 @@ This project involves understanding key concepts of Dynamics of UAVs, Modern Rob
 
 Our full project report can be found [here](./report/Project_Report_Copter_Control.pdf)
 
-[Brief Presentation](./report/Copter-Control.pptx) can be found here
+Brief Presentation can be found [here](./report/Copter-Control.pptx)
 
-[Detailed Presentation](https://www.canva.com/design/DAFO6QGqbzk/BZ5_9Rk-LoEGTwhVJiBExA/view?utm_content=DAFO6QGqbzk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) can be found here
+Detailed Presentation can be found [here](https://www.canva.com/design/DAFO6QGqbzk/BZ5_9Rk-LoEGTwhVJiBExA/view?utm_content=DAFO6QGqbzk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## Project workflow
 - To learn about different control systems
