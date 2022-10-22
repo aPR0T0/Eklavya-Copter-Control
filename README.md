@@ -108,7 +108,9 @@ Detailed Presentation can be found [here](https://www.canva.com/design/DAFO6QGqb
 
 ### Installation
 
-[Installation Guide](./assets/Installations.md "Installation")
+[Installation Guide For Forkers](./dev_Installations.md "Installation")
+
+[Installation Guide For beginners](./Installations.md "Installation")
 
 ### Execution
 Open two terminal windows and run the following commands
