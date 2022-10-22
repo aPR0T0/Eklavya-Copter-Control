@@ -153,8 +153,8 @@ Simplified code structure
 <img src="/assets/Copter-Control.gif" width= "720">
 
 
-<!-- FUTURE WORK -->
-## Future Work
+<!-- WORK -->
+
 Designing & Implementing an Optimal Control System of an Overactuated Hexa-copter with Co-axial Tilt-Rotors for Efficient Omnidirectional Flight in Simulation(Gazebo) using ROS & Python. Learning about the dynamics of a basic UAV and further implementing that knowledge in understanding the various dynamics of our system.
 
 - [x] Designing Optimal Control System for Position Control using PID Algorithm
@@ -162,6 +162,11 @@ Designing & Implementing an Optimal Control System of an Overactuated Hexa-copte
 - [x] Implementing Control System with PID Tuning in Simulation(Gazebo) for reaching arbitrary altitude
 - [x] Implementing Control System with PID Tuning in Simulation(Gazebo) for reaching Co-ordinates in free space
 - [x] Implementing Control System with Tuning in Simulation(Gazebo) with decoupled Position and Orientation
+
+
+<!-- FUTURE WORK -->
+## Future Work
+
 - [ ] Improve Tuning, Control Algorithm for Efficient, Accurate, Stable and Fast Flight with decoupled Position and Orientation
 - [ ] Achieve Stable Flight in presence of external disturbances like Wind,...
 - [ ] Exploring different Control Systems & Approaches to improve performance of system
