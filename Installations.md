@@ -40,13 +40,13 @@ source /opt/ros/noetic/setup.bash
     Then run following command in terminal `source ~/.bashrc`
 
 * **If you face a problem like:**
-![Error faced](./Installation_Dependencies.png "Error based on unmet dependencies")
+![Error faced](./assets/Installation_Dependencies.png "Error based on unmet dependencies")
     
     Then just before using `line 3` of the above block just type in `sudo apt install -f` (This is auto remove feature of ros of unwanted commands) after this the problem should be solved.
 
 
 * **If you face a problem like:**
-![Error faced](./source_file_exists.png "Source File Already Exists")
+![Error faced](./assets/source_file_exists.png "Source File Already Exists")
     
     It is not necessary to solve this error (But in few cases it might be required)
 
@@ -118,10 +118,8 @@ If any errors occur you could run `catkin init` and `catkin build` commands agai
 echo "source ~/hexacopter_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
-
+---
 ## Basic Usage
------------
-
 Launch the simulator with a hex-rotor helicopter model, in our case, the AscTec Firefly in a basic world.
 
 ```
