@@ -7,7 +7,7 @@
 
 ## Demo
 
-<img src="/assets/Demo.gif" width= "720">
+<img src="assets/Demo.gif" width= "720">
 
 
 <!-- TABLE OF CONTENTS -->
