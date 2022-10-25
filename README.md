@@ -152,7 +152,7 @@ Simplified code structure
 ### Implementation
 
 
-<img src="/assets/Copter-Control.gif" width= "720">
+<img src="./assets/Copter-Control.gif" width= "720">
 
 
 <!-- WORK -->
