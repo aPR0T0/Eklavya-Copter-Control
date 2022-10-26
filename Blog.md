@@ -191,3 +191,5 @@ We needed a 6x24 allocation matrix that converts 6x1 desired variables to 18 opt
 ### Conclusion
 
 #### Links of Further reading
+
+- Checkout some inspiring [quotes](./Some%20Basic%20Concepts/Fun%20Quotes.md) 
