@@ -160,6 +160,30 @@ So, we first learn
 
 ### Our journey through the matrices
 
+One of the major challenges was to understand the physics behind the model and then actually derive a mathematical model for the same. But have you ever heard of getting 18 variables from 12 equations? Never, right?. So, here we come with a smart move but before that let's understand [basics of Linear algebra](./Some%20Basic%20Concepts/Linear%20algebra.md) Ft. 3blue1brown (My math crush🥰).
+
+Now, getting the basic Idea and actual intuition of how and why things actually work in matrices. We can now understand the math behind each step
+
+**There are actually 6 condition in general dynamics**
+- Sum of **Forces** in x, y, and z directions produced by the body or on the body are zero.
+- Sum of **Moments** developed in x, y, and z on the body or by the body is zero.
+
+![Image](./assets/Blog_4.png)
+
+So, now we have 6 conditions for the body. So, we needed to convert them into respective rotor velocity and tilt angles which was quite a difficult task.
+
+But see who came in rescue....... Concepts we learned from 3blue1brown playlist and our knowledge from 12th standard physics.
+
+![Forces and moments](./assets/Blog_5.png)
+
+![Forces desired](./assets/Blog_6.png)
+
+Now, there are 12 rotors for thrust and 6 rotors to tilt these rotors around the axis of the arms
+
+So, to allocate them with an optimal solution from 3x1 matrix of Force desired and 3x1 matrix of Moments desired *With respect to the body 🤭
+
+We needed a 6x24 allocation matrix that converts 6x1 desired variables to 18 optimally required variables.
+
 ### Trapped in Allocation and frames
 
 ### The real hell 😈
