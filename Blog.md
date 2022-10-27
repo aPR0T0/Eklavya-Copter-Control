@@ -1,5 +1,7 @@
 # Experiencing the Dream: Understanding Drones and Control systems
 
+![Future of drones](./assets/Blog_9.webp)
+
 The Title describes our Project quite elgantly. It was like a dream for me and team-mate to work on this project. But this project isn't about building a simple drone it is much more than a beginner thinks-of while imagining drones. To give you a rough idea, the complexity of our system has made us scratch our heads and gave us many sleepless nights, the very description of which you find later in this blog.
 
 Through this rough journey of learning to work with ROS, designing a controller for a hexacopter, While(1){Understanding **Math**} and understanding **Math**, and debugging, we were selflessly backed and helped by our mentors **Sagar Chotalia**, **Jash Shah**, and **Ayush Kaura**. Thanks to the most dynamic club of VJTI: [Society of Robotics and Automation (SRA)](https://sravjti.in/).
@@ -9,6 +11,8 @@ One of the Major questions was **How to make a control system for a drone ?**
 >**Mentors**: Just do the Installations first!
 
 ### Struggles of the Installations
+
+![Jokes](./assets/Blog_11.jpg)
 
 It now seems like it was too easy to install ROS, Gazebo, and other cloned repo. But it wasn't. I (Alqama) had no idea of how does these things even work, turns out no one really knows, they just install it by checking the versions🥲. 
 
@@ -21,6 +25,8 @@ Another shock for me was these tech freaks also name their version. Like kinetic
 > Knowing that this wasn't even a fraction of work we needed to do to make the controller work😉
 
 ### Next up was implementing a controller based on a normal hexacopter
+
+![memes](./assets/Blog_14.jpg)
 
 Before moving on to the actual model we needed to know how a controller works on a simpler model for which we needed to learn motor mixing before moving on to the matrix calculations.
 #### Motor Mixing
@@ -160,6 +166,8 @@ So, we first learn
 
 ### Our journey through the matrices
 
+![Joke](./assets/Blog_7.jpg)
+
 One of the major challenges was to understand the physics behind the model and then actually derive a mathematical model for the same. But have you ever heard of getting 18 variables from 12 equations? Never, right?. So, here we come with a smart move but before that let's understand [basics of Linear algebra](./Some%20Basic%20Concepts/Linear%20algebra.md) Ft. 3blue1brown (My math crush🥰).
 
 Now, getting the basic Idea and actual intuition of how and why things actually work in matrices. We can now understand the math behind each step
@@ -186,10 +194,38 @@ We needed a 6x24 allocation matrix that converts 6x1 desired variables to 18 opt
 
 ### Trapped in Allocation and frames
 
+Here, we had three matrices to allocate the velocities and angles to the hexacopter, no suprise that we argued on these matriced the most. 
+
+**Option one** Clearly the most simple (Ofcourse not clearly to you but just scroll a bit and then you might agree with me 🤭)
+
+![Allocation one](./assets/Blog_12.png)
+
+We used this matrix that is originally for the 6 rotor based Voliro hexacopter. So basically we just put our **__Jugaad__** into place, that splitting the single output for rotor velcity per arm into two by just multiplying the output and some factor 😜
+
+Which is not a great approach as you might have guessed and we still continued with it till the last week, but then after hours wasted in tuning and looking at a very bad output we decided to get a better matrix into our book. 
+
+Another reason was that the moment terms i.e. the terms from 4th to the 6th row, were not right when I derived them using simple math and Concepts of mechanics
+
+> Aryan was the one who didn't believe in it till the last moment and unfortunately he was right
+
+**Option two** Still don't agree? just try to expand it 🤣
+![Allocation two](./assets/Blog_13.png)
+
+This matrix was the one which was nearly as we accurate as my derived one and we tried to implement this next and yeppie it worked after some debugging nightmares but yeah it worked.
+
+**Option three** By far the most reliable 💪
+
+![Allocation three](./assets/Blog_14.png)
+
+This is the most generalized matrix which even accounts for the angle at which arms are from the horizon of the body. Which is so cool!
+
+Anyway it same as the previous one so we that for our controller
+
 ### The real hell 😈
 
 ### Conclusion
 
 #### Links of Further reading
 
-- Checkout some inspiring [quotes](./Some%20Basic%20Concepts/Fun%20Quotes.md) 
+- Derivation of correct [allocation matrix](./Some%20Basic%20Concepts/Allocation%20Matrix%20Derivation.md)
+- Checkout some inspiring yet fun [quotes](./Some%20Basic%20Concepts/Fun%20Quotes.md) 
