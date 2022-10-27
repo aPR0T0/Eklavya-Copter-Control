@@ -131,11 +131,11 @@ python3 control_omav.py
 <!--Flowchart -->
 
 ## Algorithm Flowchart 
-Control System
+**Control System**
 ![](./assets/Overall_flow.png)
-Controller and Sensor Readings, Reference Data Flowchart
+**Controller and Sensor Readings, Reference Data Flowchart**
 ![](./assets/Basic_algo_flow.png)
-Simplified code structure 
+**Simplified code structure**
 ![](./assets/Simplified_code_struct.png)
 
 <!-- Model And Implementation -->
