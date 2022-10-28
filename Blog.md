@@ -12,7 +12,7 @@ One of the Major questions was **How to make a control system for a drone ?**
 
 ### Struggles of the Installations
 
-![Jokes](./assets/Blog_11.jpg)
+<img src="./assets/Blog_11.jpg" widht="100%">
 
 It now seems like it was too easy to install ROS, Gazebo, and other cloned repo. But it wasn't. I (Alqama) had no idea of how does these things even work, turns out no one really knows, they just install it by checking the versions🥲. 
 
@@ -213,6 +213,7 @@ Another reason was that the moment terms i.e. the terms from 4th to the 6th row,
 > Aryan was the one who didn't believe in it till the last moment and unfortunately he was right
 
 **Option two** Still don't agree? just try to expand it 🤣
+
 ![Allocation two](./assets/Blog_13.png)
 
 This matrix was the one which was nearly as we accurate as my derived one and we tried to implement this next and yeppie it worked after some debugging nightmares but yeah it worked.
@@ -259,7 +260,7 @@ https://user-images.githubusercontent.com/97826285/198553931-bf8a2c51-4ef2-4d20-
 
 ### Conclusion
 
-![Images](./assets/Blog_21.jpeg)
+<img src="./assets/Blog_21.jpeg" width="100%">
 
 #### Links of Further reading
 
