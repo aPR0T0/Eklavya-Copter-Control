@@ -166,7 +166,9 @@ So, we first learn
 
 ### Our journey through the matrices
 
+
 ![Joke](./assets/Blog_7.jpg)
+
 
 One of the major challenges was to understand the physics behind the model and then actually derive a mathematical model for the same. But have you ever heard of getting 18 variables from 12 equations? Never, right?. So, here we come with a smart move but before that let's understand [basics of Linear algebra](./Some%20Basic%20Concepts/Linear%20algebra.md) Ft. 3blue1brown (My math crush🥰).
 
@@ -193,6 +195,9 @@ So, to allocate them with an optimal solution from 3x1 matrix of Force desired a
 We needed a 6x24 allocation matrix that converts 6x1 desired variables to 18 optimally required variables.
 
 ### Trapped in Allocation and frames
+
+
+![Images](./assets/Blog_20.jpeg)
 
 Here, we had three matrices to allocate the velocities and angles to the hexacopter, no suprise that we argued on these matriced the most. 
 
@@ -223,7 +228,39 @@ Anyway it same as the previous one so we that for our controller
 
 ### The real hell 😈
 
+https://user-images.githubusercontent.com/97826285/198553647-efe8fce6-7324-4938-be47-4308d76b84cb.mp4
+
+**Here Comes the Challenges**
+
+- **Rotation Matrix**: The matrix that we were using was for body to inertial though we wanted it to convert from inertial to the body frame. So, first major difficulty was when the orientation of the body changed slightly then the error was significantly increased. After keen observation and cross-checking a hundred times we found out that the base for our calculations was wrong 🥹.
+
+![Image](./assets/Blog_15.png)
+
+- **Errors in sensor readings**: So, the sensors we were using are odometry and IMU. But we had two options for both groung_truth imu and odometry and normal imu and odometry. Which basically output the same thing but with different rates, noise values, and biases due to which sudden jump in reading were observed. So, in the end we chose simple imu and odometry as they both had less noise in their readings
+
+![Image](./assets/Blog_16.webp.png)
+
+- **Frames of References**: Our whole calculations is done in the body frame. But, all the readings that we get are w.r.t the ground frame.
+
+>But, how do we know in which frame does the sensor published a dataset ?🤔
+
+![Image](./assets/Blog_17.jpg.png)
+
+![Image](./assets/Blog_18.png)
+
+- **Sign mistakes**: In engineering and other scientific fields we all know what is the biggest enemy.
+
+![Images](./assets/Blog_19.jpg)
+
+Before the end of the final week the most important mistake was found in the signs of the allocation matrix and booYah! See the output for yourself 🥳
+
+**And Finally after all this we got something remarkable**
+
+https://user-images.githubusercontent.com/97826285/198553931-bf8a2c51-4ef2-4d20-9ed7-d9a86223a7c3.webm
+
 ### Conclusion
+
+![Images](./assets/Blog_21.jpeg)
 
 #### Links of Further reading
 
