@@ -26,7 +26,7 @@ Another shock for me was these tech freaks also name their version. Like kinetic
 
 ### Next up was implementing a controller based on a normal hexacopter
 
-![memes](./assets/Blog_14.jpg)
+<img src="./assets/Blog_14.jpg" width="100%">
 
 Before moving on to the actual model we needed to know how a controller works on a simpler model for which we needed to learn motor mixing before moving on to the matrix calculations.
 #### Motor Mixing
@@ -196,8 +196,7 @@ We needed a 6x24 allocation matrix that converts 6x1 desired variables to 18 opt
 
 ### Trapped in Allocation and frames
 
-
-![Images](./assets/Blog_20.jpeg)
+<img src="./assets/Blog_20.jpeg" width="500%">
 
 Here, we had three matrices to allocate the velocities and angles to the hexacopter, no suprise that we argued on these matriced the most. 
 
@@ -250,7 +249,7 @@ https://user-images.githubusercontent.com/97826285/198553647-efe8fce6-7324-4938-
 
 - **Sign mistakes**: In engineering and other scientific fields we all know what is the biggest enemy.
 
-![Images](./assets/Blog_19.jpg)
+<img src="./assets/Blog_19.jpg" width="100%">
 
 Before the end of the final week the most important mistake was found in the signs of the allocation matrix and booYah! See the output for yourself 🥳
 
