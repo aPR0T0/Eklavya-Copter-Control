@@ -97,18 +97,12 @@ and that would work just fine for two dimensions
 
 - decrease one of the left/right pairs and increase the other causing a rolling torque
 
-![](./assets/1_21.jpeg)
-
-
 3. Pitch - 
 
 - decrease one of the front/back pairs and increase the other causing a pitching torque
 
-![](./assets/1_22.jpeg)
-
 
 > Both of these motions would have no effect on yaw since we're moving counter rotating motors in the same direction and their yaw torque would continue to cancel out each other
-![](./assets/1_23.jpeg)
 
 
 4. Thrust -
