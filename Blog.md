@@ -39,34 +39,26 @@ Before moving on to the actual model we needed to know how a controller works on
 ![](./assets/1_11.jpeg)
 
 - If the motor is placed in a position that the force is applied through the center of gravity of an object then that object will move in pure translation with no rotation
-
-![](./assets/1_12.jpeg)
-
 - If the force of the thrust is exactly equal to and opposite the force of gravity then the object will hover in place
 
-![](./assets/1_13.jpeg)
 
 - A force at a distance from the center of gravity produces both a translational motion as well as a torque
 - If our motor is attached to the bar as it rotates the torque will stay constant
 - But the force is now no longer always in the opposite direction of gravity
 - Hence our bar will begin to move off the side and fall out of the sky
 
-![](./assets/1_14.jpeg)
 
 - Now if there's a counter force on the opposite side of the center of gravity and each force is half of the force of gravity then the object will again stay stationary because the torques and forces will cancel each other out
 
-![](./assets/1_15.jpeg)
 
 - But our actuators don't generate purely force when it generates thrust since it accomplishes thrust by rotating and torquing a propeller which has mass our actuators are also generating a reaction torque that is in the opposite direction
 - If both of our motors are spinning in the same direction then the torque is doubled and our bar would start to rotate
 
-![](./assets/1_16.jpeg)
 
 - To counter this torque we could spend the two motors in opposite directions
 and that would work just fine for two dimensions
 - but we can't roll this bar
 
-![](./assets/1_17.jpeg)
 
 - Hence we add a second bar with two more motors to create our quadcopter
 - With this configuration we can hover by accelerating each motor until they each produce a force one fourth that of gravity
@@ -87,14 +79,11 @@ and that would work just fine for two dimensions
 - causing yaw-motion
 - forces about Centre of Mass is Zero, hence no roll or pitch
 
-![](./assets/1_19.jpeg)
-
 - If the rotating motor pairs are on the same side
 - then slowing one pair down and increasing the other pair will cause an imbalance of forces about the center of gravity
 - and the vehicle will either pitch or roll depending on which side the motor pairs are on
 - However if we separate the two motors and place them on opposite sides of the drone then the forces will balance each other out
 
-![](./assets/1_20.jpeg)
 
 > Hence **motor configuration** and **spin directions** are so CRITICAL
 
