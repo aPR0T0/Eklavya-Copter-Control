@@ -103,19 +103,11 @@ and that would work just fine for two dimensions
 
 - decrease one of the left/right pairs and increase the other causing a rolling torque
 
-![](./assets/1_21.jpeg)
-
-
 3. Pitch - 
 
 - decrease one of the front/back pairs and increase the other causing a pitching torque
 
-![](./assets/1_22.jpeg)
-
-
 > Both of these motions would have no effect on yaw since we're moving counter rotating motors in the same direction and their yaw torque would continue to cancel out each other
-![](./assets/1_23.jpeg)
-
 
 4. Thrust -
 
@@ -144,13 +136,8 @@ This is our simple motor mixing algorithm that can convert between the intuitive
 - Forward/Backward/Left/Right Motion our unactivated motions
 - first tilt in direction of motion such that force (thrust) vector is partially in direction opposite to that of gravity and partially in direction of motion
 
-![](./assets/1_26.jpeg)
 
 - Now if we wanted to maintain altitude while we do this maneuver then we would increase the thrust so that the vertical component is still cancelling out the downward pull of gravity
-
-By using this concept of motor mixing we tried to implement the controller for a hexacopter using the logic below:
-
-![](./assets/Blog_3.jpeg)
 
 Right, this was the point from which my (Alqama's) love for math came into picture ❤️.
 
